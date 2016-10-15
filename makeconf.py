@@ -77,54 +77,82 @@ class MyWindow(PySide.QtGui.QMainWindow):
             self.setLayout(self.layout)
 
         def paintRatingsWidget(self):
-            self.rWidget = Py.QtGui.QWidget()
-            layout = Py.QtGui.QHBoxLayout()
-
-
-
-            self.dropdown = Py.QtGui.QComboBox()
-            self.dropdown.addItem("will this work?")
-            self.dropdown.addItem("I hope")
-
-            self.dropdown2 = Py.QtGui.QComboBox()
-            self.dropdown2.addItem("will this work?")
-            self.dropdown2.addItem("I hope")
-
-
-            layout.addWidget(self.dropdown)
-            layout.addWidget(self.dropdown2)
-
-            self.rWidget.setLayout(layout)
 
             try:
-                self.tWidget.deleteLater()
+                self.layout.addWidget(self.rWidget)
+            except AttributeError:
+                self.rWidget = Py.QtGui.QWidget()
+                layout = Py.QtGui.QVBoxLayout()
+
+
+
+                self.rName = Py.QtGui.QComboBox()
+
+                self.rNameInput = Py.QtGui.QLineEdit()
+                self.rNameInput.setPlaceholderText("Name")
+
+                self.rQuestionNum = Py.QtGui.QSpinBox()
+                self.rQuestionNum.setRange(1, 5)
+
+
+                self.rType = Py.QtGui.QComboBox()
+                self.rType.addItem("Radio Buttons")
+                self.rType.addItem("Check Boxes")
+                self.rType.addItem("Free Response")
+                def typechange():
+                    if self.rType.currentText() == "Radio Buttons":
+                        options = True
+                    elif self.rType.currentText() == "Check Boxes":
+                        options = True
+                    elif self.rType.currentText() == "Free Response":
+                        options = False
+                    else:
+                        options = self.rType.currentText()
+                    print(options)
+                self.rType.currentIndexChanged.connect(typechange)
+
+
+                layout.addWidget(self.rName)
+                layout.addWidget(self.rNameInput)
+                layout.addWidget(self.rQuestionNum)
+                layout.addWidget(self.rType)
+
+                self.rWidget.setLayout(layout)
+
+            try:
+                self.tWidget.hide()
                 self.layout.removeWidget(self.tWidget)
-            except Exception as e:
+                self.rWidget.show()
+            except AttributeError as e:
                 print(e)
             self.ratingsButton.setEnabled(False)
             self.trialsButton.setEnabled(True)
             self.layout.addWidget(self.rWidget)
 
         def paintTrialsWidget(self):
-            self.tWidget = Py.QtGui.QWidget()
-            layout = Py.QtGui.QHBoxLayout()
+            try:
+                self.layout.addWidget(self.tWidget)
+            except AttributeError:
+                self.tWidget = Py.QtGui.QWidget()
+                layout = Py.QtGui.QHBoxLayout()
 
 
 
-            self.dropdown = Py.QtGui.QComboBox()
-            self.dropdown.addItem("yay!")
-            self.dropdown.addItem("Celebrate!")
+                self.dropdown = Py.QtGui.QComboBox()
+                self.dropdown.addItem("yay!")
+                self.dropdown.addItem("Celebrate!")
 
 
 
-            layout.addWidget(self.dropdown)
+                layout.addWidget(self.dropdown)
 
-            self.tWidget.setLayout(layout)
+                self.tWidget.setLayout(layout)
 
             try:
-                self.rWidget.deleteLater()
+                self.rWidget.hide()
                 self.layout.removeWidget(self.rWidget)
-            except Exception as e:
+                self.tWidget.show()
+            except AttributeError as e:
                 print(e)
             self.trialsButton.setEnabled(False)
             self.ratingsButton.setEnabled(True)
