@@ -61,17 +61,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
             self.trialsButton = Py.QtGui.QToolButton()
             self.trialsButton.setText("Trials")
 
-            # Some baaad stuff
-            #buttons = {'ratings': self.ratingsButton, 'trials' : self.trialsButton}
-            #self.ratingswidget = self.RatingsWidget(self.layout, buttons)
-            #self.trialswidget = self.TrialsWidget(self.layout, buttons)
-            #self.ratingswidget.other = self.trialswidget
-            #self.trialswidget.other = self.ratingswidget
-            #ratingswidget.paintMenu()
-
             # Make buttons do stuff
             self.ratingsButton.clicked.connect(self.paintRatingsWidget)
-            #self.trialsButton.clicked.connect(self.trialswidget.paintMenu)
             self.trialsButton.clicked.connect(self.paintTrialsWidget)
 
 
@@ -85,10 +76,9 @@ class MyWindow(PySide.QtGui.QMainWindow):
             self.layout.addLayout(buttonlayout)
             self.setLayout(self.layout)
 
-        # I may want to incorporate both of these into the same class
         def paintRatingsWidget(self):
-            self.ratingsWidget = Py.QtGui.QWidget()
-            ratingsLayout = Py.QtGui.QHBoxLayout()
+            self.rWidget = Py.QtGui.QWidget()
+            layout = Py.QtGui.QHBoxLayout()
 
 
 
@@ -96,24 +86,28 @@ class MyWindow(PySide.QtGui.QMainWindow):
             self.dropdown.addItem("will this work?")
             self.dropdown.addItem("I hope")
 
+            self.dropdown2 = Py.QtGui.QComboBox()
+            self.dropdown2.addItem("will this work?")
+            self.dropdown2.addItem("I hope")
 
 
-            ratingsLayout.addWidget(self.dropdown)
+            layout.addWidget(self.dropdown)
+            layout.addWidget(self.dropdown2)
 
-            self.ratingsWidget.setLayout(ratingsLayout)
+            self.rWidget.setLayout(layout)
 
             try:
-                self.trialsWidget.deleteLater()
-                self.layout.removeWidget(self.trialsWidget)
+                self.tWidget.deleteLater()
+                self.layout.removeWidget(self.tWidget)
             except Exception as e:
                 print(e)
             self.ratingsButton.setEnabled(False)
             self.trialsButton.setEnabled(True)
-            self.layout.addWidget(self.ratingsWidget)
+            self.layout.addWidget(self.rWidget)
 
         def paintTrialsWidget(self):
-            self.trialsWidget = Py.QtGui.QWidget()
-            ratingsLayout = Py.QtGui.QHBoxLayout()
+            self.tWidget = Py.QtGui.QWidget()
+            layout = Py.QtGui.QHBoxLayout()
 
 
 
@@ -123,18 +117,18 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
 
 
-            ratingsLayout.addWidget(self.dropdown)
+            layout.addWidget(self.dropdown)
 
-            self.trialsWidget.setLayout(ratingsLayout)
+            self.tWidget.setLayout(layout)
 
             try:
-                self.ratingsWidget.deleteLater()
-                self.layout.removeWidget(self.ratingsWidget)
+                self.rWidget.deleteLater()
+                self.layout.removeWidget(self.rWidget)
             except Exception as e:
                 print(e)
             self.trialsButton.setEnabled(False)
             self.ratingsButton.setEnabled(True)
-            self.layout.addWidget(self.trialsWidget)
+            self.layout.addWidget(self.tWidget)
 
     def initUI(self):
 
