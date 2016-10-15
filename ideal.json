@@ -1,0 +1,125 @@
+{
+  "description" : "Basic basic exercise",
+  "hostname" : "beslime-67",
+  "ratings" : { 
+    "Default_Radio" : {
+      "type" : "rating",
+      "description" : "Default radio list on a majority of the trials",
+      "subtype" : "radio",
+      "question" : "How well did the signal sound to you",
+      "options" : [ "Excellent", "Good", "Dunno", "", "Not too well" ]
+    },
+    "Default_Fillin" : {
+      "type" : "rating",
+      "description" : "Default free response question",
+      "subtype" : "free",
+      "question" : "Whats your name?",
+      "options" : null
+    }
+  },
+  "trials" : [ 
+    {
+      "noise" : [
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        }
+      ],
+      "signal" : [
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        },
+        {
+          "sample" : "audio.ogg",
+          "level" : 0,
+          "offset" : 0,
+          "state" : 1
+        }
+      ],
+      "target" : 3
+    }
+  ]
+}
