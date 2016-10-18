@@ -1,6 +1,7 @@
 {
   "description" : "Basic basic exercise",
   "hostname" : "beslime-67",
+  "program" : 2,
   "ratings" : { 
     "Default_Radio" : {
       "type" : "rating",
