@@ -29,11 +29,11 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
 
 
+        self.widget = self.MainWidget()
         self.initUI()
 
 
 
-        self.widget = self.MainWidget()
         self.setCentralWidget(self.widget)
         self.label = "yo"
 
@@ -61,9 +61,13 @@ class MyWindow(PySide.QtGui.QMainWindow):
             self.trialsButton = Py.QtGui.QToolButton()
             self.trialsButton.setText("Trials")
 
+            # Hi
+            self.ratingsWidget = self.RatingsWidget(self)
+            self.trialsWidget = self.TrialsWidget(self)
+
             # Make buttons do stuff
-            self.ratingsButton.clicked.connect(self.paintRatingsWidget)
-            self.trialsButton.clicked.connect(self.paintTrialsWidget)
+            self.ratingsButton.clicked.connect(self.ratingsWidget.show)
+            self.trialsButton.clicked.connect(self.trialsWidget.show)
 
 
             buttonlayout.addWidget(self.ratingsButton)
@@ -76,64 +80,133 @@ class MyWindow(PySide.QtGui.QMainWindow):
             self.layout.addLayout(buttonlayout)
             self.setLayout(self.layout)
 
-        def paintRatingsWidget(self):
+        class RatingsWidget(Py.QtGui.QWidget):
+            def __init__(self, parent=None):
+                super().__init__(parent)
+                self.parent = parent
 
-            try:
-                self.layout.addWidget(self.rWidget)
-            except AttributeError:
-                self.rWidget = Py.QtGui.QWidget()
-                layout = Py.QtGui.QVBoxLayout()
+                self.alltheratings = []
 
+                self.layout = Py.QtGui.QVBoxLayout()
 
 
                 self.rName = Py.QtGui.QComboBox()
-
-                self.rNameInput = Py.QtGui.QLineEdit()
-                self.rNameInput.setPlaceholderText("Name")
-
-                self.rQuestionNum = Py.QtGui.QSpinBox()
-                self.rQuestionNum.setRange(1, 5)
+                #Set editable
+                # Allow duplicates
+                # Insert policy
+                self.rName.currentIndexChanged.connect(self.change)
 
 
-                self.rType = Py.QtGui.QComboBox()
-                self.rType.addItem("Radio Buttons")
-                self.rType.addItem("Check Boxes")
-                self.rType.addItem("Free Response")
-                def typechange():
-                    if self.rType.currentText() == "Radio Buttons":
-                        options = True
-                    elif self.rType.currentText() == "Check Boxes":
-                        options = True
-                    elif self.rType.currentText() == "Free Response":
-                        options = False
-                    else:
-                        options = self.rType.currentText()
-                    print(options)
-                self.rType.currentIndexChanged.connect(typechange)
+                self.layout.addWidget(self.rName)
+
+                self.setLayout(self.layout)
+                self.hide()
+
+            class SingularRating(Py.QtGui.QWidget):
+                def __init__(self, parent=None):
+                    super().__init__(parent)
+                    layout = Py.QtGui.QVBoxLayout()
+
+                    self.nameInput = Py.QtGui.QLineEdit()
+                    self.nameInput.setPlaceholderText("Name")
+
+                    self.question = Py.QtGui.QLineEdit()
+                    self.question.setPlaceholderText("Question")
+
+                    #self.questionNum = Py.QtGui.QSpinBox()
+                    #self.questionNum.setRange(1, 5)
+
+                    self.options = self.OptionalOptions(layout, parent=self)
+
+                    self.rType = Py.QtGui.QComboBox()
+                    self.rType.addItem("Radio Buttons")
+                    self.rType.addItem("Check Boxes")
+                    self.rType.addItem("Free Response")
+                    self.rType.currentIndexChanged.connect(self.options.check)
 
 
-                layout.addWidget(self.rName)
-                layout.addWidget(self.rNameInput)
-                layout.addWidget(self.rQuestionNum)
-                layout.addWidget(self.rType)
+                    layout.addWidget(self.nameInput)
+                    #layout.addWidget(self.questionNum)
+                    layout.addWidget(self.question)
+                    layout.addWidget(self.rType)
+                    self.setLayout(layout)
 
-                self.rWidget.setLayout(layout)
+                    self.options.check()
+                class OptionalOptions(Py.QtGui.QWidget):
+                    def __init__(self, playout, parent=None):
+                        super().__init__(parent)
+                        self.playout = playout
+                        self.parent = parent
 
-            try:
-                self.tWidget.hide()
-                self.layout.removeWidget(self.tWidget)
-                self.rWidget.show()
-            except AttributeError as e:
-                print(e)
-            self.ratingsButton.setEnabled(False)
-            self.trialsButton.setEnabled(True)
-            self.layout.addWidget(self.rWidget)
+                        layout = Py.QtGui.QVBoxLayout()
 
-        def paintTrialsWidget(self):
-            try:
-                self.layout.addWidget(self.tWidget)
-            except AttributeError:
-                self.tWidget = Py.QtGui.QWidget()
+                        questionNum = Py.QtGui.QSpinBox()
+                        questionNum.setRange(2, 5)
+
+                        layout.addWidget(questionNum)
+
+                        self.setLayout(layout)
+
+                        self.hide()
+
+                    def check(self):
+                        text = self.parent.rType.currentText()
+                        if text == "Radio Buttons":
+                            self.show()
+                        elif text == "Check Boxes":
+                            self.show()
+                        elif text == "Free Response":
+                            self.hide()
+                        else:
+                            print(text)
+                    def show(self):
+                        super().show()
+                        self.playout.addWidget(self)
+
+                    def hide(self):
+                        super().hide()
+                        self.playout.removeWidget(self)
+
+
+            def show(self):
+                super().show()
+                self.parent.layout.addWidget(self)
+                self.parent.trialsWidget.hide()
+                self.parent.layout.removeWidget(self.parent.trialsWidget)
+                self.parent.ratingsButton.setEnabled(False)
+                self.parent.trialsButton.setEnabled(True)
+
+            def add(self):
+
+                rating = self.SingularRating()
+                for oldrating in self.alltheratings:
+                    try:
+                        self.layout.removeWidget(oldrating)
+                        oldrating.hide()
+                    except Exception as e:
+                        print(e)
+                self.alltheratings.append(rating)
+                self.layout.addWidget(rating)
+                self.rName.addItem("Question numero uno")
+
+            def change(self):
+                for oldrating in self.alltheratings:
+                    try:
+                        self.layout.removeWidget(oldrating)
+                        oldrating.hide()
+                    except Exception as e:
+                        print(e)
+                currentrating = self.alltheratings[self.rName.currentIndex()]
+                self.layout.addWidget(currentrating)
+                currentrating.show()
+
+
+
+        class TrialsWidget(Py.QtGui.QWidget):
+            def __init__(self, parent=None):
+                super().__init__(parent)
+                self.parent = parent
+
                 layout = Py.QtGui.QHBoxLayout()
 
 
@@ -146,17 +219,16 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
                 layout.addWidget(self.dropdown)
 
-                self.tWidget.setLayout(layout)
+                self.setLayout(layout)
+                self.hide()
 
-            try:
-                self.rWidget.hide()
-                self.layout.removeWidget(self.rWidget)
-                self.tWidget.show()
-            except AttributeError as e:
-                print(e)
-            self.trialsButton.setEnabled(False)
-            self.ratingsButton.setEnabled(True)
-            self.layout.addWidget(self.tWidget)
+            def show(self):
+                super().show()
+                self.parent.layout.addWidget(self)
+                self.parent.ratingsWidget.hide()
+                self.parent.layout.removeWidget(self.parent.ratingsWidget)
+                self.parent.trialsButton.setEnabled(False)
+                self.parent.ratingsButton.setEnabled(True)
 
     def initUI(self):
 
@@ -192,7 +264,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+Shift+S"))
 
 
-        action = editMenu.addAction('Add Rating', self.import_data)
+        action = editMenu.addAction('Add Rating', self.widget.ratingsWidget.add)
         #action.setShortcut(Py.QtGui.QKeySequence("Ctrl+Shift+S"))
 
         action = editMenu.addAction('Add Trial', self.import_data)
