@@ -33,8 +33,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
 
 
-        widget = self.MainWidget()
-        self.setCentralWidget(widget)
+        self.widget = self.MainWidget()
+        self.setCentralWidget(self.widget)
         self.label = "yo"
 
     class MainWidget(PySide.QtGui.QWidget):
@@ -225,25 +225,19 @@ class MyWindow(PySide.QtGui.QMainWindow):
             jsonFile = open(jsonFile[0], 'r')
             try:
                 settings = json.load(jsonFile)
-                self.data = self.Data(settings)
-                print('hostname is {}'.format(self.data.hostname))
+                self.data = self.data(settings)
             except Exception as err:
                 self.error("import failed",
                         "<p>import file failed to open with<br />{}</p>", err)
                 return 1
 
-    class Data():
-        # set base data
-        description = ""
-        hostname = ""
-        ratings = {}
-        trials = {}
+    def data(self, dictionary):
+        self.description = dictionary['description']
+        self.hostname = dictionary['hostname']
+        self.ratings = dictionary['ratings']
+        self.trials = dictionary['trials']
+        self.widget.resultsInput.setText(self.description)
 
-        def __init__(self, dictionary):
-            self.description = dictionary['description']
-            self.hostname = dictionary['hostname']
-            self.ratings = dictionary['ratings']
-            self.trials = dictionary['trials']
 
 
 
