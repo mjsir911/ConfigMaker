@@ -41,8 +41,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
         def __init__(self, parent=None):
             super().__init__(parent)
 
-
             self.layout = Py.QtGui.QVBoxLayout()
+
             # Actual content inside window
 
             self.resultsInput = Py.QtGui.QLineEdit()
@@ -79,6 +79,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
             self.layout.addLayout(buttonlayout)
             self.setLayout(self.layout)
+
 
         class RatingsWidget(Py.QtGui.QWidget):
             def __init__(self, parent=None):
@@ -135,6 +136,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
                 class OptionalOptions(Py.QtGui.QWidget):
                     def __init__(self, playout, parent=None):
                         super().__init__(parent)
+                        self.responses = []
+
                         self.playout = playout
                         self.parent = parent
 
@@ -146,6 +149,11 @@ class MyWindow(PySide.QtGui.QMainWindow):
                         layout.addWidget(questionNum)
 
                         self.setLayout(layout)
+
+                        for x in range(0, 5):
+                            response = self.Responses(x)
+                            self.responses.append(response)
+                            layout.addWidget(response)
 
                         self.hide()
 
@@ -159,6 +167,22 @@ class MyWindow(PySide.QtGui.QMainWindow):
                             self.hide()
                         else:
                             print(text)
+
+
+                    class Responses(Py.QtGui.QWidget):
+                        def __init__(self, num, parent=None):
+                            super().__init__(parent)
+                            self.layout = Py.QtGui.QVBoxLayout()
+
+                            #self.hr = Py.QtGui.QSpacerItem(20, 40, Py.QtGui.QSizePolicy.Minimum, Py.QtGui.QSizePolicy.Expanding)
+
+                            self.selection = Py.QtGui.QLineEdit()
+                            self.selection.setPlaceholderText("Selection Text")
+
+                            self.layout.addWidget(self.selection)
+                            #self.layout.addItem(self.hr)
+                            self.setLayout(self.layout)
+
                     def show(self):
                         super().show()
                         self.playout.addWidget(self)
@@ -188,6 +212,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
                 self.alltheratings.append(rating)
                 self.layout.addWidget(rating)
                 self.rName.addItem("Question numero uno")
+                self.rName.setCurrentIndex(self.rName.count() - 1)
+                self.show()
 
             def change(self):
                 for oldrating in self.alltheratings:
@@ -246,7 +272,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
 
         # Give menu tabs actions
-        action = fileMenu.addAction('New Exercise', self.import_data)
+        action = fileMenu.addAction('New Exercise', self.clearFocus)
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+N"))
 
         action = fileMenu.addAction('Open...', self.import_data)
