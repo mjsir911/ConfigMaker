@@ -133,6 +133,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
                     self.setLayout(layout)
 
                     self.options.check()
+
                 class OptionalOptions(Py.QtGui.QWidget):
                     def __init__(self, playout, parent=None):
                         super().__init__(parent)
@@ -143,10 +144,13 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
                         layout = Py.QtGui.QVBoxLayout()
 
-                        questionNum = Py.QtGui.QSpinBox()
-                        questionNum.setRange(2, 5)
+                        self.questionNum = Py.QtGui.QSpinBox()
+                        self.questionNum.setRange(2, 5)
 
-                        layout.addWidget(questionNum)
+                        self.questionNum.valueChanged.connect(self.responseCheck)
+
+
+                        layout.addWidget(self.questionNum)
 
                         self.setLayout(layout)
 
@@ -155,7 +159,12 @@ class MyWindow(PySide.QtGui.QMainWindow):
                             self.responses.append(response)
                             layout.addWidget(response)
 
+                        self.responseCheck()
                         self.hide()
+
+                    def responseCheck(self):
+                        for x in self.responses:
+                            x.check(self.questionNum.value())
 
                     def check(self):
                         text = self.parent.rType.currentText()
@@ -174,6 +183,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
                             super().__init__(parent)
                             self.layout = Py.QtGui.QVBoxLayout()
 
+                            self.num = num
+
                             #self.hr = Py.QtGui.QSpacerItem(20, 40, Py.QtGui.QSizePolicy.Minimum, Py.QtGui.QSizePolicy.Expanding)
 
                             self.selection = Py.QtGui.QLineEdit()
@@ -182,6 +193,12 @@ class MyWindow(PySide.QtGui.QMainWindow):
                             self.layout.addWidget(self.selection)
                             #self.layout.addItem(self.hr)
                             self.setLayout(self.layout)
+
+                        def check(self, maxnum):
+                            if self.num > maxnum - 1:
+                                self.hide()
+                            else:
+                                self.show()
 
                     def show(self):
                         super().show()
