@@ -24,15 +24,10 @@ __module__      = ""
 
 class MyWindow(PySide.QtGui.QMainWindow):
     def __init__(self, parent=None):
-        super(self).__init__(parent)
-
-
-
+        super(MyWindow, self).__init__(parent)
 
         self.widget = self.MainWidget()
         self.initUI()
-
-
 
         self.setCentralWidget(self.widget)
         self.label = "yo"
