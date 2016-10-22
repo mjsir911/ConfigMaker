@@ -24,7 +24,7 @@ __module__      = ""
 
 class MyWindow(PySide.QtGui.QMainWindow):
     def __init__(self, parent=None):
-        super(MyWindow, self).__init__()
+        super(self).__init__(parent)
 
 
 
