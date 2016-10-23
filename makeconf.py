@@ -92,6 +92,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
 
                 self.rName = Py.QtGui.QComboBox()
+                self.rName.setEditable(True)
                 #Set editable
                 # Allow duplicates
                 # Insert policy
@@ -190,7 +191,11 @@ class MyWindow(PySide.QtGui.QMainWindow):
                             self.selection = Py.QtGui.QLineEdit()
                             self.selection.setPlaceholderText("Selection Text")
 
+                            self.label = Py.QtGui.QLineEdit()
+                            self.label.setPlaceholderText("Label")
+
                             self.layout.addWidget(self.selection)
+                            self.layout.addWidget(self.label)
                             #self.layout.addItem(self.hr)
                             self.setLayout(self.layout)
 
