@@ -21,8 +21,6 @@ __module__      = ""
 
 
 
-
-
 class MyWindow(PySide.QtGui.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -123,9 +121,23 @@ class MyWindow(PySide.QtGui.QMainWindow):
         self.hostname = dictionary['hostname']
         self.trials = dictionary['trials']
         self.widget.resultsInput.setText(self.description)
-        for x in dictionary['ratings']:
+        responses = {'radio' : 0, 'check' : 1, 'free' : 2}
+        for y, x in enumerate(dictionary['ratings']):
             self.widget.ratingsWidget.add()
-            self.widget.ratingsWidget.alltheratings[-1].question.setText(x['question'])
+            self.widget.ratingsWidget.rName.setItemText(y, x['name'])
+            currentratingswidget = self.widget.ratingsWidget.alltheratings[y]
+            currentratingswidget.question.setText(x['question'])
+            currentratingswidget.rType.setCurrentIndex(
+                    responses[x['subtype']])
+            if x['subtype'] != "free":
+                currentratingswidget.options.questionNum.setValue(
+                        len(x['options']))
+            for c, d in enumerate(currentratingswidget.options.responses):
+                print(d)
+                print(x['options'][c])
+                d.selection.setText(x['options'][c])
+
+
 
 
 
