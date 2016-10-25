@@ -169,6 +169,7 @@ class Responses(Py.QtGui.QWidget):
         #self.hr = Py.QtGui.QSpacerItem(20, 40, Py.QtGui.QSizePolicy.Minimum, Py.QtGui.QSizePolicy.Expanding)
         self.selection = Py.QtGui.QLineEdit()
         self.selection.setPlaceholderText("Selection Text")
+
         self.layout.addWidget(self.selection)
         #self.layout.addItem(self.hr)
         self.setLayout(self.layout)
