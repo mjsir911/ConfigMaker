@@ -50,6 +50,8 @@ class RatingsWidget(Py.QtGui.QWidget):
         self.alltheratings = []
         self.layout = Py.QtGui.QVBoxLayout()
         self.rName = Py.QtGui.QComboBox()
+        self.rName.setEditable(True)
+        self.rName.hide()
         #Set editable
         # Allow duplicates
         # Insert policy
@@ -64,6 +66,7 @@ class RatingsWidget(Py.QtGui.QWidget):
         self.parent.layout.removeWidget(self.parent.trialsWidget)
         self.parent.ratingsButton.setEnabled(False)
         self.parent.trialsButton.setEnabled(True)
+
     def add(self):
         rating = SingularRating()
         for oldrating in self.alltheratings:
@@ -74,9 +77,12 @@ class RatingsWidget(Py.QtGui.QWidget):
                 print(e)
         self.alltheratings.append(rating)
         self.layout.addWidget(rating)
-        self.rName.addItem("Question numero uno")
+        self.rName.addItem("Question numero {}".format(self.rName.currentIndex() + 2))
         self.rName.setCurrentIndex(self.rName.count() - 1)
         self.show()
+
+        # Show the combo box when its shown
+        self.rName.show()
     def change(self):
         for oldrating in self.alltheratings:
             try:
@@ -84,15 +90,23 @@ class RatingsWidget(Py.QtGui.QWidget):
                 oldrating.hide()
             except Exception as e:
                 print(e)
+        #print(Py.QtGui.QComboBox.InsertAfterCurrent)
+        self.rName.setInsertPolicy(Py.QtGui.QComboBox.InsertPolicy(Py.QtGui.QComboBox.InsertAfterCurrent))
+        if self.rName.count() > len(self.alltheratings):
+            print(self.rName.currentIndex() - 1)
+            self.rName.removeItem(self.rName.currentIndex() - 1)
         currentrating = self.alltheratings[self.rName.currentIndex()]
         self.layout.addWidget(currentrating)
+        self.rName.setInsertPolicy(
+                self.rName.InsertPolicy(
+                        self.rName.InsertAfterCurrent))
         currentrating.show()
 class SingularRating(Py.QtGui.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = Py.QtGui.QVBoxLayout()
-        self.nameInput = Py.QtGui.QLineEdit()
-        self.nameInput.setPlaceholderText("Name")
+        #self.nameInput = Py.QtGui.QLineEdit()
+        #self.nameInput.setPlaceholderText("Name")
         self.question = Py.QtGui.QLineEdit()
         self.question.setPlaceholderText("Question")
         #self.questionNum = Py.QtGui.QSpinBox()
@@ -103,7 +117,7 @@ class SingularRating(Py.QtGui.QWidget):
         self.rType.addItem("Check Boxes")
         self.rType.addItem("Free Response")
         self.rType.currentIndexChanged.connect(self.options.check)
-        layout.addWidget(self.nameInput)
+        #layout.addWidget(self.nameInput)
         #layout.addWidget(self.questionNum)
         layout.addWidget(self.question)
         layout.addWidget(self.rType)
@@ -111,17 +125,18 @@ class SingularRating(Py.QtGui.QWidget):
         self.options.check()
 class OptionalOptions(Py.QtGui.QWidget):
     def __init__(self, playout, parent=None):
+        maxoptions = 5
         super().__init__(parent)
         self.responses = []
         self.playout = playout
         self.parent = parent
         layout = Py.QtGui.QVBoxLayout()
         self.questionNum = Py.QtGui.QSpinBox()
-        self.questionNum.setRange(2, 5)
+        self.questionNum.setRange(2, maxoptions)
         self.questionNum.valueChanged.connect(self.responseCheck)
         layout.addWidget(self.questionNum)
         self.setLayout(layout)
-        for x in range(0, 5):
+        for x in range(0, maxoptions):
             response = Responses(x)
             self.responses.append(response)
             layout.addWidget(response)
