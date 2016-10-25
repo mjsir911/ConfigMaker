@@ -38,10 +38,17 @@ class MyWindow(PySide.QtGui.QMainWindow):
         self.setCentralWidget(self.widget)
         self.label = "yo"
 
+    def reInitGui(self):
+        self.widget = mainWidget.MainWidget()
+        self.setCentralWidget(self.widget)
+        self.selfmenubar.clear()
+        self.initUI()
+
     def initUI(self):
 
         # Initialize menu bar
         menuBar = self.menuBar()
+        self.selfmenubar = menuBar
         menuBar.setNativeMenuBar(True)
         self.setMenuBar(menuBar)
 
@@ -54,7 +61,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
 
         # Give menu tabs actions
-        action = fileMenu.addAction('New Exercise', self.clearFocus)
+        action = fileMenu.addAction('New Exercise', self.reInitGui)
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+N"))
 
         action = fileMenu.addAction('Open...', self.import_data)
