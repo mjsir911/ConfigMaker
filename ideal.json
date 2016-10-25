@@ -2,22 +2,24 @@
   "description" : "Basic basic exercise",
   "hostname" : "beslime-67",
   "program" : 2,
-  "ratings" : { 
-    "Default_Radio" : {
+  "ratings" : [ 
+    {
+      "name" : "Default_Radio"
       "type" : "rating",
       "description" : "Default radio list on a majority of the trials",
       "subtype" : "radio",
       "question" : "How well did the signal sound to you",
       "options" : [ "Excellent", "Good", "Dunno", "", "Not too well" ]
     },
-    "Default_Fillin" : {
+    {
+      "name" : "Default_Fillin"
       "type" : "rating",
       "description" : "Default free response question",
       "subtype" : "free",
       "question" : "Whats your name?",
       "options" : null
     }
-  },
+  ],
   "trials" : [ 
     {
       "noise" : [
