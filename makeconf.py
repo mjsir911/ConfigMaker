@@ -69,10 +69,10 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
         fileMenu.addSeparator() # This is a horizontal bar
 
-        action = fileMenu.addAction('Close', self.import_data)
+        action = fileMenu.addAction('Close')
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+W"))
 
-        action = fileMenu.addAction('Save', self.import_data)
+        action = fileMenu.addAction('Save')
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+S"))
 
         action = fileMenu.addAction('Save As...', self.import_data)
@@ -112,8 +112,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
             jsonFile = open(jsonFile[0], 'r')
             try:
                 settings = json.load(jsonFile)
-                self.data = self.data(settings)
-            except Exception as err:
+                self.data(settings)
+            except EOFError as err:
                 self.error("import failed",
                         "<p>import file failed to open with<br />{}</p>", err)
                 return 1
@@ -121,9 +121,11 @@ class MyWindow(PySide.QtGui.QMainWindow):
     def data(self, dictionary):
         self.description = dictionary['description']
         self.hostname = dictionary['hostname']
-        self.ratings = dictionary['ratings']
         self.trials = dictionary['trials']
         self.widget.resultsInput.setText(self.description)
+        for x in dictionary['ratings']:
+            self.widget.ratingsWidget.add()
+            self.widget.ratingsWidget.alltheratings[-1].question.setText(x['question'])
 
 
 
