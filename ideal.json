@@ -4,7 +4,7 @@
   "program" : 2,
   "ratings" : [ 
     {
-      "name" : "Default_Radio"
+      "name" : "Default_Radio",
       "type" : "rating",
       "description" : "Default radio list on a majority of the trials",
       "subtype" : "radio",
@@ -12,7 +12,7 @@
       "options" : [ "Excellent", "Good", "Dunno", "", "Not too well" ]
     },
     {
-      "name" : "Default_Fillin"
+      "name" : "Default_Fillin",
       "type" : "rating",
       "description" : "Default free response question",
       "subtype" : "free",
