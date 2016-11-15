@@ -20,6 +20,7 @@ __status__      = "Prototype"  # "Prototype", "Development" or "Production"
 __module__      = ""
 
 
+responses = {'radio' : 0, 'check' : 1, 'free' : 2}
 
 class MyWindow(PySide.QtGui.QMainWindow):
     def __init__(self, parent=None):
@@ -70,17 +71,17 @@ class MyWindow(PySide.QtGui.QMainWindow):
         action = fileMenu.addAction('Close')
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+W"))
 
-        action = fileMenu.addAction('Save')
+        action = fileMenu.addAction('Save', self.save)
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+S"))
 
-        action = fileMenu.addAction('Save As...', self.import_data)
+        action = fileMenu.addAction('Save As...', self.export_data)
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+Shift+S"))
 
 
         action = editMenu.addAction('Add Rating', self.widget.ratingsWidget.add)
         #action.setShortcut(Py.QtGui.QKeySequence("Ctrl+Shift+S"))
 
-        action = editMenu.addAction('Add Trial', self.import_data)
+        action = editMenu.addAction('Add Trial', self.widget.trialsWidget.add)
 
 
         # Give menu bar tabs
@@ -106,41 +107,69 @@ class MyWindow(PySide.QtGui.QMainWindow):
                                               caption="Open Configuration File",
                                               #dir=appDataPath,
                                               filter="JSON files (*.json)")
+        self.reInitGui()
         if jsonFile[0]:  # If a valid filename has been selected...
             jsonFile = open(jsonFile[0], 'r')
             try:
                 settings = json.load(jsonFile)
-                self.data(settings)
+                #self.data(settings)
+                self.widget.resultsInput.setText(settings['description'])
+                for y, x in enumerate(settings['ratings']):
+                    self.widget.ratingsWidget.add()
+                    print(type(y))
+                    print(type(x['name']))
+                    self.widget.ratingsWidget.rName.setItemText(y, x['name'])
+                    currentwidget = self.widget.ratingsWidget.alltheratings[y]
+                    currentwidget.question.setText(x['question'])
+                    currentwidget.rType.setCurrentIndex(
+                            responses[x['subtype']])
+                    if x['subtype'] != "free":
+                        currentwidget.options.questionNum.setValue(
+                                len(x['options']))
+                    if x['options']:
+                        for c, d in enumerate(x['options']):
+                            currentwidget.options.responses[c].selection.setText(d)
             except EOFError as err:
                 self.error("import failed",
                         "<p>import file failed to open with<br />{}</p>", err)
                 return 1
+            except KeyError as err:
+                self.error("Invalid file",
+                        "<b>Import file failed to open with<br />{}</b>", err)
 
-    def data(self, dictionary):
-        self.description = dictionary['description']
-        self.hostname = dictionary['hostname']
-        self.trials = dictionary['trials']
-        self.widget.resultsInput.setText(self.description)
-        responses = {'radio' : 0, 'check' : 1, 'free' : 2}
-        for y, x in enumerate(dictionary['ratings']):
-            self.widget.ratingsWidget.add()
-            self.widget.ratingsWidget.rName.setItemText(y, x['name'])
-            currentwidget = self.widget.ratingsWidget.alltheratings[y]
-            currentwidget.question.setText(x['question'])
-            currentwidget.rType.setCurrentIndex(
-                    responses[x['subtype']])
-            if x['subtype'] != "free":
-                currentwidget.options.questionNum.setValue(
-                        len(x['options']))
-            #print(len(currentwidget.options.responses))
-            if x['options']:
-                for c, d in enumerate(x['options']):
-                    currentwidget.options.responses[c].selection.setText(d)
+    def export_data(self):
+        savefilepath = Py.QtGui.QFileDialog.getSaveFileName(parent=None,
+                                                    caption="hi",
+                                                    filter="JSON files(*.json)")[0]
+        self.write(savefilepath)
 
+    def save(self):
+        pass
 
+    def write(self, path):
+        data = {}
+        data['description'] = self.widget.resultsInput.text()
+        data['ratings'] = []
+        for num, x in enumerate(self.widget.ratingsWidget.alltheratings):
+            ratings = {}
 
+            ratings['name'] = self.widget.ratingsWidget.rName.itemText(num)
+            ratings['question'] = x.question.text()
+            if x.rType.currentText() == "Free Response":
+                subtype = "free"
+            elif x.rType.currentText() == "Check Boxes":
+                subtype = "check"
+            elif x.rType.currentText() == "Radio Buttons":
+                subtype = "radio"
+            else:
+                print(x.rType.currentText())
+            ratings['subtype'] = subtype
+            del subtype
 
+            data['ratings'].append(ratings)
 
+        with open(path, 'w') as outfile:
+            json.dump(data, outfile)
 
 
 app = PySide.QtGui.QApplication(sys.argv)
