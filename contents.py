@@ -43,6 +43,7 @@ class MainWidget(Py.QtGui.QWidget):
         self.layout.addWidget(self.resultsInput)
         self.layout.addLayout(buttonlayout)
         self.setLayout(self.layout)
+
 class RatingsWidget(Py.QtGui.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -101,6 +102,7 @@ class RatingsWidget(Py.QtGui.QWidget):
                 self.rName.InsertPolicy(
                         self.rName.InsertAfterCurrent))
         currentrating.show()
+
 class SingularRating(Py.QtGui.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -179,16 +181,17 @@ class Responses(Py.QtGui.QWidget):
         else:
             self.show()
 class TrialsWidget(Py.QtGui.QWidget):
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
-        layout = Py.QtGui.QHBoxLayout()
+        self.layout = Py.QtGui.QVBoxLayout()
         self.dropdown = Py.QtGui.QComboBox()
-        self.dropdown.addItem("yay!")
-        self.dropdown.addItem("Celebrate!")
-        layout.addWidget(self.dropdown)
-        self.setLayout(layout)
+        self.dropdown.hide()
+        self.layout.addWidget(self.dropdown)
+        self.setLayout(self.layout)
         self.hide()
+
     def show(self):
         super().show()
         self.parent.layout.addWidget(self)
@@ -196,3 +199,61 @@ class TrialsWidget(Py.QtGui.QWidget):
         self.parent.layout.removeWidget(self.parent.ratingsWidget)
         self.parent.trialsButton.setEnabled(False)
         self.parent.ratingsButton.setEnabled(True)
+
+    def add(self):
+        self.show()
+        self.dropdown.show()
+        self.dropdown.addItem("Trial {}".format(self.dropdown.count() + 1))
+        self.dropdown.setCurrentIndex(self.dropdown.count() - 1)
+        speakergrid = SpeakerGrid()
+        self.layout.addWidget(speakergrid)
+
+class SpeakerGrid(Py.QtGui.QWidget):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        layout = Py.QtGui.QGridLayout()
+
+        xp = (1.143, -2.486, 1.682, -0.2929, 0.01515)
+        yp = (3.786, -1.803, -0.04924, 0.1237, -0.01136)
+        # THESE ARE FOR THE EQUATIONS BELOOWWWW
+        for testest in range(1, 9):
+            # courtesy of my handy dandy graphing calculator
+            # This is a fun little diversion
+            # It outputs xc and yc in a 3x3 grid surrounding the center
+            # based on range(1, 9)
+            """
+                --------
+                /       \        ooh fancy quartic graph
+            ---          --------
+            """
+            button = Py.QtGui.QPushButton()
+            button.setText(str(testest))
+            xc = round(
+                    (xp[0]) +
+                    (xp[1] * testest) +
+                    (xp[2] * testest ** 2) +
+                    (xp[3] * testest ** 3) +
+                    (xp[4] * testest ** 4))
+            yc = round(
+                    (yp[0]) +
+                    (yp[1] * testest) +
+                    (yp[2] * testest ** 2) +
+                    (yp[3] * testest ** 3) +
+                    (yp[4] * testest ** 4))
+            #print(xc, yc)
+            layout.addWidget(button, xc, yc)
+
+        """ In case of emergency, break quotes
+        layout.addWidget(button, 0, 2)
+        layout.addWidget(button, 1, 1)
+        layout.addWidget(button, 2, 0)
+        layout.addWidget(button, 3, 1)
+        layout.addWidget(button, 4, 2)
+        layout.addWidget(button, 3, 3)
+        layout.addWidget(button, 2, 4)
+        layout.addWidget(button, 1, 3)
+        """
+        self.setLayout(layout)
+
+#class In
