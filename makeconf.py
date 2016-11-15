@@ -164,8 +164,20 @@ class MyWindow(PySide.QtGui.QMainWindow):
             else:
                 print(x.rType.currentText())
             ratings['subtype'] = subtype
-            del subtype
 
+            ratings['options'] = []
+
+            if subtype is not "free":
+                print('not free')
+                for option in x.options.responses:
+                    print('for opt in responses')
+                    if not option.isHidden():
+                        print('if not hid')
+                        ratings['options'].append(option.selection.text())
+                        print(option.selection.text())
+
+
+            del subtype
             data['ratings'].append(ratings)
 
         with open(path, 'w') as outfile:
