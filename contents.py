@@ -125,6 +125,7 @@ class SingularRating(Py.QtGui.QWidget):
         layout.addWidget(self.rType)
         self.setLayout(layout)
         self.options.check()
+
 class OptionalOptions(Py.QtGui.QWidget):
     def __init__(self, playout, parent=None):
         maxoptions = 5
@@ -163,6 +164,7 @@ class OptionalOptions(Py.QtGui.QWidget):
     def hide(self):
         super().hide()
         self.playout.removeWidget(self)
+
 class Responses(Py.QtGui.QWidget):
     def __init__(self, num, parent=None):
         super().__init__(parent)
@@ -180,6 +182,8 @@ class Responses(Py.QtGui.QWidget):
             self.hide()
         else:
             self.show()
+
+
 class TrialsWidget(Py.QtGui.QWidget):
 
     def __init__(self, parent=None):
