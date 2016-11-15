@@ -18,9 +18,21 @@ class MainWidget(Py.QtGui.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.layout = Py.QtGui.QVBoxLayout()
+
+
+
+
         # Actual content inside window
         self.resultsInput = Py.QtGui.QLineEdit()
+        labelgroup = Py.QtGui.QHBoxLayout()
+        desclabel = Py.QtGui.QLabel("Description")
         self.resultsInput.setPlaceholderText("Description")
+
+        # Fix focus probs
+        self.resultsInput.selectAll()
+        self.resultsInput.setFocus()
+        self.resultsInput.clearFocus()
+
         #self.resultsInput.setPlaceholderText(Py.QtGui.QApplication.translate("mainWindow", "Username", None, Py.QtGui.QApplication.UnicodeUTF8)) # Why translate when you could not?
         # Sub layouts inside of layouts!
         buttonlayout = Py.QtGui.QHBoxLayout()
@@ -37,10 +49,13 @@ class MainWidget(Py.QtGui.QWidget):
         # Make buttons do stuff
         self.ratingsButton.clicked.connect(self.ratingsWidget.show)
         self.trialsButton.clicked.connect(self.trialsWidget.show)
+
+        labelgroup.addWidget(desclabel)
+        labelgroup.addWidget(self.resultsInput)
+        self.layout.addLayout(labelgroup)
         buttonlayout.addWidget(self.ratingsButton)
         buttonlayout.addWidget(self.trialsButton)
         # Add Widgets to layout
-        self.layout.addWidget(self.resultsInput)
         self.layout.addLayout(buttonlayout)
         self.setLayout(self.layout)
 
