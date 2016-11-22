@@ -231,8 +231,9 @@ class SpeakerGrid(Py.QtGui.QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        layout = Py.QtGui.QGridLayout()
+        self.layout = Py.QtGui.QGridLayout()
 
+        self.datums = []
         xp = (1.143, -2.486, 1.682, -0.2929, 0.01515)
         yp = (3.786, -1.803, -0.04924, 0.1237, -0.01136)
         # THESE ARE FOR THE EQUATIONS BELOOWWWW
@@ -246,7 +247,12 @@ class SpeakerGrid(Py.QtGui.QWidget):
                 /       \        ooh fancy quartic graph
             ---          --------
             """
+            interior = InteriorDatum(parent=self)
+            self.datums.append(interior)
+            interior.show()
+            interior.hide()
             button = Py.QtGui.QPushButton()
+            button.clicked.connect(interior.show)
             button.setText(str(testest))
             xc = round(
                     (xp[0]) +
@@ -261,18 +267,53 @@ class SpeakerGrid(Py.QtGui.QWidget):
                     (yp[3] * testest ** 3) +
                     (yp[4] * testest ** 4))
             #print(xc, yc)
-            layout.addWidget(button, xc, yc)
+            self.layout.addWidget(button, xc, yc)
 
         """ In case of emergency, break quotes
-        layout.addWidget(button, 0, 2)
-        layout.addWidget(button, 1, 1)
-        layout.addWidget(button, 2, 0)
-        layout.addWidget(button, 3, 1)
-        layout.addWidget(button, 4, 2)
-        layout.addWidget(button, 3, 3)
-        layout.addWidget(button, 2, 4)
-        layout.addWidget(button, 1, 3)
+        self.layout.addWidget(button, 0, 2)
+        self.layout.addWidget(button, 1, 1)
+        self.layout.addWidget(button, 2, 0)
+        self.layout.addWidget(button, 3, 1)
+        self.layout.addWidget(button, 4, 2)
+        self.layout.addWidget(button, 3, 3)
+        self.layout.addWidget(button, 2, 4)
+        self.layout.addWidget(button, 1, 3)
         """
+        self.setLayout(self.layout)
+        #desclabel = Py.QtGui.QLabel("Description")
+        #self.layout.addWidget(desclabel, 2, 2)
+
+class InteriorDatum(Py.QtGui.QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.parent = parent
+
+        layout = Py.QtGui.QVBoxLayout()
+        switchlayout = Py.QtGui.QHBoxLayout()
+        print(type(self.parent.datums))
+        desclabel = Py.QtGui.QLabel("Description" + str(len(self.parent.datums)) + "after")
+
+        #layout.addLayout(switchlayout)
+        #self.parent.layout.addWidget(desclabel, 2, 2)
+        layout.addWidget(desclabel)
+        #self.layout.add
+        layout.addLayout(switchlayout)
         self.setLayout(layout)
 
-#class In
+    def show(self):
+        super().show()
+        print('hi' + str(self.parent.datums.index(self)))
+        for x in self.parent.datums:
+            if x is not self:
+                x.hide()
+            #pass
+            #self.parent.layout.removeWidget(self)
+
+        self.parent.layout.addWidget(self, 2, 2)
+        self.parent.layout.indexOf(self)
+
+    def hide(self):
+        super().hide()
+        #print(self.parent)
+        #print(type(self.parent))
+        self.parent.layout.removeWidget(self)
