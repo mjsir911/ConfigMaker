@@ -291,18 +291,43 @@ class InteriorDatum(Py.QtGui.QWidget):
         layout = Py.QtGui.QVBoxLayout()
         switchlayout = Py.QtGui.QHBoxLayout()
         print(type(self.parent.datums))
-        desclabel = Py.QtGui.QLabel("Description" + str(len(self.parent.datums)) + "after")
+        #desclabel = Py.QtGui.QLabel("Description" + str(len(self.parent.datums)) + "after")
+
+
+
+        flippy_buttons = Py.QtGui.QHBoxLayout()
+        flippy_buttons.setSpacing(-0.1)
+        self.signalButton = Py.QtGui.QPushButton("Signal")
+        self.signalButton = Py.QtGui.QToolButton()
+        self.signalButton.setText("Signal")
+        self.noiseButton = Py.QtGui.QPushButton("Noise")
+        self.noiseButton = Py.QtGui.QToolButton()
+        self.noiseButton.setText("Noise")
+
+        flippy_buttons.addWidget(self.signalButton)
+        flippy_buttons.addWidget(self.noiseButton)
+
+
+
+        self.signal = SignalOrNoise("signal", self)
+        self.noise = SignalOrNoise("noise", self)
+
+        self.signalButton.clicked.connect(self.signal.show)
+        self.noiseButton.clicked.connect(self.noise.show)
+
+        self.layout = layout
 
         #layout.addLayout(switchlayout)
         #self.parent.layout.addWidget(desclabel, 2, 2)
-        layout.addWidget(desclabel)
+        #layout.addWidget(desclabel)
+        layout.addLayout(flippy_buttons)
         #self.layout.add
         layout.addLayout(switchlayout)
         self.setLayout(layout)
 
     def show(self):
         super().show()
-        print('hi' + str(self.parent.datums.index(self)))
+        #print('hi' + str(self.parent.datums.index(self)))
         for x in self.parent.datums:
             if x is not self:
                 x.hide()
@@ -317,3 +342,59 @@ class InteriorDatum(Py.QtGui.QWidget):
         #print(self.parent)
         #print(type(self.parent))
         self.parent.layout.removeWidget(self)
+
+
+
+class SignalOrNoise(Py.QtGui.QWidget):
+    def __init__(self, sigornoise, parent=None):
+        super().__init__(parent)
+        self.parent = parent
+        self.toggle = sigornoise
+        self.layout = Py.QtGui.QVBoxLayout()
+
+        """
+        sample: number
+        level: -12 to 12
+        offset: in milliseconds
+        state: radio button true or false
+        """
+
+        self.sampleinput = Py.QtGui.QSpinBox()
+        samplelayout = Py.QtGui.QHBoxLayout()
+        label = Py.QtGui.QLabel("Sample")
+        samplelayout.addWidget(label)
+        samplelayout.addWidget(self.sampleinput)
+        self.layout.addLayout(samplelayout)
+
+        self.levelinput = Py.QtGui.QSlider(Py.QtCore.Qt.Horizontal)
+        levellayout = Py.QtGui.QHBoxLayout()
+        label = Py.QtGui.QLabel("Level")
+        levellayout.addWidget(label)
+        levellayout.addWidget(self.levelinput)
+        self.layout.addLayout(levellayout)
+
+        self.offsetinput = Py.QtGui.QSpinBox()
+        offsetinput = Py.QtGui.QHBoxLayout()
+        label = Py.QtGui.QLabel("Offset(ms)")
+        offsetlayout.addWidget(label)
+        offsetlayout.addWidget(self.offsetinput)
+        self.layout.addLayout(levellayout)
+
+        self.setLayout(self.layout)
+        self.hide()
+    def show(self):
+        super().show()
+        if self.toggle == "signal":
+            opposite = self.parent.noise
+            oppositebutt = self.parent.noiseButton
+            button = self.parent.signalButton
+        elif self.toggle == "noise":
+            opposite = self.parent.signal
+            oppositebutt = self.parent.signalButton
+            button = self.parent.noiseButton
+
+        self.parent.layout.addWidget(self)
+        opposite.hide()
+        self.parent.layout.removeWidget(opposite)
+        button.setEnabled(False)
+        oppositebutt.setEnabled(True)
