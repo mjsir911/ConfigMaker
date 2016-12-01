@@ -224,7 +224,13 @@ class TrialsWidget(Py.QtGui.QWidget):
         self.dropdown.show()
         self.dropdown.addItem("Trial {}".format(self.dropdown.count() + 1))
         self.dropdown.setCurrentIndex(self.dropdown.count() - 1)
-        speakergrid = SpeakerGrid()
+        try:
+            print('remove old')
+            self.layout.removeWidget(self.currentwidge)
+            self.currentwidge.hide()
+        except AttributeError as e:
+            print(e)
+        self.currentwidge = speakergrid = SpeakerGrid()
         self.layout.addWidget(speakergrid)
 
 class SpeakerGrid(Py.QtGui.QWidget):
@@ -374,11 +380,11 @@ class SignalOrNoise(Py.QtGui.QWidget):
         self.layout.addLayout(levellayout)
 
         self.offsetinput = Py.QtGui.QSpinBox()
-        offsetinput = Py.QtGui.QHBoxLayout()
+        offsetlayout = Py.QtGui.QHBoxLayout()
         label = Py.QtGui.QLabel("Offset(ms)")
         offsetlayout.addWidget(label)
         offsetlayout.addWidget(self.offsetinput)
-        self.layout.addLayout(levellayout)
+        self.layout.addLayout(offsetlayout)
 
         self.setLayout(self.layout)
         self.hide()
