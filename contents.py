@@ -204,8 +204,10 @@ class TrialsWidget(Py.QtGui.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
+        self.dropdown_list = []
         self.layout = Py.QtGui.QVBoxLayout()
         self.dropdown = Py.QtGui.QComboBox()
+        self.dropdown.currentIndexChanged.connect(self.change)
         self.dropdown.hide()
         self.layout.addWidget(self.dropdown)
         self.setLayout(self.layout)
@@ -231,7 +233,22 @@ class TrialsWidget(Py.QtGui.QWidget):
         except AttributeError as e:
             print(e)
         self.currentwidge = speakergrid = SpeakerGrid()
+        self.dropdown_list.append(speakergrid)
         self.layout.addWidget(speakergrid)
+
+    def change(self):
+        dropdown = self.dropdown
+        current = dropdown.currentIndex()
+        for widget in self.dropdown_list:
+            if widget is not self.dropdown_list[current]:
+                self.layout.removeWidget(widget)
+                widget.hide()
+            else:
+                self.currentwidge = widget
+        self.layout.addWidget(self.currentwidge)
+        self.currentwidge.show()
+        print(self.dropdown_list)
+        print(current)
 
 class SpeakerGrid(Py.QtGui.QWidget):
 
@@ -298,6 +315,8 @@ class InteriorDatum(Py.QtGui.QWidget):
         switchlayout = Py.QtGui.QHBoxLayout()
         print(type(self.parent.datums))
         #desclabel = Py.QtGui.QLabel("Description" + str(len(self.parent.datums)) + "after")
+        speakernum = Py.QtGui.QLabel("Speaker Number " + str(len(self.parent.datums) + 1))
+        layout.addWidget(speakernum)
 
 
 
