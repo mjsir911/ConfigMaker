@@ -129,6 +129,44 @@ class MyWindow(PySide.QtGui.QMainWindow):
                     if x['options']:
                         for c, d in enumerate(x['options']):
                             currentwidget.options.responses[c].selection.setText(d)
+
+                # Done with ratings
+
+                for num, trial in enumerate(settings['trials']):
+                    self.widget.trialsWidget.add()
+                    for inpt in ('signal', 'noise'):
+                        if inpt == 'signal':
+                            currentwidget = self.widget.trialsWidget.dropdown_list[num].signal
+                        elif inpt == 'noise':
+                            currentwidget = self.widget.trialsWidget.dropdown_list[num].noise
+
+                        print(inp, trial)
+                        currentwidget.sampleinput.setValue(trial[inpt]['sample'])
+                        currentwidget.levelinput.setValue(trial[inpt]['level'])
+                        currentwidget.offsetinput.setValue(trial[inpt]['offset'])
+                        currentwidget.noise.setValue(trial[inpt]['noise'])
+
+
+                    for speaker in trial.datums:
+                        s_noise = speaker.noise
+                        s_sig = speaker.signal
+
+                        noise.append({
+                            'sample' : s_noise.sampleinput.value(),
+                            'level' : s_noise.levelinput.tickInterval(),
+                            'offset' : s_noise.offsetinput.value(),
+                            'state' : s_noise.state.isChecked(),
+                            })
+                        sig.append({
+                            'sample' : s_sig.sampleinput.value(),
+                            'level' : s_sig.levelinput.tickInterval(),
+                            'offset' : s_sig.offsetinput.value(),
+                            'state' : s_sig.state.isChecked(),
+                            })
+
+
+
+
             except EOFError as err:
                 self.error("import failed",
                         "<p>import file failed to open with<br />{}</p>", err)
@@ -144,7 +182,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
         self.write(savefilepath)
 
     def save(self):
-        pass
+        if self.opened:
+            self.write(self.opened)
 
     def write(self, path):
         data = {}
@@ -175,10 +214,43 @@ class MyWindow(PySide.QtGui.QMainWindow):
                         print('if not hid')
                         ratings['options'].append(option.selection.text())
                         print(option.selection.text())
+            else:
+                ratings['options'] = None
 
 
             del subtype
             data['ratings'].append(ratings)
+
+        # Done with ratings
+
+        data['trials'] = {}
+        data['trials']['noise'] = []
+        data['trials']['signal'] = []
+
+        noise = data['trials']['noise']
+        sig = data['trials']['signal']
+        for trial in self.widget.trialsWidget.dropdown_list:
+            for speaker in trial.datums:
+                s_noise = speaker.noise
+                s_sig = speaker.signal
+
+                noise.append({
+                    'sample' : s_noise.sampleinput.value(),
+                    'level' : s_noise.levelinput.tickInterval(),
+                    'offset' : s_noise.offsetinput.value(),
+                    'state' : s_noise.state.isChecked(),
+                    })
+                sig.append({
+                    'sample' : s_sig.sampleinput.value(),
+                    'level' : s_sig.levelinput.tickInterval(),
+                    'offset' : s_sig.offsetinput.value(),
+                    'state' : s_sig.state.isChecked(),
+                    })
+
+
+
+
+
 
         with open(path, 'w') as outfile:
             json.dump(data, outfile)

@@ -245,8 +245,11 @@ class TrialsWidget(Py.QtGui.QWidget):
                 widget.hide()
             else:
                 self.currentwidge = widget
-        self.layout.addWidget(self.currentwidge)
-        self.currentwidge.show()
+        try:
+            self.layout.addWidget(self.currentwidge)
+            self.currentwidge.show()
+        except:
+            pass
         print(self.dropdown_list)
         print(current)
 
@@ -320,6 +323,7 @@ class InteriorDatum(Py.QtGui.QWidget):
 
 
 
+        """
         flippy_buttons = Py.QtGui.QHBoxLayout()
         flippy_buttons.setSpacing(-0.1)
         self.signalButton = Py.QtGui.QPushButton("Signal")
@@ -331,21 +335,29 @@ class InteriorDatum(Py.QtGui.QWidget):
 
         flippy_buttons.addWidget(self.signalButton)
         flippy_buttons.addWidget(self.noiseButton)
+        """
 
 
 
-        self.signal = SignalOrNoise("signal", self)
-        self.noise = SignalOrNoise("noise", self)
+        self.signal = SignalOrNoise("Signal", self)
+        self.noise = SignalOrNoise("Noise", self)
 
-        self.signalButton.clicked.connect(self.signal.show)
-        self.noiseButton.clicked.connect(self.noise.show)
+        #self.signalButton.clicked.connect(self.signal.show)
+        #self.noiseButton.clicked.connect(self.noise.show)
+
+        signal_noise_layout = Py.QtGui.QHBoxLayout()
+
+        signal_noise_layout.addWidget(self.signal)
+        signal_noise_layout.addWidget(self.noise)
+
+        layout.addLayout(signal_noise_layout)
 
         self.layout = layout
 
         #layout.addLayout(switchlayout)
         #self.parent.layout.addWidget(desclabel, 2, 2)
         #layout.addWidget(desclabel)
-        layout.addLayout(flippy_buttons)
+        #layout.addLayout(flippy_buttons)
         #self.layout.add
         layout.addLayout(switchlayout)
         self.setLayout(layout)
@@ -377,6 +389,9 @@ class SignalOrNoise(Py.QtGui.QWidget):
         self.toggle = sigornoise
         self.layout = Py.QtGui.QVBoxLayout()
 
+        label = Py.QtGui.QLabel(sigornoise)
+        self.layout.addWidget(label)
+
         """
         sample: number
         level: -12 to 12
@@ -405,21 +420,12 @@ class SignalOrNoise(Py.QtGui.QWidget):
         offsetlayout.addWidget(self.offsetinput)
         self.layout.addLayout(offsetlayout)
 
-        self.setLayout(self.layout)
-        self.hide()
-    def show(self):
-        super().show()
-        if self.toggle == "signal":
-            opposite = self.parent.noise
-            oppositebutt = self.parent.noiseButton
-            button = self.parent.signalButton
-        elif self.toggle == "noise":
-            opposite = self.parent.signal
-            oppositebutt = self.parent.signalButton
-            button = self.parent.noiseButton
+        self.state = Py.QtGui.QCheckBox()
+        statelayout = Py.QtGui.QHBoxLayout()
+        label = Py.QtGui.QLabel("State")
+        statelayout.addWidget(label)
+        statelayout.addWidget(self.state)
+        self.layout.addLayout(statelayout)
 
-        self.parent.layout.addWidget(self)
-        opposite.hide()
-        self.parent.layout.removeWidget(opposite)
-        button.setEnabled(False)
-        oppositebutt.setEnabled(True)
+        self.setLayout(self.layout)
+        #self.hide()
