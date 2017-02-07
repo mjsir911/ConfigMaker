@@ -9,7 +9,7 @@
       "description" : "Default radio list on a majority of the trials",
       "subtype" : "radio",
       "question" : "How well did the signal sound to you",
-      "options" : [ "Excellent", "Good", "Dunno", "", "Not too well" ]
+      "options" : [ ["Excellent", 5], ["Good", 4], ["Dunno", 3], ["", 2], ["Not too well", 1] ]
     },
     {
       "name" : "Default_Fillin",
