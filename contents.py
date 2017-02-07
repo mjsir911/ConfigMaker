@@ -188,8 +188,13 @@ class Responses(Py.QtGui.QWidget):
         #self.hr = Py.QtGui.QSpacerItem(20, 40, Py.QtGui.QSizePolicy.Minimum, Py.QtGui.QSizePolicy.Expanding)
         self.selection = Py.QtGui.QLineEdit()
         self.selection.setPlaceholderText("Selection Text")
+        self.recode = Py.QtGui.QLineEdit()
+        self.recode.setPlaceholderText("Re-Code")
 
-        self.layout.addWidget(self.selection)
+        self.hbox = Py.QtGui.QHBoxLayout()
+        self.hbox.addWidget(self.recode)
+        self.hbox.addWidget(self.selection)
+        self.layout.addLayout(self.hbox)
         #self.layout.addItem(self.hr)
         self.setLayout(self.layout)
     def check(self, maxnum):
