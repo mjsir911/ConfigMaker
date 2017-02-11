@@ -232,11 +232,12 @@ class TrialsWidget(Py.QtGui.QWidget):
         self.dropdown.addItem("Trial {}".format(self.dropdown.count() + 1))
         self.dropdown.setCurrentIndex(self.dropdown.count() - 1)
         try:
-            print('remove old')
+            #print('remove old')
             self.layout.removeWidget(self.currentwidge)
             self.currentwidge.hide()
         except AttributeError as e:
-            print(e)
+            #print(e, 'hi')
+            pass
         self.currentwidge = speakergrid = SpeakerGrid()
         self.dropdown_list.append(speakergrid)
         self.layout.addWidget(speakergrid)
@@ -388,6 +389,12 @@ class InteriorDatum(Py.QtGui.QWidget):
 
 
 class SignalOrNoise(Py.QtGui.QWidget):
+    def buttonclick(self):
+        self.parent.datums
+        for datum in self.parent.datums:
+            if datum is not self:
+                pass
+                "make button not blue"
     def __init__(self, sigornoise, parent=None):
         super().__init__(parent)
         self.parent = parent
