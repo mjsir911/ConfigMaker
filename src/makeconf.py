@@ -128,46 +128,36 @@ class MyWindow(PySide.QtGui.QMainWindow):
                                 len(x['options']))
                     if x['options']:
                         for c, d in enumerate(x['options']):
-                            currentwidget.options.responses[c].selection.setText(d)
+                            currentwidget.options.responses[c].selection.setText(d[0])
 
                 # Done with ratings
 
                 for num, trial in enumerate(settings['trials']):
                     self.widget.trialsWidget.add()
-                    for inpt in ('signal', 'noise'):
-                        if inpt == 'signal':
-                            currentwidget = self.widget.trialsWidget.dropdown_list[num].signal
-                        elif inpt == 'noise':
-                            currentwidget = self.widget.trialsWidget.dropdown_list[num].noise
-
-                        print(inp, trial)
-                        currentwidget.sampleinput.setValue(trial[inpt]['sample'])
-                        currentwidget.levelinput.setValue(trial[inpt]['level'])
-                        currentwidget.offsetinput.setValue(trial[inpt]['offset'])
-                        currentwidget.noise.setValue(trial[inpt]['noise'])
-
-
-                    for speaker in trial.datums:
+                    # Description
+                    # Program
+                    # Target
+                    """Noise"""
+                    print(self.widget.trialsWidget.dropdown_list)
+                    trial_object = self.widget.trialsWidget.dropdown_list[-1]
+                    print(trial_object.datums, trial['signal'], trial['noise'])
+                    for speaker, signal, noise in zip(trial_object.datums, trial['signal'], trial['noise']):
                         s_noise = speaker.noise
                         s_sig = speaker.signal
+                        s_noise.sampleinput.setValue(signal['sample']),
+                        s_noise.levelinput.setValue(signal['level']),
+                        s_noise.offsetinput.setValue(signal['offset']),
+                        s_noise.state.setChecked(signal['state']),
 
-                        noise.append({
-                            'sample' : s_noise.sampleinput.value(),
-                            'level' : s_noise.levelinput.tickInterval(),
-                            'offset' : s_noise.offsetinput.value(),
-                            'state' : s_noise.state.isChecked(),
-                            })
-                        sig.append({
-                            'sample' : s_sig.sampleinput.value(),
-                            'level' : s_sig.levelinput.tickInterval(),
-                            'offset' : s_sig.offsetinput.value(),
-                            'state' : s_sig.state.isChecked(),
-                            })
-
+                        s_sig.sampleinput.setValue(noise['sample']),
+                        s_sig.levelinput.setValue(noise['level']),
+                        s_sig.offsetinput.setValue(noise['offset']),
+                        s_sig.state.setChecked(noise['state']),
 
 
 
             except EOFError as err:
+                print(err)
                 self.error("import failed",
                         "<p>import file failed to open with<br />{}</p>", err)
                 return 1
