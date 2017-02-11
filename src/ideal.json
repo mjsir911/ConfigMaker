@@ -1,20 +1,15 @@
 {
   "description" : "Basic basic exercise",
   "hostname" : "beslime-67",
-  "program" : 2,
   "ratings" : [ 
     {
       "name" : "Default_Radio",
-      "type" : "rating",
-      "description" : "Default radio list on a majority of the trials",
       "subtype" : "radio",
       "question" : "How well did the signal sound to you",
       "options" : [ ["Excellent", 5], ["Good", 4], ["Dunno", 3], ["", 2], ["Not too well", 1] ]
     },
     {
       "name" : "Default_Fillin",
-      "type" : "rating",
-      "description" : "Default free response question",
       "subtype" : "free",
       "question" : "Whats your name?",
       "options" : null
@@ -22,51 +17,54 @@
   ],
   "trials" : [ 
     {
+      "description" : "Basic basic trial",
+      "program" : 1,
+      "target" : 3,
       "noise" : [
         {
-          "sample" : "audio.ogg",
+          "sample" : 1,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
@@ -74,55 +72,54 @@
       ],
       "signal" : [
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         },
         {
-          "sample" : "audio.ogg",
+          "sample" : 0,
           "level" : 0,
           "offset" : 0,
           "state" : 1
         }
-      ],
-      "target" : 3
+      ]
     }
   ]
 }
