@@ -243,7 +243,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
 
         with open(path, 'w') as outfile:
-            json.dump(data, outfile)
+            pretty_print={'sort_keys':True, 'indent':4, 'separators':(',', ': ')}
+            json.dump(data, outfile, **pretty_print)
 
 
 app = PySide.QtGui.QApplication(sys.argv)
