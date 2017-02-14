@@ -1,6 +1,9 @@
 {
   "description" : "Basic basic exercise",
   "hostname" : "beslime-67",
+  "kymasound" : "hello.sound",
+  "programs" : 5,
+
   "ratings" : [ 
     {
       "name" : "Default_Radio",
@@ -20,54 +23,57 @@
       "description" : "Basic basic trial",
       "program" : 1,
       "target" : 3,
+      "step" : 2,
+      "range" [-5, 5],
+      "rsize" : [200, 250]
       "noise" : [
         {
           "sample" : 1,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         }
       ],
       "signal" : [
@@ -75,49 +81,49 @@
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         },
         {
           "sample" : 0,
           "level" : 0,
           "offset" : 0,
-          "state" : 1
+          "state" : true
         }
       ]
     }
