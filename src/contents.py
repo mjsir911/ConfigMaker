@@ -93,7 +93,7 @@ class RatingsWidget(Py.QtGui.QWidget):
                 print(e)
         self.alltheratings.append(rating)
         self.layout.addWidget(rating)
-        self.rName.addItem("Question numero {}".format(self.rName.currentIndex() + 2))
+        self.rName.addItem("Question {} Label".format(self.rName.currentIndex() + 2))
         self.rName.setCurrentIndex(self.rName.count() - 1)
         self.show()
 
@@ -142,19 +142,19 @@ class SingularRating(Py.QtGui.QWidget):
         self.options.check()
 
 class OptionalOptions(Py.QtGui.QWidget):
+    maxoptions = 5
     def __init__(self, playout, parent=None):
-        maxoptions = 5
         super().__init__(parent)
         self.responses = []
         self.playout = playout
         self.parent = parent
         layout = Py.QtGui.QVBoxLayout()
         self.questionNum = Py.QtGui.QSpinBox()
-        self.questionNum.setRange(2, maxoptions)
+        self.questionNum.setRange(2, self.maxoptions)
         self.questionNum.valueChanged.connect(self.responseCheck)
         layout.addWidget(self.questionNum)
         self.setLayout(layout)
-        for x in range(0, maxoptions):
+        for x in range(0, self.maxoptions):
             response = Responses(x)
             self.responses.append(response)
             layout.addWidget(response)
@@ -167,8 +167,10 @@ class OptionalOptions(Py.QtGui.QWidget):
         text = self.parent.rType.currentText()
         if text == "Radio Buttons":
             self.show()
+            self.questionNum.setRange(2, self.maxoptions)
         elif text == "Check Boxes":
             self.show()
+            self.questionNum.setRange(1, self.maxoptions)
         elif text == "Free Response":
             self.hide()
         else:
@@ -187,9 +189,11 @@ class Responses(Py.QtGui.QWidget):
         self.num = num
         #self.hr = Py.QtGui.QSpacerItem(20, 40, Py.QtGui.QSizePolicy.Minimum, Py.QtGui.QSizePolicy.Expanding)
         self.selection = Py.QtGui.QLineEdit()
-        self.selection.setPlaceholderText("Selection Text")
-        self.recode = Py.QtGui.QLineEdit()
-        self.recode.setPlaceholderText("Re-Code")
+        self.selection.setPlaceholderText("Text")
+        self.questionNum = Py.QtGui.QSpinBox()
+        self.recode = Py.QtGui.QSpinBox()
+        #self.recode.setPlaceholderText("Number")
+        self.questionNum.setRange(0, -1)
 
         self.hbox = Py.QtGui.QHBoxLayout()
         self.hbox.addWidget(self.recode)
@@ -284,6 +288,7 @@ class SpeakerGrid(Py.QtGui.QWidget):
             interior.show()
             interior.hide()
             button = Py.QtGui.QPushButton()
+            button.setFixedWidth(200)
             button.clicked.connect(interior.show)
             button.setText(str(testest))
             xc = round(

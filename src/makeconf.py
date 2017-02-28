@@ -250,6 +250,9 @@ class MyWindow(PySide.QtGui.QMainWindow):
 app = PySide.QtGui.QApplication(sys.argv)
 main_window = MyWindow()
 main_window.show()
+font = app.font()
+font.setPointSize(24)
+app.setFont(font)
 app.exec_()
 
 #if __name__ == '__main__':
