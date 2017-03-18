@@ -2,11 +2,34 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Configuration maker</title>
-<style type="text/css">
-</style>
+<title>Sound advice configuration maker</title>
+<link rel="stylesheet" type="text/css" href="index.css">
+<script language="javascript" src="index.js"></script>
 </head>
 <body>
+  <input id="description" type="text" placeholder="Description"></input>
+  <button type="button" onclick="toggle('ratings', 1)">Ratings</button>
+  <button type="button" onclick="toggle('trials', 1)">Trials</button>
+
+<main id="ratings">
+<form onsubmit="return false">
+  <input class="question" type="text" placeholder="Question"></input>
+  <div class="dropdown">
+    <button type="button" onclick="drop()">Tutorials</button>
+    <ul>
+      <li><button type="button" onclick="dropselect('radio')">Radio Buttons</button></li>
+      <li><button type="button" onclick="dropselect('check')">Check Boxes</button></li>
+      <li><button type="button" onclick="dropselect('free')">Free Response</button></li>
+    </ul>
+  </div>
+  <button type="submit">OK</button>
+  <button type="reset">reset</button>
+</form>
+ratingsssss
+</main>
+<main id="trials">
+trialslsss
+</main>
 
 </body>
 </html>
