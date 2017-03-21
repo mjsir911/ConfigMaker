@@ -219,14 +219,14 @@ class MyWindow(PySide.QtGui.QMainWindow):
         for trial in self.widget.trialsWidget.dropdown_list:
             data['trials'].append({})
 
-            #WIP
-            data['trials']['description'] = "description work in progress"
-            data['trials']['program'] = 1
-            data['trials']['targets'] = [1]
-
-            #END OF WIP
 
             json_trial = data['trials'][-1]
+            #WIP
+            json_trial['description'] = "description work in progress"
+            json_trial['program'] = 1
+            json_trial['targets'] = [1]
+
+            #END OF WIP
             noise = json_trial['noise'] = []
             sig = json_trial['signal'] = []
             for speaker in trial.datums:
