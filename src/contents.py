@@ -416,14 +416,24 @@ class SignalOrNoise(Py.QtGui.QWidget):
         state: radio button true or false
         """
 
+
+        self.state = Py.QtGui.QCheckBox()
+        self.state.setCheckState(Py.QtCore.Qt.Checked)
+        statelayout = Py.QtGui.QHBoxLayout()
+        label = Py.QtGui.QLabel("State")
+        statelayout.addWidget(label)
+        statelayout.addWidget(self.state)
+        self.layout.addLayout(statelayout)
+
         self.sampleinput = Py.QtGui.QSpinBox()
+        self.sampleinput.setMinimum(1)
         samplelayout = Py.QtGui.QHBoxLayout()
         label = Py.QtGui.QLabel("Sample")
         samplelayout.addWidget(label)
         samplelayout.addWidget(self.sampleinput)
         self.layout.addLayout(samplelayout)
 
-        self.levelinput = Py.QtGui.QSlider(Py.QtCore.Qt.Horizontal)
+        self.levelinput = Py.QtGui.QSpinBox()
         levellayout = Py.QtGui.QHBoxLayout()
         label = Py.QtGui.QLabel("Level")
         levellayout.addWidget(label)
@@ -436,14 +446,6 @@ class SignalOrNoise(Py.QtGui.QWidget):
         offsetlayout.addWidget(label)
         offsetlayout.addWidget(self.offsetinput)
         self.layout.addLayout(offsetlayout)
-
-        self.state = Py.QtGui.QCheckBox()
-        self.state.setCheckState(Py.QtCore.Qt.Checked)
-        statelayout = Py.QtGui.QHBoxLayout()
-        label = Py.QtGui.QLabel("State")
-        statelayout.addWidget(label)
-        statelayout.addWidget(self.state)
-        self.layout.addLayout(statelayout)
 
         self.setLayout(self.layout)
         #self.hide()

@@ -235,13 +235,13 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
                 noise.append({
                     'sample' : s_noise.sampleinput.value(),
-                    'level' : s_noise.levelinput.tickInterval(),
+                    'level' : s_noise.levelinput.value(),
                     'offset' : s_noise.offsetinput.value(),
                     'state' : s_noise.state.isChecked(),
                     })
                 sig.append({
                     'sample' : s_sig.sampleinput.value(),
-                    'level' : s_sig.levelinput.tickInterval(),
+                    'level' : s_sig.levelinput.value(),
                     'offset' : s_sig.offsetinput.value(),
                     'state' : s_sig.state.isChecked(),
                     })
