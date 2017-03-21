@@ -22,7 +22,7 @@
     {
       "description" : "Basic basic trial",
       "program" : 1,
-      "target" : 3,
+      "targets" : [3],
       "step" : 2,
       "range" [-5, 5],
       "rsize" : [200, 250]
