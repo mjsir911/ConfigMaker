@@ -132,6 +132,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
                 # Done with ratings
 
+
+
                 for num, trial in enumerate(settings['trials']):
                     self.widget.trialsWidget.add()
                     # Description
@@ -142,15 +144,16 @@ class MyWindow(PySide.QtGui.QMainWindow):
                     for speaker, signal, noise in zip(trial_object.datums, trial['signal'], trial['noise']):
                         s_noise = speaker.noise
                         s_sig = speaker.signal
-                        s_noise.sampleinput.setValue(signal['sample']),
-                        s_noise.levelinput.setValue(signal['level']),
-                        s_noise.offsetinput.setValue(signal['offset']),
-                        s_noise.state.setChecked(signal['state']),
 
-                        s_sig.sampleinput.setValue(noise['sample']),
-                        s_sig.levelinput.setValue(noise['level']),
-                        s_sig.offsetinput.setValue(noise['offset']),
-                        s_sig.state.setChecked(noise['state']),
+                        s_noise.sampleinput.setValue(noise['sample']),
+                        s_noise.levelinput.setValue(noise['level']),
+                        s_noise.offsetinput.setValue(noise['offset']),
+                        s_noise.state.setChecked(noise['state']),
+
+                        s_sig.sampleinput.setValue(signal['sample']),
+                        s_sig.levelinput.setValue(signal['level']),
+                        s_sig.offsetinput.setValue(signal['offset']),
+                        s_sig.state.setChecked(signal['state']),
 
 
 
@@ -215,9 +218,17 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
         for trial in self.widget.trialsWidget.dropdown_list:
             data['trials'].append({})
+
+            #WIP
+            data['trials']['description'] = "description work in progress"
+            data['trials']['program'] = 1
+            data['trials']['targets'] = [1]
+
+            #END OF WIP
+
             json_trial = data['trials'][-1]
             noise = json_trial['noise'] = []
-            sig = signal = json_trial['signal'] = []
+            sig = json_trial['signal'] = []
             for speaker in trial.datums:
                 s_noise = speaker.noise
                 s_sig = speaker.signal
