@@ -138,9 +138,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
                     # Program
                     # Target
                     """Noise"""
-                    print(self.widget.trialsWidget.dropdown_list)
                     trial_object = self.widget.trialsWidget.dropdown_list[-1]
-                    print(trial_object.datums, trial['signal'], trial['noise'])
                     for speaker, signal, noise in zip(trial_object.datums, trial['signal'], trial['noise']):
                         s_noise = speaker.noise
                         s_sig = speaker.signal
@@ -213,13 +211,13 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
         # Done with ratings
 
-        data['trials'] = {}
-        data['trials']['noise'] = []
-        data['trials']['signal'] = []
+        data['trials'] = []
 
-        noise = data['trials']['noise']
-        sig = data['trials']['signal']
         for trial in self.widget.trialsWidget.dropdown_list:
+            data['trials'].append({})
+            json_trial = data['trials'][-1]
+            noise = json_trial['noise'] = []
+            sig = signal = json_trial['signal'] = []
             for speaker in trial.datums:
                 s_noise = speaker.noise
                 s_sig = speaker.signal
