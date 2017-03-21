@@ -438,6 +438,7 @@ class SignalOrNoise(Py.QtGui.QWidget):
         self.layout.addLayout(offsetlayout)
 
         self.state = Py.QtGui.QCheckBox()
+        self.state.setCheckState(Py.QtCore.Qt.Checked)
         statelayout = Py.QtGui.QHBoxLayout()
         label = Py.QtGui.QLabel("State")
         statelayout.addWidget(label)
