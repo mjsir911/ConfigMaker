@@ -434,6 +434,8 @@ class SignalOrNoise(Py.QtGui.QWidget):
         self.layout.addLayout(samplelayout)
 
         self.levelinput = Py.QtGui.QSpinBox()
+        self.levelinput.setMinimum(-50)
+        self.levelinput.setMaximum(50)
         levellayout = Py.QtGui.QHBoxLayout()
         label = Py.QtGui.QLabel("Level")
         levellayout.addWidget(label)
