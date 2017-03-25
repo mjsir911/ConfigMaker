@@ -1,6 +1,16 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import absolute_import
+from builtins import range
+from builtins import super
+from builtins import round
+from builtins import str
+from future import standard_library
+standard_library.install_aliases()
 import PySide as Py
 
 __appname__     = ""
