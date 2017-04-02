@@ -337,7 +337,7 @@ class InteriorDatum(Py.QtGui.QWidget):
 
         layout = Py.QtGui.QVBoxLayout()
         switchlayout = Py.QtGui.QHBoxLayout()
-        print(type(self.parent.datums))
+        #print(type(self.parent.datums))
         #desclabel = Py.QtGui.QLabel("Description" + str(len(self.parent.datums)) + "after")
         speakernum = Py.QtGui.QLabel("Speaker Number " + str(len(self.parent.datums) + 1))
         layout.addWidget(speakernum)
@@ -372,6 +372,13 @@ class InteriorDatum(Py.QtGui.QWidget):
         signal_noise_layout.addWidget(self.noise)
 
         layout.addLayout(signal_noise_layout)
+
+        self.target = Py.QtGui.QCheckBox()
+        targetlayout = Py.QtGui.QHBoxLayout()
+        label = Py.QtGui.QLabel("Target:")
+        targetlayout.addWidget(label)
+        targetlayout.addWidget(self.target)
+        layout.addLayout(targetlayout)
 
         self.layout = layout
 
