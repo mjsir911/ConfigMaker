@@ -281,18 +281,19 @@ class SpeakerGrid(Py.QtGui.QWidget):
         self.glayout = Py.QtGui.QGridLayout()
 
         self.datums = []
+        #http://mathworld.wolfram.com/TriangleWave.html
         x_equation = lambda t: 8 * abs(round((1 / 8) * (t - 1)) - (1 / 8) * (t - 1))
         y_equation = lambda t: 8 * abs(round((1 / 8) * (t - 3)) - (1 / 8) * (t - 3))
         # THESE ARE FOR THE EQUATIONS BELOOWWWW
         for testest in range(1, 9):
-            # courtesy of my handy dandy graphing calculator
-            # This is a fun little diversion
-            # It outputs xc and yc in a 3x3 grid surrounding the center
-            # based on range(1, 9)
             """
-                --------
-                /       \        ooh fancy quartic graph
-            ---          --------
+            Courtesy of the internet, i refined the quartic equation
+            Now its a triangle graph, mapping x and y coordinates
+            creates a diamond shaped object, which is exactly where we want
+            the buttons
+              /\    /
+             /  \  /   ooh fancy triangle graph
+            /    \/
             """
             interior = InteriorDatum(parent=self)
             self.datums.append(interior)
