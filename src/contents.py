@@ -281,8 +281,8 @@ class SpeakerGrid(Py.QtGui.QWidget):
         self.glayout = Py.QtGui.QGridLayout()
 
         self.datums = []
-        xp = (1.143, -2.486, 1.682, -0.2929, 0.01515)
-        yp = (3.786, -1.803, -0.04924, 0.1237, -0.01136)
+        x_equation = lambda t: 8 * abs(round((1 / 8) * (t - 1)) - (1 / 8) * (t - 1))
+        y_equation = lambda t: 8 * abs(round((1 / 8) * (t - 3)) - (1 / 8) * (t - 3))
         # THESE ARE FOR THE EQUATIONS BELOOWWWW
         for testest in range(1, 9):
             # courtesy of my handy dandy graphing calculator
@@ -302,18 +302,8 @@ class SpeakerGrid(Py.QtGui.QWidget):
             button.setFixedWidth(200)
             button.clicked.connect(interior.show)
             button.setText(str(testest))
-            xc = round(
-                    (xp[0]) +
-                    (xp[1] * testest) +
-                    (xp[2] * testest ** 2) +
-                    (xp[3] * testest ** 3) +
-                    (xp[4] * testest ** 4))
-            yc = round(
-                    (yp[0]) +
-                    (yp[1] * testest) +
-                    (yp[2] * testest ** 2) +
-                    (yp[3] * testest ** 3) +
-                    (yp[4] * testest ** 4))
+            xc = x_equation(testest)
+            yc = y_equation(testest)
             #print(xc, yc)
             self.glayout.addWidget(button, xc, yc)
 
@@ -399,14 +389,14 @@ class InteriorDatum(Py.QtGui.QWidget):
             #pass
             #self.parent.layout.removeWidget(self)
 
-        self.parent.layout.addWidget(self, 2, 2)
-        self.parent.layout.indexOf(self)
+        self.parent.glayout.addWidget(self, 2, 2)
+        self.parent.glayout.indexOf(self)
 
     def hide(self):
         super().hide()
         #print(self.parent)
         #print(type(self.parent))
-        self.parent.layout.removeWidget(self)
+        self.parent.glayout.removeWidget(self)
 
 
 
