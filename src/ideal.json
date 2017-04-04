@@ -24,8 +24,8 @@
       "program" : 1,
       "targets" : [3],
       "step" : 2,
-      "range" [-5, 5],
-      "rsize" : [200, 250]
+      "range" : [-5, 5],
+      "rsize" : [200, 250],
       "noise" : [
         {
           "sample" : 1,
