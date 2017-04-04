@@ -273,9 +273,11 @@ class SpeakerGrid(Py.QtGui.QWidget):
         self.program = Py.QtGui.QSpinBox()
         self.program.setMinimum(1)
         self.program.setMaximum(6)
-        plabel = Py.QtGui.QLabel("Program")
+        plabel = Py.QtGui.QLabel("Program: ")
+        programlayout.addStretch(0.5)
         programlayout.addWidget(plabel)
         programlayout.addWidget(self.program)
+        programlayout.addStretch(0.5)
         self.layout.addLayout(programlayout)
 
         self.glayout = Py.QtGui.QGridLayout()
