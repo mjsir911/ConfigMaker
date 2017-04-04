@@ -223,7 +223,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
             json_trial = data['trials'][-1]
             #WIP
             json_trial['description'] = "description work in progress"
-            json_trial['program'] = 1
+            json_trial['program'] = trials
 
             #END OF WIP
             json_trial['targets'] = targets = []
