@@ -224,12 +224,16 @@ class MyWindow(PySide.QtGui.QMainWindow):
             #WIP
             json_trial['description'] = "description work in progress"
             json_trial['program'] = 1
-            json_trial['targets'] = [1]
 
             #END OF WIP
+            json_trial['targets'] = targets = []
             noise = json_trial['noise'] = []
             sig = json_trial['signal'] = []
-            for speaker in trial.datums:
+            for index, speaker in enumerate(trial.datums):
+                if speaker.target.isChecked():
+                    targets.append(index + 1)
+
+
                 s_noise = speaker.noise
                 s_sig = speaker.signal
 
