@@ -267,7 +267,18 @@ class SpeakerGrid(Py.QtGui.QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.layout = Py.QtGui.QGridLayout()
+        self.layout = Py.QtGui.QVBoxLayout()
+
+        programlayout = Py.QtGui.QHBoxLayout()
+        self.program = Py.QtGui.QSpinBox()
+        self.program.setMinimum(1)
+        self.program.setMaximum(6)
+        plabel = Py.QtGui.QLabel("Program")
+        programlayout.addWidget(plabel)
+        programlayout.addWidget(self.program)
+        self.layout.addLayout(programlayout)
+
+        self.glayout = Py.QtGui.QGridLayout()
 
         self.datums = []
         xp = (1.143, -2.486, 1.682, -0.2929, 0.01515)
@@ -304,7 +315,7 @@ class SpeakerGrid(Py.QtGui.QWidget):
                     (yp[3] * testest ** 3) +
                     (yp[4] * testest ** 4))
             #print(xc, yc)
-            self.layout.addWidget(button, xc, yc)
+            self.glayout.addWidget(button, xc, yc)
 
         """ In case of emergency, break quotes
         self.layout.addWidget(button, 0, 2)
@@ -316,9 +327,8 @@ class SpeakerGrid(Py.QtGui.QWidget):
         self.layout.addWidget(button, 2, 4)
         self.layout.addWidget(button, 1, 3)
         """
+        self.layout.addLayout(self.glayout)
         self.setLayout(self.layout)
-        #desclabel = Py.QtGui.QLabel("Description")
-        #self.layout.addWidget(desclabel, 2, 2)
 
 class InteriorDatum(Py.QtGui.QWidget):
     def __init__(self, parent=None):
