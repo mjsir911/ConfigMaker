@@ -166,6 +166,9 @@ class MyWindow(PySide.QtGui.QMainWindow):
                         s_sig.offsetinput.setValue(signal['offset']),
                         s_sig.state.setChecked(signal['state']),
 
+                    for index in trial['targets']:
+                        trial_object.datums[index - 1].target.setCheckState(PySide.QtCore.Qt.Checked)
+
 
 
             except EOFError as err:
