@@ -151,6 +151,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
                     # Target
                     """Noise"""
                     trial_object = self.widget.trialsWidget.dropdown_list[-1]
+                    trial_object.program.setValue(trial['program'])
                     for speaker, signal, noise in zip(trial_object.datums, trial['signal'], trial['noise']):
                         s_noise = speaker.noise
                         s_sig = speaker.signal
@@ -234,9 +235,9 @@ class MyWindow(PySide.QtGui.QMainWindow):
             json_trial = data['trials'][-1]
             #WIP
             json_trial['description'] = "description work in progress"
-            json_trial['program'] = trial.program.value()
 
             #END OF WIP
+            json_trial['program'] = trial.program.value()
             json_trial['targets'] = targets = []
             noise = json_trial['noise'] = []
             sig = json_trial['signal'] = []
