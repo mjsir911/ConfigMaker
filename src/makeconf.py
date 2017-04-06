@@ -14,6 +14,7 @@ import PySide.QtCore
 import PySide.QtGui
 import PySide as Py
 import sys
+import os
 import json
 import contents as mainWidget
 
@@ -114,7 +115,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
     def import_data(self):
         jsonFile = Py.QtGui.QFileDialog.getOpenFileName(parent=None,
                                               caption="Open Configuration File",
-                                              #dir=appDataPath,
+                                              dir=os.path.expanduser('~/Code/dragana/Sound Advice/Presets/'),
                                               filter="JSON files (*.json)")
         self.reInitGui()
         if jsonFile[0]:  # If a valid filename has been selected...
@@ -177,8 +178,9 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
     def export_data(self):
         savefilepath = Py.QtGui.QFileDialog.getSaveFileName(parent=None,
-                                                    caption="hi",
-                                                    filter="JSON files(*.json)")[0]
+                                                      caption="hi",
+                                                      dir=os.path.expanduser('~/Code/dragana/Sound Advice/Presets/'),
+                                                      filter="JSON files(*.json)")[0]
         self.write(savefilepath)
 
     def save(self):
