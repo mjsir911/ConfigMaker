@@ -99,8 +99,9 @@ class RatingsWidget(Py.QtGui.QWidget):
             try:
                 self.layout.removeWidget(oldrating)
                 oldrating.hide()
-            except Exception as e:
-                print(e)
+            except:
+                pass
+                #print(e) # if there are no ratings, cant remove one more
         self.alltheratings.append(rating)
         self.layout.addWidget(rating)
         self.rName.addItem("Question {} Label".format(self.rName.currentIndex() + 2))
