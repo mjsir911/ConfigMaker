@@ -19,9 +19,4 @@ else
   pip install -U pip
   pip install -r requirements.txt
   python2.7 $VIRTUAL_ENV/bin/pyside_postinstall.py -install
-  cd src
-  rm -rf build dist
-  py2applet --make-setup makeconf.py
-  python2.7 setup.py py2app -A
-  rm setup.py
 fi
