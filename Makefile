@@ -1,6 +1,5 @@
 PYTH = python2.7
 VENV = venv
-BUILD = $(date -u +"%Y-%m-%d")
 
 
 .PHONY: all build clean
@@ -8,15 +7,20 @@ BUILD = $(date -u +"%Y-%m-%d")
 all: requirements
 
 build: $(VENV)/bin/py2applet
-	$(VENV)/bin/py2applet -s src/makeconf.py
-	mv src/makeconf.app "build/makeconf-$(shell date -u +"%Y-%m-%d").app"
+	#$(VENV)/bin/py2applet -s -d build/ src/makeconf.py
+	$(VENV)/bin/$(PYTH) setup.py py2app
+	@rm -rf "build/makeconf-$(shell date -u +"%Y-%m-%d").app"
+	mv build/makeconf.app "build/makeconf-$(shell date -u +"%Y-%m-%d").app"
+	rm -rf build/bdist*
 
 $(VENV)/bin/py2applet: requirements
 
 requirements: $(VENV)
 
 $(VENV): venv/bin/activate requirements.txt
+	$(VENV)/bin/pip install -U pip
 	$(VENV)/bin/pip install -Ur requirements.txt
+	$(VENV)/bin/pyside_postinstall.py -install # dont think needed but ok
 
 $(VENV)/bin/activate: 
 	virtualenv $(VENV) --python=$(PYTH)
