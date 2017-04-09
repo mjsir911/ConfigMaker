@@ -437,7 +437,14 @@ class SignalOrNoise(Py.QtGui.QWidget):
         self.layout = Py.QtGui.QVBoxLayout()
 
         label = Py.QtGui.QLabel(sigornoise)
-        self.layout.addWidget(label)
+        f = Py.QtGui.QFont()
+        f.setWeight(Py.QtGui.QFont.DemiBold)
+        label.setFont(f)
+        headlayout = Py.QtGui.QHBoxLayout()
+        headlayout.addStretch(0.5)
+        headlayout.addWidget(label)
+        headlayout.addStretch(0.5)
+        self.layout.addLayout(label)
 
         """
         sample: number
