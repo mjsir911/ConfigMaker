@@ -81,8 +81,10 @@ class MyWindow(PySide.QtGui.QMainWindow):
         action = fileMenu.addAction('Close')
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+W"))
 
-        action = fileMenu.addAction('Save', self.save)
+        action = fileMenu.addAction('Save', self.write)
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+S"))
+        self.save = action
+        self.save.setEnabled(False)
 
         action = fileMenu.addAction('Save As...', self.export_data)
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+Shift+S"))
@@ -122,6 +124,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
         if jsonFile[0]:  # If a valid filename has been selected...
             self.filename = jsonFile[0]
             self.setWindowTitle(self.windowtitle.format(os.path.basename(self.filename)))
+            self.save.setEnabled(True)
             jsonFile = open(jsonFile[0], 'r')
             try:
                 settings = json.load(jsonFile)
@@ -192,11 +195,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
                                                       filter="JSON files(*.json)")[0]
         self.write(savefilepath)
 
-    def save(self):
-        if self.opened:
-            self.write(self.opened)
-
-    def write(self, path):
+    def write(self, path=None):
         data = {}
         data['description'] = self.widget.resultsInput.text()
         data['ratings'] = []
@@ -277,6 +276,9 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
 
 
+        if not path:
+            path = self.filename
+        print(path)
         with open(path, 'w') as outfile:
             pretty_print={'sort_keys':True, 'indent':4, 'separators':(',', ': ')}
             outfile.write(json.dumps(data, **pretty_print))
