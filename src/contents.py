@@ -380,8 +380,10 @@ class InteriorDatum(Py.QtGui.QWidget):
         self.target = Py.QtGui.QCheckBox()
         targetlayout = Py.QtGui.QHBoxLayout()
         label = Py.QtGui.QLabel("Target:")
+        targetlayout.addStretch(0.5)
         targetlayout.addWidget(label)
         targetlayout.addWidget(self.target)
+        targetlayout.addStretch(0.5)
         layout.addLayout(targetlayout)
 
         self.layout = layout
