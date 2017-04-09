@@ -1,12 +1,12 @@
-- pretty print - done
+- pretty print - **done**
 - enter on dropdown, make dropdown menu 
-- replace question numero uno -> "Question 1 Label" - done
-- make text bigger - done but need to adjust text box heights
-- one option for checkboxes !!!! - done
-- restrict re-code to integers - done 0 - 100
-- "re-code" -> "number" - done
-- "question"  -> "text" - done
-- Dragana likes recode first and selection text last - done?
+- replace question numero uno -> "Question 1 Label" - **done**
+- make text bigger - **done** but need to adjust text box heights
+- one option for checkboxes !!!! - **done**
+- restrict re-code to integers - **done** 0 - 100
+- "re-code" -> "number" - **done**
+- "question"  -> "text" - **done**
+- Dragana likes recode first and selection text last - **done**?
 - **ok button** how would i do this? make it a placebo button!
 - error if recode is blank
 - plus button next to dropdown menu to add a new rating and trial
