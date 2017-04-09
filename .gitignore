@@ -158,3 +158,5 @@ tags
 *.bak
 .app
 setup.py
+compile.sh
+install.sh
