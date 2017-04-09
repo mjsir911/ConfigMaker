@@ -281,6 +281,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
         else:
             self.filename = path
         self.setWindowTitle(self.windowtitle.format(os.path.basename(path)))
+        self.save.setEnabled(True)
         with open(path, 'w') as outfile:
             pretty_print={'sort_keys':True, 'indent':4, 'separators':(',', ': ')}
             outfile.write(json.dumps(data, **pretty_print))
