@@ -344,7 +344,14 @@ class InteriorDatum(Py.QtGui.QWidget):
         #print(type(self.parent.datums))
         #desclabel = Py.QtGui.QLabel("Description" + str(len(self.parent.datums)) + "after")
         speakernum = Py.QtGui.QLabel("Speaker Number " + str(len(self.parent.datums) + 1))
-        layout.addWidget(speakernum)
+        f = Py.QtGui.QFont()
+        f.setWeight(Py.QtGui.QFont.Black)
+        speakernum.setFont(f)
+        speakerhead = Py.QtGui.QHBoxLayout()
+        speakerhead.addStretch(0.5)
+        speakerhead.addWidget(speakernum)
+        speakerhead.addStretch(0.5)
+        layout.addLayout(speakerhead)
 
 
 
