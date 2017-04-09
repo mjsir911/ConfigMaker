@@ -100,7 +100,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
 
         self.setGeometry(300, 300, 250, 150)
-        self.setWindowTitle('Sound Advice Configuration Editor')
+        self.windowtitle = 'Sound Advice Configuration Editor ({})'
+        self.setWindowTitle(self.windowtitle.format('New File'))
 
 
 
@@ -119,6 +120,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
                                               filter="JSON files (*.json)")
         self.reInitGui()
         if jsonFile[0]:  # If a valid filename has been selected...
+            self.filename = jsonFile[0]
+            self.setWindowTitle(self.windowtitle.format(os.path.basename(self.filename)))
             jsonFile = open(jsonFile[0], 'r')
             try:
                 settings = json.load(jsonFile)
