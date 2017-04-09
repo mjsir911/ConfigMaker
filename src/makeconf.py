@@ -138,7 +138,9 @@ class MyWindow(PySide.QtGui.QMainWindow):
                                 len(x['options']))
                     if x['options']:
                         for c, d in enumerate(x['options']):
-                            currentwidget.options.responses[c].selection.setText(d[0])
+                            cresponse = currentwidget.options.responses[c]
+                            cresponse.selection.setText(d[0])
+                            cresponse.recode.setValue(d[1])
 
                 # Done with ratings
 
@@ -218,8 +220,10 @@ class MyWindow(PySide.QtGui.QMainWindow):
                     print('for opt in responses')
                     if not option.isHidden():
                         print('if not hid')
-                        ratings['options'].append(option.selection.text())
-                        print(option.selection.text())
+                        option = [option.selection.text(),
+                                option.recode.value()]
+                        ratings['options'].append(option)
+                        print(option)
             else:
                 ratings['options'] = None
 
