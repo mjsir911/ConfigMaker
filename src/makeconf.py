@@ -278,7 +278,9 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
         if not path:
             path = self.filename
-        print(path)
+        else:
+            self.filename = path
+        self.setWindowTitle(self.windowtitle.format(os.path.basename(path)))
         with open(path, 'w') as outfile:
             pretty_print={'sort_keys':True, 'indent':4, 'separators':(',', ': ')}
             outfile.write(json.dumps(data, **pretty_print))
