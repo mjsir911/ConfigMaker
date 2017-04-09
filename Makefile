@@ -6,12 +6,15 @@ VENV = venv
 
 all: requirements
 
-build: $(VENV)/bin/py2applet
+build: $(VENV)/bin/py2applet setup.py
 	#$(VENV)/bin/py2applet -s -d build/ src/makeconf.py
 	$(VENV)/bin/$(PYTH) setup.py py2app
 	@rm -rf "build/makeconf-$(shell date -u +"%Y-%m-%d").app"
 	mv build/makeconf.app "build/makeconf-$(shell date -u +"%Y-%m-%d").app"
 	rm -rf build/bdist*
+
+setup.py: $(VENV)/bin/py2applet
+	venv/bin/py2applet --make-setup -a -s --site-packages --packages=PySide -d build/ src/makeconf.py
 
 $(VENV)/bin/py2applet: requirements
 
