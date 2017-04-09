@@ -157,4 +157,4 @@ tags
 #
 *.bak
 .app
-.setup.py
+setup.py
