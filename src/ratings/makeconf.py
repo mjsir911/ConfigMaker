@@ -35,11 +35,13 @@ responses = {'radio' : 0, 'check' : 1, 'free' : 2}
 class MyWindow(PySide.QtGui.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
+        import refactoredcontents as mWidge
 
 
 
 
-        self.widget = mainWidget.MainWidget()
+        #self.widget = mainWidget.MainWidget()
+        self.widget = mWidge.mainWidget
         self.initUI()
 
 
