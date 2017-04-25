@@ -35,7 +35,7 @@ pip: $(VENV)/pip-selfcheck.json
 $(VENV)/pip-selfcheck.json: $(VENV) requirements.txt
 	$(VENV)/bin/pip install -U pip
 	$(VENV)/bin/pip install -Ur requirements.txt
-	python2.7 $(VENV)/bin/pyside_postinstall.py -install # dont think needed but ok
+	$(VENV)/bin/$(PYTH) $(VENV)/bin/pyside_postinstall.py -install # dont think needed but ok
 	touch $(VENV)/pip-selfcheck.json
 
 $(VENV):
