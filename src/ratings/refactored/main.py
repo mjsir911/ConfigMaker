@@ -262,7 +262,10 @@ class SubWindow(PySide.QtGui.QDialog):
         self.data = {}
         super().__init__(parent)
         self.layout = Py.QtGui.QVBoxLayout()
+        self.name = description_and_label('Column Heading', Py.QtGui.QLineEdit())
+        self.layout.addLayout(self.name)
         self.question = description_and_label('Question', Py.QtGui.QLineEdit())
+        self.layout.addLayout(self.question)
 
         #self.questionNum = Py.QtGui.QSpinBox()
         #self.questionNum.setRange(1, 5)
@@ -273,7 +276,6 @@ class SubWindow(PySide.QtGui.QDialog):
             self.rType.addItem(button_type)
 
         self.rType.currentIndexChanged.connect(self.check)
-        self.layout.addWidget(self.question)
         self.layout.addWidget(self.rType)
 
         self.responses = []
