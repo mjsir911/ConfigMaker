@@ -34,7 +34,9 @@ def description_and_label(text, inputobj):
     layout = PySide.QtGui.QHBoxLayout()
     label  = PySide.QtGui.QLabel(text)
     layout.addWidget(label)
+    layout.name = label
     layout.addWidget(inputobj)
+    layout.inputobj = inputobj
     try:
         inputobj.setPlaceholderText(text)
     except:
@@ -46,15 +48,13 @@ def wandl(widget, layout):
     widget.setLayout(widget.layout)
     return widget
 
-def okbutt(layout, func, button=None):
-    ok = 'OK'
+def okbutt(func, button=None, buttonText='OK'):
     if button is None:
-        button = PySide.QtGui.QPushButton(ok)
+        button = PySide.QtGui.QPushButton(buttonText)
     else:
         if button.text() is not "":
-            button.setText(ok)
+            button.setText(buttonText)
     button.clicked.connect(func)
-    layout.addWidget(button)
     return button
 
 class MyWindow(PySide.QtGui.QMainWindow):
@@ -72,6 +72,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
         self.label = "yo"
 
     def reInitGui(self):
+        self.savedcontents = {}
         self.widget = wandl(PySide.QtGui.QWidget(), PySide.QtGui.QVBoxLayout())
         description = PySide.QtGui.QLineEdit()
         self.widget.layout.addLayout(description_and_label('Description', description))
@@ -83,17 +84,39 @@ class MyWindow(PySide.QtGui.QMainWindow):
             text = description.text()
             if text:
                 description.setEnabled(False)
-                savedcontents['description'] = description.text()
+                self.savedcontents['description'] = description.text()
                 self.widget.layout.removeWidget(description_ok)
                 description_ok.hide()
             else:
                 PySide.QtGui.QMessageBox.critical(self.widget, 'Empty Description',
                 'Description box cannot be empty')
 
-        okbutt(self.widget.layout, lockDescription, description_ok)
+        description_ok = okbutt(lockDescription)
+        self.widget.layout.addWidget(description_ok)
         self.setCentralWidget(self.widget)
         self.selfmenubar.clear()
         self.initUI()
+
+        self.dropdown = PySide.QtGui.QComboBox()
+        self.dropdown.currentIndexChanged.connect(self.selected_new)
+        self.widget.layout.addWidget(self.dropdown)
+        self.ratings = []
+
+    def update_dropdown(self):
+        self.editing_dropdown = True  # Hacky
+        for _ in range(self.dropdown.count()):
+            self.dropdown.removeItem(0)
+        for rating in self.ratings:
+            self.dropdown.addItem(rating.name.inputobj.text())
+        self.editing_dropdown = False
+        self.dropdown.setCurrentIndex(-1)
+
+    def selected_new(self):
+        ci = self.dropdown.currentIndex()
+        if ci >= 0 and not self.editing_dropdown:
+            self.ratings[ci].show()
+
+
 
     def initUI(self):
 
@@ -132,8 +155,8 @@ class MyWindow(PySide.QtGui.QMainWindow):
         action.setShortcut(Py.QtGui.QKeySequence("Ctrl+Shift+S"))
 
 
-        action = editMenu.addAction('Add Rating', lambda: SubWindow().exec_())
-        #action.setShortcut(Py.QtGui.QKeySequence("Ctrl+Shift+S"))
+        action = editMenu.addAction('Add Rating', self.add_rating)
+        #action.setShortcut(Py.QtGui.QKeySequence(self.add_rating"Ctrl+Shift+S"))
 
 
         # Give menu bar tabs
@@ -148,6 +171,11 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
 
         self.show()
+
+    def add_rating(self):
+        newrating = SubWindow(parent=self)
+        self.ratings.append(newrating)
+        newrating.exec_()
 
     def error(self, title, message, error_message=None):
         if error_message:
@@ -206,56 +234,30 @@ class MyWindow(PySide.QtGui.QMainWindow):
         self.write(savefilepath)
 
     def write(self, path=None):
-        data = {}
-        data['description'] = self.widget.resultsInput.text()
-        data['ratings'] = []
-        for num, x in enumerate(self.widget.ratingsWidget.alltheratings):
-            ratings = {}
-
-            ratings['name'] = self.widget.ratingsWidget.rName.itemText(num)
-            ratings['question'] = x.question.text()
-            if x.rType.currentText() == "Free Response":
-                subtype = "free"
-            elif x.rType.currentText() == "Check Boxes":
-                subtype = "check"
-            elif x.rType.currentText() == "Radio Buttons":
-                subtype = "radio"
-            else:
-                print(x.rType.currentText())
-            ratings['subtype'] = subtype
-
-            ratings['options'] = []
-
-            if subtype is not "free":
-                print('not free')
-                for option in x.options.responses:
-                    print('for opt in responses')
-                    if not option.isHidden():
-                        print('if not hid')
-                        option = [option.selection.text(),
-                                option.recode.value()]
-                        ratings['options'].append(option)
-                        print(option)
-            else:
-                ratings['options'] = None
-
-
-            del subtype
-            data['ratings'].append(ratings)
-
-        # Done with ratings
-
-
         if not path:
             path = self.filename
         else:
             self.filename = path
+        for rating in self.ratings:
+            rating.write_file(os.path.dirname(os.path.abspath(path)))
+
+        self.savedcontents.update({
+                'ratings': [rating.data for rating in self.ratings]
+                })
+
         self.setWindowTitle(self.windowtitle.format(os.path.basename(path)))
         self.save.setEnabled(True)
+
         with open(path, 'w') as outfile:
             pretty_print = {'sort_keys':True, 'indent':4, 'separators':(',', ': ')}
-            outfile.write(json.dumps(data, **pretty_print))
+            outfile.write(json.dumps(self.savedcontents, **pretty_print))
 
+
+responses = {
+        'Radio Buttons': "radio",
+        "Check Boxes": 'check',
+        "Free Response": 'free'
+        }
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
     def __init__(self, parent=None):
@@ -272,7 +274,7 @@ class SubWindow(PySide.QtGui.QDialog):
 
         self.rType = Py.QtGui.QComboBox()
 
-        for button_type in ("Radio Buttons", "Check Boxes", "Free Response"):
+        for button_type in responses.keys():
             self.rType.addItem(button_type)
 
         self.rType.currentIndexChanged.connect(self.check)
@@ -288,6 +290,8 @@ class SubWindow(PySide.QtGui.QDialog):
             response = self.Response(x)
             self.responses.append(response)
             self.layout.addWidget(response)
+
+        self.layout.addWidget(okbutt(self.write))
         self.responseCheck()
         self.setLayout(self.layout)
         self.check()
@@ -310,6 +314,7 @@ class SubWindow(PySide.QtGui.QDialog):
     class Response(Py.QtGui.QWidget):
         def __init__(self, num, parent=None):
             super().__init__(parent)
+            self.parent = parent
             self.layout = Py.QtGui.QVBoxLayout()
             self.num = num
             #self.hr = Py.QtGui.QSpacerItem(20, 40, Py.QtGui.QSizePolicy.Minimum, Py.QtGui.QSizePolicy.Expanding)
@@ -333,8 +338,19 @@ class SubWindow(PySide.QtGui.QDialog):
             else:
                 self.show()
 
-    #def write(self):
-        #self.data['name'] =
+    def write(self):
+        self.data['name'] = self.name.inputobj.text()
+        self.data['subtype'] = responses[self.rType.currentText()]
+        self.data['question'] = self.question.inputobj.text()
+        self.data['options'] = [(x.recode.value(), x.selection.text()) for x in self.responses if not x.isHidden()]
+        self.hide()
+        self.parent.update_dropdown()
+
+    def write_file(self, pathdir):
+        with open('{}/{}.json'.format(pathdir, self.data['name']), 'w') as outfile:
+            pretty_print = {'sort_keys':True, 'indent':4, 'separators':(',', ': ')}
+            outfile.write(json.dumps(self.data, **pretty_print))
+            # Multiple ratings with same name
 
 
 
