@@ -97,9 +97,17 @@ class MyWindow(PySide.QtGui.QMainWindow):
         self.selfmenubar.clear()
         self.initUI()
 
+        dropdownlayout = PySide.QtGui.QHBoxLayout()
         self.dropdown = PySide.QtGui.QComboBox()
         self.dropdown.currentIndexChanged.connect(self.selected_new)
-        self.widget.layout.addWidget(self.dropdown)
+        dropdownlayout.addWidget(self.dropdown)
+        addbutton = Py.QtGui.QPushButton('+')
+        addbutton.clicked.connect(self.add_rating)
+        dropdownlayout.addWidget(addbutton)
+
+
+        self.widget.layout.addLayout(dropdownlayout)
+
         self.ratings = []
 
     def update_dropdown(self):
