@@ -238,11 +238,13 @@ class MyWindow(PySide.QtGui.QMainWindow):
             path = self.filename
         else:
             self.filename = path
+
+        dirpath = os.path.dirname(os.path.abspath(path))
         for rating in self.ratings:
-            rating.write_file(os.path.dirname(os.path.abspath(path)))
+            rating.write_file(dirpath)
 
         self.savedcontents.update({
-                'ratings': [rating.data for rating in self.ratings]
+                'ratings': ['{}.json'.format(rating.data['name']) for  rating in self.ratings]
                 })
 
         self.setWindowTitle(self.windowtitle.format(os.path.basename(path)))
@@ -342,7 +344,7 @@ class SubWindow(PySide.QtGui.QDialog):
         self.data['name'] = self.name.inputobj.text()
         self.data['subtype'] = responses[self.rType.currentText()]
         self.data['question'] = self.question.inputobj.text()
-        self.data['options'] = [(x.recode.value(), x.selection.text()) for x in self.responses if not x.isHidden()]
+        self.data['options'] = [(x.selection.text(), x.recode.value()) for x in self.responses if not x.isHidden()]
         self.hide()
         self.parent.update_dropdown()
 
