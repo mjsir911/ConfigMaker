@@ -267,7 +267,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
     def __init__(self, parent=None):
-        self.data = {}
+        self.data = {'type': 'trial'}
         super().__init__(parent)
         self.parent = parent
         self.layout = Py.QtGui.QVBoxLayout()

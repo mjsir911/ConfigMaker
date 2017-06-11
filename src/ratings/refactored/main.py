@@ -271,7 +271,7 @@ responses = {
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
     def __init__(self, parent=None):
-        self.data = {}
+        self.data = {'type': 'rating'}
         super().__init__(parent)
         self.layout = Py.QtGui.QVBoxLayout()
         self.name = description_and_label('Column Heading', Py.QtGui.QLineEdit())
