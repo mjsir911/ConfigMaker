@@ -194,7 +194,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
         raise NotImplementedError()
         jsonFile = Py.QtGui.QFileDialog.getOpenFileName(parent=None,
                                               caption="Open Configuration File",
-                                              dir=os.path.expanduser('~/Code/dragana/Sound Advice/Presets/'),
+                                              dir=os.path.expanduser('~/.config/sound-advice/presets/'),
                                               filter="JSON files (*.json)")
         self.reInitGui()
         if jsonFile[0]:  # If a valid filename has been selected...
@@ -237,7 +237,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
     def export_data(self):
         savefilepath = Py.QtGui.QFileDialog.getSaveFileName(parent=None,
                                                       caption="hi",
-                                                      dir=os.path.expanduser('~/Code/dragana/Sound Advice/Presets/'),
+                                                      dir=os.path.expanduser('~/.config/sound-advice/presets/'),
                                                       filter="JSON files(*.json)")[0]
         self.write(savefilepath)
 
