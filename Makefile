@@ -24,7 +24,7 @@ $(SRC)/makeconf.py: $(SRC)/contents.py
 
 setup.py: $(VENV)/bin/py2applet
 	rm -f setup.py
-	venv/bin/py2applet --make-setup -a -s --site-packages --packages=PySide -d $(BUILD) -b $(BUILD) $(SRC)/makeconf.py
+	$(VENV)/bin/py2applet --make-setup -a -s --site-packages --packages=PySide -d $(BUILD) -b $(BUILD) $(SRC)/makeconf.py
 
 $(VENV)/bin/py2applet: requirements
 
