@@ -33,6 +33,9 @@ def description_and_label(text, inputobj):
     layout = PySide.QtGui.QHBoxLayout()
     layout.setAlignment(PySide.QtCore.Qt.AlignCenter)
     label  = PySide.QtGui.QLabel(text)
+    label.setText(label.text() + ': ')
+    #label.text += ': '
+    print(label.text())
     layout.addWidget(label)
     layout.name = label
     layout.addWidget(inputobj)
@@ -278,7 +281,7 @@ class SubWindow(PySide.QtGui.QDialog):
         program = Py.QtGui.QSpinBox()
         program.setMinimum(1)
         program.setMaximum(6)
-        self.programlayout = description_and_label('Program: ', program)
+        self.programlayout = description_and_label('Program', program)
         self.programlayout.addStretch(0.5)
         self.program = self.programlayout.inputobj
         del program
