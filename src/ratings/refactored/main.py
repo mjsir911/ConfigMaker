@@ -194,7 +194,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
     def import_data(self):
         jsonFile = Py.QtGui.QFileDialog.getOpenFileName(parent=None,
                                               caption="Open Configuration File",
-                                              dir=os.path.expanduser('~/.config/sound-advice/presets/'),
+                                              dir=os.path.expanduser('~/.config/sound-advice/ratings/'),
                                               filter="JSON files (*.json)")
         self.reInitGui()
         if jsonFile[0]:  # If a valid filename has been selected...
@@ -237,7 +237,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
     def export_data(self):
         savefilepath = Py.QtGui.QFileDialog.getSaveFileName(parent=None,
                                                       caption="hi",
-                                                      dir=os.path.expanduser('~/.config/sound-advice/presets/'),
+                                                      dir=os.path.expanduser('~/.config/sound-advice/ratings/'),
                                                       filter="JSON files(*.json)")[0]
         self.write(savefilepath)
 
@@ -252,7 +252,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
             rating.write_file(dirpath)
 
         self.savedcontents.update({
-                'ratings': ['{}.json'.format(rating.data['name']) for  rating in self.ratings]
+                'ratings': [rating.data['name'] for  rating in self.ratings]
                 })
 
         self.setWindowTitle(self.windowtitle.format(os.path.basename(path)))
@@ -357,7 +357,7 @@ class SubWindow(PySide.QtGui.QDialog):
         self.parent.update_dropdown()
 
     def write_file(self, pathdir):
-        with open('{}/{}.json'.format(pathdir, self.data['name']), 'w') as outfile:
+        with open('{}/rating/{}.json'.format(pathdir, self.data['name']), 'w') as outfile:
             pretty_print = {'sort_keys':True, 'indent':4, 'separators':(',', ': ')}
             outfile.write(json.dumps(self.data, **pretty_print))
             # Multiple ratings with same name

@@ -255,8 +255,7 @@ class MyWindow(PySide.QtGui.QMainWindow):
             trial.write_file(dirpath)
 
         self.savedcontents.update({
-                'trials': ['{}.json'.format(trial.data['description']) for  trial in
-                    self.trials]
+                'trials': [trial.data['description'] for trial in self.trials]
                 })
 
         self.setWindowTitle(self.windowtitle.format(os.path.basename(path)))
@@ -367,7 +366,7 @@ class SubWindow(PySide.QtGui.QDialog):
         self.parent.update_dropdown()
 
     def write_file(self, pathdir):
-        with open('{}/{}.json'.format(pathdir, self.data['description']), 'w') as outfile:
+        with open('{}/preset/{}.json'.format(pathdir, self.data['description']), 'w') as outfile:
             pretty_print = {'sort_keys':True, 'indent':4, 'separators':(',', ': ')}
             outfile.write(json.dumps(self.data, **pretty_print))
 
