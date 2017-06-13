@@ -366,7 +366,8 @@ class SubWindow(PySide.QtGui.QDialog):
 
 
         self.hide()
-        self.parent.trials.append(self)
+        if self not in self.parent.things:
+            self.parent.things.append(self)
         self.parent.update_dropdown()
 
     def write_file(self, pathdir):
