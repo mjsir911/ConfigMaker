@@ -184,7 +184,6 @@ class MyWindow(PySide.QtGui.QMainWindow):
 
     def add_trial(self):
         newtrial = SubWindow(parent=self)
-        self.trials.append(newtrial)
         newtrial.exec_()
 
     def error(self, title, message, error_message=None):
@@ -363,6 +362,7 @@ class SubWindow(PySide.QtGui.QDialog):
 
 
         self.hide()
+        self.parent.trials.append(self)
         self.parent.update_dropdown()
 
     def write_file(self, pathdir):
