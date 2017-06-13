@@ -1,0 +1,9 @@
+Signal and noise centered and headified
+buttons showing already edited
+does not save the bundled program
+
+Colons after headers: done
+
+more headers
+
+indication to number of options

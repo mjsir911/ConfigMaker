@@ -1,0 +1,5 @@
+add button next to dropdown 
+warning if quit without save
+opening up back files for editing
+warnings if any fields are empty on the subwindow
+grey out number box if free response on subwindow
