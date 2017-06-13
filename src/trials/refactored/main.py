@@ -331,6 +331,10 @@ class SubWindow(PySide.QtGui.QDialog):
 
         self.setLayout(self.layout)
 
+    @classmethod
+    def load(cls, parent, fp):
+        self = cls(parent)
+
     def write(self):
         self.data.update({
             'description': self.desc.inputobj.text(),
