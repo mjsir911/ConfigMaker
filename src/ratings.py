@@ -96,7 +96,7 @@ class SubWindow(PySide.QtGui.QDialog):
         elif text == "Free Response":
             self.questionNum.setRange(0, 0)
         else:
-            print(text)
+            print('error: {}'.format(text))
 
     class Response(Py.QtGui.QWidget):
         def __init__(self, num, parent=None):

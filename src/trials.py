@@ -218,7 +218,6 @@ class SubWindow(PySide.QtGui.QDialog):
 
         def show(self):
             super().show()
-            #print('hi' + str(self.parent.datums.index(self)))
             for x in self.parent.datums:
                 if x is not self:
                     x.hide()
@@ -230,8 +229,6 @@ class SubWindow(PySide.QtGui.QDialog):
 
         def hide(self):
             super().hide()
-            #print(self.parent)
-            #print(type(self.parent))
             self.parent.glayout.removeWidget(self)
 
 
