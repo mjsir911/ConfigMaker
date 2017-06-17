@@ -72,7 +72,13 @@ class SubWindow(PySide.QtGui.QDialog):
             self.responses.append(response)
             self.layout.addWidget(response)
 
-        self.layout.addWidget(okbutt(self.write))
+        buttonlayout = PySide.QtGui.QHBoxLayout()
+        buttonlayout.addWidget(okbutt(self.write))
+        buttonlayout.addWidget(okbutt(
+                func=lambda: self.close(),
+                buttonText='Cancel',
+                ))
+        self.layout.addLayout(buttonlayout)
         self.responseCheck()
         self.setLayout(self.layout)
         self.check()
@@ -125,6 +131,8 @@ class SubWindow(PySide.QtGui.QDialog):
         self.data['question'] = self.question.inputobj.text()
         self.data['options'] = [(x.selection.text(), x.recode.value()) for x in self.responses if not x.isHidden()]
         self.hide()
+        if self not in self.parent.things:
+            self.parent.things.append(self)
         self.parent.update_dropdown()
 
     def write_file(self, pathdir):

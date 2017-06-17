@@ -93,7 +93,13 @@ class SubWindow(PySide.QtGui.QDialog):
         self.layout.addWidget(button, 1, 3)
         """
         self.layout.addLayout(self.glayout)
-        self.layout.addWidget(okbutt(self.write))
+        buttonlayout = PySide.QtGui.QHBoxLayout()
+        buttonlayout.addWidget(okbutt(self.write))
+        buttonlayout.addWidget(okbutt(
+                func=lambda: self.close(),
+                buttonText='Cancel',
+                ))
+        self.layout.addLayout(buttonlayout)
 
         self.setLayout(self.layout)
 
