@@ -34,7 +34,7 @@ from shared import *
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
     def __init__(self, parent=None):
-        self.data = {'type': 'trial'}
+        self.data = {'type': 'preset'}
         super().__init__(parent)
         self.parent = parent
         self.layout = Py.QtGui.QVBoxLayout()
@@ -106,6 +106,7 @@ class SubWindow(PySide.QtGui.QDialog):
     @classmethod
     def load(cls, parent, fp):
         self = cls(parent)
+        outfile.write(json.dumps(self.data, **pretty_print))
 
     def write(self):
         self.data.update({
@@ -295,7 +296,7 @@ class SubWindow(PySide.QtGui.QDialog):
 
 
 class MyWindow(BaseWindow):
-    name = 'trial'
+    name = 'preset'
     namevar = 'description'
     subwind = SubWindow
 
