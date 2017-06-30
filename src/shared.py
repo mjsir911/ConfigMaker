@@ -248,7 +248,7 @@ class BaseWindow(PySide.QtGui.QMainWindow):
 
         dirpath = os.path.dirname(os.path.abspath(path))
         for thing in self.things:
-            thing.write_file(dirpath)
+            thing.write_file(os.path.basename(path), dirpath)
 
         self.savedcontents.update({
                 '{}s'.format(self.name): [thing.data[self.namevar] for thing
