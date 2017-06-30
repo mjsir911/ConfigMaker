@@ -106,7 +106,9 @@ class SubWindow(PySide.QtGui.QDialog):
     @classmethod
     def load(cls, parent, fp):
         self = cls(parent)
-        outfile.write(json.dumps(self.data, **pretty_print))
+        self.data = json.load(fp)
+        for preset_name in self.data['presets']:
+        return self
 
     def write(self):
         self.data.update({
@@ -149,7 +151,7 @@ class SubWindow(PySide.QtGui.QDialog):
             outfile.write(json.dumps(self.data, **pretty_print))
 
     class InteriorDatum(Py.QtGui.QWidget):
-        def __init__(self, parent=None):
+        def __init__(self, parent=None, data={}):
             super().__init__(parent)
             self.parent = parent
 
