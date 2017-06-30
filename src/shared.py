@@ -190,11 +190,12 @@ class BaseWindow(PySide.QtGui.QMainWindow):
             PySide.QtGui.QMessageBox.critical(self, title, message)
 
     def import_data(self):
-        raise NotImplementedError()
         jsonFile = PySide.QtGui.QFileDialog.getOpenFileName(parent=None,
                                               caption="Open Configuration File",
                                               dir=os.path.expanduser('~/.config/sound-advice/presets/'),
                                               filter="JSON files (*.json)")
+        print(json.load(open(jsonFile[0], 'r')))
+        raise NotImplementedError()
         self.reInitGui()
         if jsonFile[0]:  # If a valid filename has been selected...
             self.filename = jsonFile[0]

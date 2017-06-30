@@ -108,6 +108,7 @@ class SubWindow(PySide.QtGui.QDialog):
         self = cls(parent)
         self.data = json.load(fp)
         for preset_name in self.data['presets']:
+            print(preset_name)
         return self
 
     def write(self):
@@ -146,7 +147,11 @@ class SubWindow(PySide.QtGui.QDialog):
         self.parent.update_dropdown()
 
     def write_file(self, prefix, pathdir):
-        with open('{}/preset/{}-{}.json'.format(pathdir, prefix, self.data['description']), 'w') as outfile:
+        with open('{}/preset/{}-{}.json'.format(
+                  pathdir,
+                  prefix,
+                  self.data['description']),
+                  'w') as outfile:
             pretty_print = {'sort_keys':True, 'indent':4, 'separators':(',', ': ')}
             outfile.write(json.dumps(self.data, **pretty_print))
 
