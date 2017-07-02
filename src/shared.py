@@ -28,6 +28,8 @@ logger = logging.getLogger()
 logging.basicConfig()
 logger.setLevel(logging.DEBUG)
 
+defaultdir = os.path.expandsuer('~/.config/sound-advice/')
+
 
 def description_and_label(text, inputobj):
     layout = PySide.QtGui.QHBoxLayout()
@@ -197,10 +199,11 @@ class BaseWindow(PySide.QtGui.QMainWindow):
             PySide.QtGui.QMessageBox.critical(self, title, message)
 
     def import_data(self):
-        jsonFile = PySide.QtGui.QFileDialog.getOpenFileName(parent=None,
-                                              caption="Open Configuration File",
-                                              dir=os.path.expanduser('~/.config/sound-advice/presets/'),
-                                              filter="JSON files (*.json)")
+        from PySide.QtGui.QFileDialog import getOpenFileName
+        jsonFile = getOpenFileName(parent=None,
+                                   caption="Open Configuration File",
+                                   dir=defaultdir
+                                   filter="JSON files (*.json)")
         print(json.load(open(jsonFile[0], 'r')))
         raise NotImplementedError()
         self.reInitGui()
@@ -244,7 +247,6 @@ class BaseWindow(PySide.QtGui.QMainWindow):
 
     def export_data(self):
         from PySide.QtGui.QFileDialog import getSaveFileName
-        defaultdir = os.path.expandsuer('~/.config/sound-advice/presets/')
         savefilepath = getSaveFileName(parent=None,
                                        caption="hi",
                                        dir=defaultdir,
