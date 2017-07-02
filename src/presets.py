@@ -9,13 +9,17 @@ from builtins import super
 from builtins import open
 from builtins import zip
 from future import standard_library
-standard_library.install_aliases()
 import PySide.QtCore
 import PySide.QtGui
 import PySide as Py
 import sys
 import os
 import json
+import logging
+
+from shared import *
+
+standard_library.install_aliases()
 
 __appname__     = ""
 __author__      = "Marco Sirabella"
@@ -29,7 +33,9 @@ __status__      = "Prototype"  # "Prototype", "Development" or "Production"
 __module__      = ""
 
 
-from shared import *
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+
 
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
@@ -147,6 +153,8 @@ class SubWindow(PySide.QtGui.QDialog):
         self.parent.update_dropdown()
 
     def write_file(self, prefix, pathdir):
+        logger.info('writing sub-file %s/preset/%s-%s.json', pathdir, prefix,
+                    self.data['description'])
         with open('{}/preset/{}-{}.json'.format(
                   pathdir,
                   prefix,

@@ -11,6 +11,8 @@ from builtins import super
 
 import json
 
+import logging
+
 __appname__     = ""
 __author__      = "Marco Sirabella"
 __copyright__   = ""
@@ -21,6 +23,11 @@ __maintainers__ = "Marco Sirabella"
 __email__       = "msirabel@gmail.com"
 __status__      = "Prototype"  # "Prototype", "Development" or "Production"
 __module__      = ""
+
+logger = logging.getLogger()
+logging.basicConfig()
+logger.setLevel(logging.DEBUG)
+
 
 def description_and_label(text, inputobj):
     layout = PySide.QtGui.QHBoxLayout()
@@ -224,24 +231,29 @@ class BaseWindow(PySide.QtGui.QMainWindow):
                             cresponse.selection.setText(d[0])
                             cresponse.recode.setValue(d[1])
 
-
             except EOFError as err:
                 print(err)
                 self.error("import failed",
-                        "<p>import file failed to open with<br />{}</p>", err)
+                           "<p>import file failed to open with<br />{}</p>",
+                           err)
                 return 1
             except KeyError as err:
                 self.error("Invalid file",
-                        "<b>Import file failed to open with<br />{}</b>", err)
+                           "<b>Import file failed to open with<br />{}</b>",
+                           err)
 
     def export_data(self):
-        savefilepath = PySide.QtGui.QFileDialog.getSaveFileName(parent=None,
-                                                      caption="hi",
-                                                      dir=os.path.expanduser('~/.config/sound-advice/presets/'),
-                                                      filter="JSON files(*.json)")[0]
+        from PySide.QtGui.QFileDialog import getSaveFileName
+        defaultdir = os.path.expandsuer('~/.config/sound-advice/presets/')
+        savefilepath = getSaveFileName(parent=None,
+                                       caption="hi",
+                                       dir=defaultdir,
+                                       filter="JSON files(*.json)")[0]
+        logger.info('path given to save is {}'.format(savefilepath))
         self.write(savefilepath)
 
     def write(self, path=None):
+        path = path.replace('.json', '')
         if not path:
             path = self.filename
         else:
@@ -249,6 +261,10 @@ class BaseWindow(PySide.QtGui.QMainWindow):
 
         dirpath = os.path.dirname(os.path.abspath(path))
         for thing in self.things:
+            try:
+                os.mkdir('{}/preset'.format(dirpath))
+            except OSError:
+                pass
             thing.write_file(os.path.basename(path), dirpath)
 
         self.savedcontents.update({
@@ -259,6 +275,10 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         self.setWindowTitle(self.windowtitle.format(os.path.basename(path)))
         self.save.setEnabled(True)
 
-        with open(path, 'w') as outfile:
-            pretty_print = {'sort_keys':True, 'indent':4, 'separators':(',', ': ')}
+        with open('{}.json'.format(path), 'w') as outfile:
+            pretty_print = {
+                'sort_keys': True,
+                'indent': 4,
+                'separators': (',', ': ')
+            }
             outfile.write(json.dumps(self.savedcontents, **pretty_print))
