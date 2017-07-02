@@ -1,12 +1,12 @@
 PYTH = python2.7
 VENV = venv
-BUILD = build# probs not best practice
-APP = $(BUILD)/makeconf.app/
+BUILD = build
+APP = ratings.app presets.app
 SRC = src
 
 
 
-.PHONY: all build clean
+.PHONY: all build clean $(APP)
 
 #$(VENV)/bin/py2applet -s -d build/ src/makeconf.py
 #rm -rf $(BUILD)/bdist*
@@ -15,16 +15,14 @@ all: venv build
 
 build: $(APP)
 
-$(APP): $(VENV)/bin/py2applet setup.py $(SRC)/makeconf.py
-	$(VENV)/bin/$(PYTH) setup.py py2app
+$(APP): % : $(BUILD)/%
 
-#makeconf depends on contents
-$(SRC)/makeconf.py: $(SRC)/contents.py
-	@touch $(SRC)/makeconf.py
+$(BUILD)/%.app: $(VENV)/bin/py2applet setup.py $(SRC)/%.py
+	$(VENV)/bin/$(PYTH) setup.py py2app --app="['src/$*.py']"
 
 setup.py: $(VENV)/bin/py2applet
 	rm -f setup.py
-	$(VENV)/bin/py2applet --make-setup -a -s --site-packages --packages=PySide -d $(BUILD) -b $(BUILD) $(SRC)/makeconf.py
+	$(VENV)/bin/py2applet --make-setup -a -s --site-packages --packages=PySide -d $(BUILD) -b $(BUILD)
 
 $(VENV)/bin/py2applet: requirements
 
@@ -41,3 +39,6 @@ $(VENV)/pip-selfcheck.json: $(VENV) requirements.txt
 $(VENV):
 	virtualenv $(VENV) --python=$(PYTH)
 	rm -f $(VENV)/pip-selfcheck.json
+
+clean: 
+	rm -rf $(BUILD)
