@@ -13,22 +13,26 @@ import json
 
 import logging
 
-__appname__     = ""
-__author__      = "Marco Sirabella"
-__copyright__   = ""
-__credits__     = ["Marco Sirabella"]  # Authors and bug reporters
-__license__     = "GPL"
-__version__     = "1.0"
-__maintainers__ = "Marco Sirabella"
-__email__       = "msirabel@gmail.com"
-__status__      = "Prototype"  # "Prototype", "Development" or "Production"
-__module__      = ""
+import abc
+import six
+
+__appname__     = ''
+__author__      = 'Marco Sirabella'
+__copyright__   = ''
+__credits__     = ['Marco Sirabella',
+                   'Kevin Cole']  # Authors and bug reporters
+__license__     = 'GPL'
+__version__     = '1.0'
+__maintainers__ = 'Marco Sirabella'
+__email__       = 'msirabel@gmail.com'
+__status__      = 'Prototype'  # 'Prototype', 'Development' or 'Production'
+__module__      = ''
 
 logger = logging.getLogger()
 logging.basicConfig()
 logger.setLevel(logging.DEBUG)
 
-defaultdir = os.path.expandsuer('~/.config/sound-advice/')
+defaultdir = os.path.expanduser('~/.config/sound-advice/')
 
 
 def description_and_label(text, inputobj):
@@ -48,48 +52,50 @@ def description_and_label(text, inputobj):
         pass
     return layout
 
+
 def wandl(widget, layout):
     widget.layout = layout
     widget.setLayout(widget.layout)
     return widget
+
 
 def okbutt(func, button=None, buttonText='OK'):
     print(buttonText)
     if button is None:
         button = PySide.QtGui.QPushButton(buttonText)
     else:
-        if button.text() is not "":
+        if button.text() is not '':
             button.setText(buttonText)
     button.clicked.connect(func)
     return button
 
-import abc
-import six
-
-
 #class MyWindow(PySide.QtGui.QMainWindow):
 #@six.add_metaclass(abc.ABCMeta)
+
+
 class BaseWindow(PySide.QtGui.QMainWindow):
     namevar = ''
     name = ''
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
         self.selfmenubar = self.menuBar()
         self.reInitGui()
 
-        self.label = "yo"
+        self.label = 'yo'
 
     def reInitGui(self):
         self.savedcontents = {}
         self.widget = wandl(PySide.QtGui.QWidget(), PySide.QtGui.QVBoxLayout())
         description = PySide.QtGui.QLineEdit()
-        self.widget.layout.addLayout(description_and_label('Description', description))
+        self.widget.layout.addLayout(description_and_label('Description',
+                                                           description))
         description_ok = PySide.QtGui.QPushButton()
         description_ok.setText('OK')
 
         def lockDescription():
-            """ Take a description and on ok hide """
+            ''' Take a description and on ok hide '''
             text = description.text()
             if text:
                 description.setEnabled(False)
@@ -97,8 +103,9 @@ class BaseWindow(PySide.QtGui.QMainWindow):
                 self.widget.layout.removeWidget(description_ok)
                 description_ok.hide()
             else:
-                PySide.QtGui.QMessageBox.critical(self.widget, 'Empty Description',
-                'Description box cannot be empty')
+                PySide.QtGui.QMessageBox.critical(self.widget,
+                                                  'Empty Description',
+                                                  'Description box cannot be empty')
 
         description_ok = okbutt(lockDescription)
         self.widget.layout.addWidget(description_ok)
@@ -113,7 +120,6 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         addbutton = PySide.QtGui.QPushButton('+')
         addbutton.clicked.connect(self.add_thing)
         dropdownlayout.addWidget(addbutton)
-
 
         self.widget.layout.addLayout(dropdownlayout)
         self.things = []
@@ -132,8 +138,6 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         if ci >= 0 and not self.editing_dropdown:
             self.things[ci].show()
 
-
-
     def initUI(self):
 
         # Initialize menu bar
@@ -144,48 +148,42 @@ class BaseWindow(PySide.QtGui.QMainWindow):
 
         # Initialize menu tabs
         fileMenu = PySide.QtGui.QMenu(menuBar)
-        fileMenu.setTitle("File")
+        fileMenu.setTitle('File')
 
         editMenu = PySide.QtGui.QMenu(menuBar)
-        editMenu.setTitle("Edit")
-
+        editMenu.setTitle('Edit')
 
         # Give menu tabs actions
         action = fileMenu.addAction('New Exercise', self.reInitGui)
-        action.setShortcut(PySide.QtGui.QKeySequence("Ctrl+N"))
+        action.setShortcut(PySide.QtGui.QKeySequence('Ctrl+N'))
 
         action = fileMenu.addAction('Open...', self.import_data)
-        action.setShortcut(PySide.QtGui.QKeySequence("Ctrl+O"))
+        action.setShortcut(PySide.QtGui.QKeySequence('Ctrl+O'))
 
         fileMenu.addSeparator() # This is a horizontal bar
 
         action = fileMenu.addAction('Close')
-        action.setShortcut(PySide.QtGui.QKeySequence("Ctrl+W"))
+        action.setShortcut(PySide.QtGui.QKeySequence('Ctrl+W'))
 
         action = fileMenu.addAction('Save', self.write)
-        action.setShortcut(PySide.QtGui.QKeySequence("Ctrl+S"))
+        action.setShortcut(PySide.QtGui.QKeySequence('Ctrl+S'))
         self.save = action
         self.save.setEnabled(False)
 
         action = fileMenu.addAction('Save As...', self.export_data)
-        action.setShortcut(PySide.QtGui.QKeySequence("Ctrl+Shift+S"))
-
+        action.setShortcut(PySide.QtGui.QKeySequence('Ctrl+Shift+S'))
 
         action = editMenu.addAction('Add {}'.format(self.name.capitalize()),
-                self.add_thing)
-        #action.setShortcut(PySide.QtGui.QKeySequence(self.add_rating"Ctrl+Shift+S"))
-
+                                    self.add_thing)
+        #action.setShortcut(PySide.QtGui.QKeySequence(self.add_rating'Ctrl+Shift+S'))
 
         # Give menu bar tabs
         menuBar.addAction(fileMenu.menuAction())
         menuBar.addAction(editMenu.menuAction())
 
-
         self.setGeometry(300, 300, 250, 150)
         self.windowtitle = 'Sound Advice Configuration Editor ({})'
         self.setWindowTitle(self.windowtitle.format('New File'))
-
-
 
         self.show()
 
@@ -194,16 +192,17 @@ class BaseWindow(PySide.QtGui.QMainWindow):
 
     def error(self, title, message, error_message=None):
         if error_message:
-            PySide.QtGui.QMessageBox.critical(self, title, message.format(error_message))
+            PySide.QtGui.QMessageBox.critical(self, title,
+                                              message.format(error_message))
         else:
             PySide.QtGui.QMessageBox.critical(self, title, message)
 
     def import_data(self):
-        from PySide.QtGui.QFileDialog import getOpenFileName
+        getOpenFileName = PySide.QtGui.QFileDialog.getOpenFileName
         jsonFile = getOpenFileName(parent=None,
-                                   caption="Open Configuration File",
-                                   dir=defaultdir
-                                   filter="JSON files (*.json)")
+                                   caption='Open Configuration File',
+                                   dir=defaultdir,
+                                   filter='JSON files (*.json)')
         print(json.load(open(jsonFile[0], 'r')))
         raise NotImplementedError()
         self.reInitGui()
@@ -225,9 +224,9 @@ class BaseWindow(PySide.QtGui.QMainWindow):
                     currentwidget.question.setText(x['question'])
                     currentwidget.rType.setCurrentIndex(
                             responses[x['subtype']])
-                    if x['subtype'] != "free":
+                    if x['subtype'] != 'free':
                         currentwidget.options.questionNum.setValue(
-                                len(x['options']))
+                            len(x['options']))
                     if x['options']:
                         for c, d in enumerate(x['options']):
                             cresponse = currentwidget.options.responses[c]
@@ -236,21 +235,21 @@ class BaseWindow(PySide.QtGui.QMainWindow):
 
             except EOFError as err:
                 print(err)
-                self.error("import failed",
-                           "<p>import file failed to open with<br />{}</p>",
+                self.error('import failed',
+                           '<p>import file failed to open with<br />{}</p>',
                            err)
                 return 1
             except KeyError as err:
-                self.error("Invalid file",
-                           "<b>Import file failed to open with<br />{}</b>",
+                self.error('Invalid file',
+                           '<b>Import file failed to open with<br />{}</b>',
                            err)
 
     def export_data(self):
-        from PySide.QtGui.QFileDialog import getSaveFileName
+        getSaveFileName = PySide.QtGui.QFileDialog.getSaveFileName
         savefilepath = getSaveFileName(parent=None,
-                                       caption="hi",
+                                       caption='hi',
                                        dir=defaultdir,
-                                       filter="JSON files(*.json)")[0]
+                                       filter='JSON files(*.json)')[0]
         logger.info('path given to save is {}'.format(savefilepath))
         self.write(savefilepath)
 
@@ -269,18 +268,17 @@ class BaseWindow(PySide.QtGui.QMainWindow):
                 pass
             thing.write_file(os.path.basename(path), dirpath)
 
-        self.savedcontents.update({
-                '{}s'.format(self.name): [thing.data[self.namevar] for thing
-                    in self.things]
-                })
+        self.savedcontents.update(
+            {'{}s'.format(self.name): [thing.data[self.namevar]
+                                       for thing in self.things]
+             })
 
         self.setWindowTitle(self.windowtitle.format(os.path.basename(path)))
         self.save.setEnabled(True)
 
         with open('{}.json'.format(path), 'w') as outfile:
-            pretty_print = {
-                'sort_keys': True,
-                'indent': 4,
-                'separators': (',', ': ')
-            }
+            pretty_print = {'sort_keys': True,
+                            'indent': 4,
+                            'separators': (',', ': ')
+                            }
             outfile.write(json.dumps(self.savedcontents, **pretty_print))
