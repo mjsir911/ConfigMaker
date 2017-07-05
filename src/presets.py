@@ -24,7 +24,8 @@ standard_library.install_aliases()
 __appname__     = ""
 __author__      = "Marco Sirabella"
 __copyright__   = ""
-__credits__     = ["Marco Sirabella"]  # Authors and bug reporters
+__credits__     = ["Marco Sirabella",
+                   "Kevin Cole"]  # Authors and bug reporters
 __license__     = "GPL"
 __version__     = "1.0"
 __maintainers__ = "Marco Sirabella"
@@ -39,6 +40,7 @@ logger.setLevel(logging.DEBUG)
 
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
+
     def __init__(self, parent=None):
         self.data = {'type': 'preset'}
         super().__init__(parent)
@@ -56,12 +58,13 @@ class SubWindow(PySide.QtGui.QDialog):
         self.program = self.programlayout.inputobj
         del program
         self.layout.addLayout(self.programlayout)
-        #self.layout.addLayout(self.programlayout, 0, 1, PySide.QtCore.Qt.AlignCenter)
+        # self.layout.addLayout(self.programlayout, 0, 1,
+        #                      PySide.QtCore.Qt.AlignCenter)
 
         self.glayout = Py.QtGui.QGridLayout()
 
         self.datums = []
-        #http://mathworld.wolfram.com/TriangleWave.html
+        # http://mathworld.wolfram.com/TriangleWave.html
         x_equation = lambda t: 8 * abs(round((1 / 8) * (t - 1)) - (1 / 8) * (t - 1))
         y_equation = lambda t: 8 * abs(round((1 / 8) * (t - 3)) - (1 / 8) * (t - 3))
         # THESE ARE FOR THE EQUATIONS BELOOWWWW
@@ -85,7 +88,7 @@ class SubWindow(PySide.QtGui.QDialog):
             button.setText(str(testest))
             xc = x_equation(testest)
             yc = y_equation(testest)
-            #print(xc, yc)
+            # print(xc, yc)
             self.glayout.addWidget(button, xc, yc)
 
         """ In case of emergency, break quotes
@@ -101,10 +104,9 @@ class SubWindow(PySide.QtGui.QDialog):
         self.layout.addLayout(self.glayout)
         buttonlayout = PySide.QtGui.QHBoxLayout()
         buttonlayout.addWidget(okbutt(self.write))
-        buttonlayout.addWidget(okbutt(
-                func=lambda: self.close(),
-                buttonText='Cancel',
-                ))
+        buttonlayout.addWidget(okbutt(func=lambda: self.close(),
+                                      buttonText='Cancel',
+                                      ))
         self.layout.addLayout(buttonlayout)
 
         self.setLayout(self.layout)
@@ -118,34 +120,28 @@ class SubWindow(PySide.QtGui.QDialog):
         return self
 
     def write(self):
-        self.data.update({
-            'description': self.desc.inputobj.text(),
-            'program': self.program.value(),
-            'targets': [3],
-            'step': 2,
-            'range': [-5, 5],
-            'rsize': [200, 250],
-            })
+        self.data.update({'description': self.desc.inputobj.text(),
+                          'program': self.program.value(),
+                          'targets': [3],
+                          'step': 2,
+                          'range': [-5, 5],
+                          'rsize': [200, 250],
+                          })
 
         self.data['noise'] = noise = []
         self.data['signal'] = signal = []
         for datum in self.datums:
             # these are all interior datums
-            signal.append({
-                'sample': datum.signal.sampleinput.value(),
-                'level': datum.signal.levelinput.value(),
-                'offset': datum.signal.offsetinput.value(),
-                'state': datum.signal.state.isChecked(),
-                })
-            noise.append({
-                'sample': datum.noise.sampleinput.value(),
-                'level': datum.noise.levelinput.value(),
-                'offset': datum.noise.offsetinput.value(),
-                'state': datum.noise.state.isChecked(),
-                })
-
-
-
+            signal.append({'sample': datum.signal.sampleinput.value(),
+                           'level': datum.signal.levelinput.value(),
+                           'offset': datum.signal.offsetinput.value(),
+                           'state': datum.signal.state.isChecked(),
+                           })
+            noise.append({'sample': datum.noise.sampleinput.value(),
+                          'level': datum.noise.levelinput.value(),
+                          'offset': datum.noise.offsetinput.value(),
+                          'state': datum.noise.state.isChecked(),
+                          })
 
         self.hide()
         if self not in self.parent.things:
@@ -160,7 +156,9 @@ class SubWindow(PySide.QtGui.QDialog):
                   prefix,
                   self.data['description']),
                   'w') as outfile:
-            pretty_print = {'sort_keys':True, 'indent':4, 'separators':(',', ': ')}
+            pretty_print = {'sort_keys': True,
+                            'indent': 4,
+                            'separators': (',', ': ')}
             outfile.write(json.dumps(self.data, **pretty_print))
 
     class InteriorDatum(Py.QtGui.QWidget):
@@ -170,9 +168,10 @@ class SubWindow(PySide.QtGui.QDialog):
 
             layout = Py.QtGui.QVBoxLayout()
             switchlayout = Py.QtGui.QHBoxLayout()
-            #print(type(self.parent.datums))
-            #desclabel = Py.QtGui.QLabel("Description" + str(len(self.parent.datums)) + "after")
-            speakernum = Py.QtGui.QLabel("Speaker Number " + str(len(self.parent.datums) + 1))
+            # print(type(self.parent.datums))
+            # desclabel = Py.QtGui.QLabel('Description' + str(len(self.parent.datums)) + 'after')
+            speakernum = Py.QtGui.QLabel('Speaker Number {0}'
+                                         .format(len(self.parent.datums) + 1))
             f = Py.QtGui.QFont()
             f.setWeight(Py.QtGui.QFont.Black)
             speakernum.setFont(f)
@@ -182,29 +181,25 @@ class SubWindow(PySide.QtGui.QDialog):
             speakerhead.addStretch(0.5)
             layout.addLayout(speakerhead)
 
-
-
             """
             flippy_buttons = Py.QtGui.QHBoxLayout()
             flippy_buttons.setSpacing(-0.1)
-            self.signalButton = Py.QtGui.QPushButton("Signal")
+            self.signalButton = Py.QtGui.QPushButton('Signal')
             self.signalButton = Py.QtGui.QToolButton()
-            self.signalButton.setText("Signal")
-            self.noiseButton = Py.QtGui.QPushButton("Noise")
+            self.signalButton.setText('Signal')
+            self.noiseButton = Py.QtGui.QPushButton('Noise')
             self.noiseButton = Py.QtGui.QToolButton()
-            self.noiseButton.setText("Noise")
+            self.noiseButton.setText('Noise')
 
             flippy_buttons.addWidget(self.signalButton)
             flippy_buttons.addWidget(self.noiseButton)
             """
 
+            self.signal = self.SignalOrNoise('Signal', self)
+            self.noise = self.SignalOrNoise('Noise', self)
 
-
-            self.signal = self.SignalOrNoise("Signal", self)
-            self.noise = self.SignalOrNoise("Noise", self)
-
-            #self.signalButton.clicked.connect(self.signal.show)
-            #self.noiseButton.clicked.connect(self.noise.show)
+            # self.signalButton.clicked.connect(self.signal.show)
+            # self.noiseButton.clicked.connect(self.noise.show)
 
             signal_noise_layout = Py.QtGui.QHBoxLayout()
 
@@ -215,7 +210,7 @@ class SubWindow(PySide.QtGui.QDialog):
 
             self.target = Py.QtGui.QCheckBox()
             targetlayout = Py.QtGui.QHBoxLayout()
-            label = Py.QtGui.QLabel("Target:")
+            label = Py.QtGui.QLabel('Target:')
             targetlayout.addStretch(0.5)
             targetlayout.addWidget(label)
             targetlayout.addWidget(self.target)
@@ -224,11 +219,11 @@ class SubWindow(PySide.QtGui.QDialog):
 
             self.layout = layout
 
-            #layout.addLayout(switchlayout)
-            #self.parent.layout.addWidget(desclabel, 2, 2)
-            #layout.addWidget(desclabel)
-            #layout.addLayout(flippy_buttons)
-            #self.layout.add
+            # layout.addLayout(switchlayout)
+            # self.parent.layout.addWidget(desclabel, 2, 2)
+            # layout.addWidget(desclabel)
+            # layout.addLayout(flippy_buttons)
+            # self.layout.add
             layout.addLayout(switchlayout)
             self.setLayout(layout)
 
@@ -237,8 +232,8 @@ class SubWindow(PySide.QtGui.QDialog):
             for x in self.parent.datums:
                 if x is not self:
                     x.hide()
-                #pass
-                #self.parent.layout.removeWidget(self)
+                # pass
+                # self.parent.layout.removeWidget(self)
 
             self.parent.glayout.addWidget(self, 2, 2)
             self.parent.glayout.indexOf(self)
@@ -247,15 +242,15 @@ class SubWindow(PySide.QtGui.QDialog):
             super().hide()
             self.parent.glayout.removeWidget(self)
 
-
-
         class SignalOrNoise(Py.QtGui.QWidget):
+
             def buttonclick(self):
                 self.parent.datums
                 for datum in self.parent.datums:
                     if datum is not self:
                         pass
-                        "make button not blue"
+                        'make button not blue'
+
             def __init__(self, sigornoise, parent=None):
                 super().__init__(parent)
                 self.parent = parent
@@ -272,11 +267,10 @@ class SubWindow(PySide.QtGui.QDialog):
                 state: radio button true or false
                 """
 
-
                 self.state = Py.QtGui.QCheckBox()
                 self.state.setCheckState(Py.QtCore.Qt.Checked)
                 statelayout = Py.QtGui.QHBoxLayout()
-                label = Py.QtGui.QLabel("State:")
+                label = Py.QtGui.QLabel('State:')
                 statelayout.addWidget(label)
                 statelayout.addWidget(self.state)
                 self.layout.addLayout(statelayout)
@@ -284,7 +278,7 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.sampleinput = Py.QtGui.QSpinBox()
                 self.sampleinput.setMinimum(1)
                 samplelayout = Py.QtGui.QHBoxLayout()
-                label = Py.QtGui.QLabel("Sample:")
+                label = Py.QtGui.QLabel('Sample:')
                 samplelayout.addWidget(label)
                 samplelayout.addWidget(self.sampleinput)
                 self.layout.addLayout(samplelayout)
@@ -293,27 +287,27 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.levelinput.setMinimum(-50)
                 self.levelinput.setMaximum(50)
                 levellayout = Py.QtGui.QHBoxLayout()
-                label = Py.QtGui.QLabel("Level:")
+                label = Py.QtGui.QLabel('Level:')
                 levellayout.addWidget(label)
                 levellayout.addWidget(self.levelinput)
                 self.layout.addLayout(levellayout)
 
                 self.offsetinput = Py.QtGui.QSpinBox()
                 offsetlayout = Py.QtGui.QHBoxLayout()
-                label = Py.QtGui.QLabel("Offset(ms):")
+                label = Py.QtGui.QLabel('Offset(ms):')
                 offsetlayout.addWidget(label)
                 offsetlayout.addWidget(self.offsetinput)
                 self.layout.addLayout(offsetlayout)
 
                 self.setLayout(self.layout)
-                #self.hide()
-
+                # self.hide()
 
 
 class MyWindow(BaseWindow):
     name = 'preset'
     namevar = 'description'
     subwind = SubWindow
+
 
 app = PySide.QtGui.QApplication(sys.argv)
 main_window = MyWindow()
@@ -323,5 +317,5 @@ font.setPointSize(24)
 app.setFont(font)
 app.exec_()
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #    main()
