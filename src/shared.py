@@ -199,7 +199,7 @@ class BaseWindow(PySide.QtGui.QMainWindow):
             PySide.QtGui.QMessageBox.critical(self, title, message)
 
     def import_data(self):
-        from PySide.QtGui.QFileDialog import getOpenFileName
+        getOpenFileName = PySide.QtGui.QFileDialog.getOpenFileName
         jsonFile = getOpenFileName(parent=None,
                                    caption="Open Configuration File",
                                    dir=defaultdir,
@@ -246,7 +246,7 @@ class BaseWindow(PySide.QtGui.QMainWindow):
                            err)
 
     def export_data(self):
-        from PySide.QtGui.QFileDialog import getSaveFileName
+        getSaveFileName = PySide.QtGui.QFileDialog.getSaveFileName
         savefilepath = getSaveFileName(parent=None,
                                        caption="hi",
                                        dir=defaultdir,
