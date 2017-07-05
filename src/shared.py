@@ -202,7 +202,7 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         from PySide.QtGui.QFileDialog import getOpenFileName
         jsonFile = getOpenFileName(parent=None,
                                    caption="Open Configuration File",
-                                   dir=defaultdir
+                                   dir=defaultdir,
                                    filter="JSON files (*.json)")
         print(json.load(open(jsonFile[0], 'r')))
         raise NotImplementedError()
