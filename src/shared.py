@@ -28,7 +28,7 @@ logger = logging.getLogger()
 logging.basicConfig()
 logger.setLevel(logging.DEBUG)
 
-defaultdir = os.path.expandsuer('~/.config/sound-advice/')
+defaultdir = os.path.expanduser('~/.config/sound-advice/')
 
 
 def description_and_label(text, inputobj):
