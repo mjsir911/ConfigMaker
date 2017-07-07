@@ -65,8 +65,8 @@ class SubWindow(PySide.QtGui.QDialog):
 
         self.datums = []
         # http://mathworld.wolfram.com/TriangleWave.html
-        x_equation = lambda t: 8 * abs(round((1 / 8) * (t - 1)) - (1 / 8) * (t - 1))
-        y_equation = lambda t: 8 * abs(round((1 / 8) * (t - 3)) - (1 / 8) * (t - 3))
+        x_equation = lambda t: 8 * abs(round((1 / 8) * (t - 1)) - (1 / 8) * (t - 1))  # noqa
+        y_equation = lambda t: 8 * abs(round((1 / 8) * (t - 3)) - (1 / 8) * (t - 3))  # noqa
         # THESE ARE FOR THE EQUATIONS BELOOWWWW
         for testest in range(1, 9):
             """
@@ -168,8 +168,6 @@ class SubWindow(PySide.QtGui.QDialog):
 
             layout = Py.QtGui.QVBoxLayout()
             switchlayout = Py.QtGui.QHBoxLayout()
-            # print(type(self.parent.datums))
-            # desclabel = Py.QtGui.QLabel('Description' + str(len(self.parent.datums)) + 'after')
             speakernum = Py.QtGui.QLabel('Speaker Number {0}'
                                          .format(len(self.parent.datums) + 1))
             f = Py.QtGui.QFont()
@@ -220,8 +218,6 @@ class SubWindow(PySide.QtGui.QDialog):
             self.layout = layout
 
             # layout.addLayout(switchlayout)
-            # self.parent.layout.addWidget(desclabel, 2, 2)
-            # layout.addWidget(desclabel)
             # layout.addLayout(flippy_buttons)
             # self.layout.add
             layout.addLayout(switchlayout)

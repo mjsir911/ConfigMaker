@@ -9,7 +9,6 @@ from builtins import super
 from builtins import open
 from builtins import zip
 from future import standard_library
-standard_library.install_aliases()
 import PySide.QtCore
 import PySide.QtGui
 import PySide as Py
@@ -17,7 +16,10 @@ import sys
 import os
 import json
 
+
 from shared import *
+
+standard_library.install_aliases()
 
 __appname__     = ""
 __author__      = "Marco Sirabella"
