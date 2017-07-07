@@ -132,7 +132,8 @@ class SubWindow(PySide.QtGui.QDialog):
         self.data['name'] = self.name.inputobj.text()
         self.data['subtype'] = responses[self.rType.currentText()]
         self.data['question'] = self.question.inputobj.text()
-        self.data['options'] = [(x.selection.text(), x.recode.value()) for x in self.responses if not x.isHidden()]
+        self.data['options'] = [(x.recode.text(), x.selection.value())
+                                for x in self.responses if not x.isHidden()]
         self.hide()
         if self not in self.parent.things:
             self.parent.things.append(self)
