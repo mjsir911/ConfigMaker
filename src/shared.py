@@ -198,11 +198,11 @@ class BaseWindow(PySide.QtGui.QMainWindow):
             PySide.QtGui.QMessageBox.critical(self, title, message)
 
     def import_data(self):
-        from PySide.QtGui.QFileDialog import getOpenFileName
-        jsonFile = getOpenFileName(parent=None,
-                                   caption='Open Configuration File',
-                                   dir=defaultdir,
-                                   filter='JSON files (*.json)')
+        from PySide.QtGui import QFileDialog
+        jsonFile = QFileDialog.getOpenFileName(parent=None,
+                                               caption='Open Config File',
+                                               dir=defaultdir,
+                                               filter='JSON files (*.json)')
         print(json.load(open(jsonFile[0], 'r')))
         raise NotImplementedError()
         self.reInitGui()
@@ -245,11 +245,12 @@ class BaseWindow(PySide.QtGui.QMainWindow):
                            err)
 
     def export_data(self):
-        from PySide.QtGui.QFileDialog import getSaveFileName
-        savefilepath = getSaveFileName(parent=None,
-                                       caption='hi',
-                                       dir=defaultdir,
-                                       filter='JSON files(*.json)')[0]
+        from PySide.QtGui import QFileDialog
+        savefilepath = QFileDialog.getSaveFileName(parent=None,
+                                                   caption='Export Config File',
+                                                   dir=defaultdir,
+                                                   filter='JSON files(*.json)'
+                                                  )[0]
         logger.info('path given to save is {}'.format(savefilepath))
         self.write(savefilepath)
 
@@ -263,7 +264,7 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         dirpath = os.path.dirname(os.path.abspath(path))
         for thing in self.things:
             try:
-                os.mkdir('{}/preset'.format(dirpath))
+                os.mkdir('{}/{}'.format(dirpath, thing.data['type']))
             except OSError:
                 pass
             thing.write_file(os.path.basename(path), dirpath)

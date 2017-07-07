@@ -149,16 +149,21 @@ class SubWindow(PySide.QtGui.QDialog):
         self.parent.update_dropdown()
 
     def write_file(self, prefix, pathdir):
-        logger.info('writing sub-file %s/preset/%s-%s.json', pathdir, prefix,
-                    self.data['description'])
-        with open('{}/preset/{}-{}.json'.format(
-                  pathdir,
-                  prefix,
-                  self.data['description']),
+        logger.info('writing sub-file %s/%s/%s-%s.json',
+                     pathdir,
+                     self.data['type'],
+                     prefix,
+                     self.data['description'])
+        with open('{}/{}/{}-{}.json'.format(pathdir,
+                                            self.data['type']
+                                            prefix,
+                                            self.data['description']
+                                           ),
                   'w') as outfile:
             pretty_print = {'sort_keys': True,
                             'indent': 4,
-                            'separators': (',', ': ')}
+                            'separators': (',', ': ')
+                           }
             outfile.write(json.dumps(self.data, **pretty_print))
 
     class InteriorDatum(Py.QtGui.QWidget):
