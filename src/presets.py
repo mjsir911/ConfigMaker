@@ -202,8 +202,8 @@ class SubWindow(PySide.QtGui.QDialog):
             self.signal = self.SignalOrNoise('Signal', self)
             self.noise = self.SignalOrNoise('Noise', self)
 
-            #self.signalButton.clicked.connect(self.signal.show)
-            #self.noiseButton.clicked.connect(self.noise.show)
+            # self.signalButton.clicked.connect(self.signal.show)
+            # self.noiseButton.clicked.connect(self.noise.show)
 
             signal_noise_layout = Py.QtGui.QHBoxLayout()
 
@@ -303,6 +303,7 @@ class SubWindow(PySide.QtGui.QDialog):
 
                 self.setLayout(self.layout)
                 # self.hide()
+
 
 class MyWindow(BaseWindow):
     name = 'preset'
