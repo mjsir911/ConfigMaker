@@ -202,8 +202,19 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         jsonFile = QFileDialog.getOpenFileName(parent=None,
                                                caption='Open Config File',
                                                dir=defaultdir,
-                                               filter='JSON files (*.json)')
-        print(json.load(open(jsonFile[0], 'r')))
+                                               filter='JSON files (*.json)')[0]
+        logger.info('opening path %s', jsonFile)
+        with open(jsonFile, 'r') as fp:
+            data = json.load(fp)
+        wd = os.path.dirname(jsonFile)
+        if self.name + 's' not in data:  # ugh plural and singular
+            logging.error("ERROR!: %s not in %s", self.name + 's', data)
+        for thingname in data[self.name + 's']:
+            with open('{}/{}/{}-{}.json'.format(wd,
+                                                self.name,
+                                                os.path.splitext(os.path.basename(jsonFile))[0],
+                                                thingname)) as fp:
+                self.subwind.load(self, fp)
         raise NotImplementedError()
         self.reInitGui()
         if jsonFile[0]:  # If a valid filename has been selected...

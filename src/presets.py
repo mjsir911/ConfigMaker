@@ -115,8 +115,9 @@ class SubWindow(PySide.QtGui.QDialog):
     def load(cls, parent, fp):
         self = cls(parent)
         self.data = json.load(fp)
-        for preset_name in self.data['presets']:
-            print(preset_name)
+        logger.info("loading subfile %s with contents %s", fp.name, self.data)
+        for noise, signal in zip(self.data['noise'], self.data['signal']):
+            print(noise, signal)
         return self
 
     def write(self):
@@ -150,15 +151,15 @@ class SubWindow(PySide.QtGui.QDialog):
 
     def write_file(self, prefix, pathdir):
         logger.info('writing sub-file %s/%s/%s-%s.json',
-                     pathdir,
-                     self.data['type'],
-                     prefix,
-                     self.data['description'])
+                    pathdir,
+                    self.data['type'],
+                    prefix,
+                    self.data['description'])
         with open('{}/{}/{}-{}.json'.format(pathdir,
-                                            self.data['type']
+                                            self.data['type'],
                                             prefix,
                                             self.data['description']
-                                           ),
+                                            ),
                   'w') as outfile:
             pretty_print = {'sort_keys': True,
                             'indent': 4,
