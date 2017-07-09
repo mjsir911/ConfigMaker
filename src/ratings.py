@@ -142,10 +142,10 @@ class SubWindow(PySide.QtGui.QDialog):
 
     def write_file(self, prefix, pathdir):
         logger.info('writing sub-file %s/%s/%s-%s.json',
-                     pathdir,
-                     self.data['type'],
-                     prefix,
-                     self.data['description'])
+                    pathdir,
+                    self.data['type'],
+                    prefix,
+                    self.data[self.parent.namevar])
         with open('{}/{}/{}-{}.json'.format(pathdir,
                                             self.data['type'],
                                             prefix,
