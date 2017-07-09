@@ -32,6 +32,7 @@ __maintainers__ = "Marco Sirabella"
 __email__       = "msirabel@gmail.com"
 __status__      = "Prototype"  # "Prototype", "Development" or "Production"
 __module__      = ""
+responses = {'radio': 0, 'check': 1, 'free': 2}
 
 
 responses = {'radio': 0, 'check': 1, 'free': 2}
