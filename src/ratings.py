@@ -113,7 +113,7 @@ class SubWindow(PySide.QtGui.QDialog):
             self.selection.setPlaceholderText("Text")
             self.questionNum = Py.QtGui.QSpinBox()
             self.recode = Py.QtGui.QSpinBox()
-            #self.recode.setPlaceholderText("Number")
+            self.recode.setValue(num + 1)
             self.questionNum.setRange(0, -1)
 
             self.hbox = Py.QtGui.QHBoxLayout()
