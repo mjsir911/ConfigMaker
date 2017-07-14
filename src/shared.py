@@ -260,7 +260,6 @@ class BaseWindow(PySide.QtGui.QMainWindow):
 
     def export_data(self):
         from PySide.QtGui import QFileDialog
-        print(defaultdir + self.name + 's/')
         savedir = defaultdir + self.name + 's/'
         try:
             os.mkdir(savedir)
