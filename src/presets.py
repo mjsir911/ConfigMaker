@@ -312,7 +312,7 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.offsetinput = Py.QtGui.QSpinBox()
                 self.offsetinput.setValue(data['offset'])
                 offsetlayout = Py.QtGui.QHBoxLayout()
-                label = Py.QtGui.QLabel('Offset(ms):')
+                label = Py.QtGui.QLabel('Offset:')
                 offsetlayout.addWidget(label)
                 offsetlayout.addWidget(self.offsetinput)
                 self.layout.addLayout(offsetlayout)
