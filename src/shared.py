@@ -288,7 +288,7 @@ class BaseWindow(PySide.QtGui.QMainWindow):
 
         for i, thing in enumerate(self.things):
             numprefix = (i + 1) * 10
-            with open("{}/{:02}-{}.json".format(path, numprefix, thing.data['description']), 'w') as fp:
+            with open("{}/{:02}-{}.json".format(path, numprefix, thing.data[self.namevar]), 'w') as fp:
                 print(fp.name)
                 thing.write_file(fp)
 
