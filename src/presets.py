@@ -59,7 +59,7 @@ class SubWindow(PySide.QtGui.QDialog):
         self.parent = parent
         self.layout = Py.QtGui.QVBoxLayout()
 
-        self.desc = description_and_label('Description', Py.QtGui.QLineEdit())
+        self.desc = description_and_label('Scenario Description', Py.QtGui.QLineEdit())
         self.layout.addLayout(self.desc)
 
         program = Py.QtGui.QSpinBox()
