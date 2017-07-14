@@ -38,10 +38,22 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
+DEFAULT = {
+    'noise':  [{'sample': 1, 'state': True, 'offset': 0, 'level': 0}] * 8,
+    'signal': [{'sample': 1, 'state': True, 'offset': 0, 'level': 0}] * 8,
+    'step': 2,
+    'range': [-5, 5],
+    'program': 1,
+    'rsize': [200, 250],
+    'type': 'preset',
+    'targets': [3]
+        }
+
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, data=DEFAULT):
+        logger.debug("data is %s", data)
         self.data = {'type': 'preset'}
         super().__init__(parent)
         self.parent = parent
@@ -68,7 +80,7 @@ class SubWindow(PySide.QtGui.QDialog):
         x_equation = lambda t: 8 * abs(round((1 / 8) * (t - 1)) - (1 / 8) * (t - 1))  # noqa
         y_equation = lambda t: 8 * abs(round((1 / 8) * (t - 3)) - (1 / 8) * (t - 3))  # noqa
         # THESE ARE FOR THE EQUATIONS BELOOWWWW
-        for testest in range(1, 9):
+        for i, datum in zip(range(1, 9), zip(data['signal'], data['noise'])):
             """
             Courtesy of the internet, i refined the quartic equation
             Now its a triangle graph, mapping x and y coordinates
@@ -78,16 +90,16 @@ class SubWindow(PySide.QtGui.QDialog):
              /  \  /   ooh fancy triangle graph
             /    \/
             """
-            interior = self.InteriorDatum(parent=self)
+            interior = self.InteriorDatum(datum, parent=self)
             self.datums.append(interior)
             interior.show()
             interior.hide()
             button = Py.QtGui.QPushButton()
             button.setFixedWidth(200)
             button.clicked.connect(interior.show)
-            button.setText(str(testest))
-            xc = x_equation(testest)
-            yc = y_equation(testest)
+            button.setText(str(i))
+            xc = x_equation(i)
+            yc = y_equation(i)
             # print(xc, yc)
             self.glayout.addWidget(button, xc, yc)
 
@@ -113,12 +125,10 @@ class SubWindow(PySide.QtGui.QDialog):
 
     @classmethod
     def load(cls, parent, fp):
-        self = cls(parent)
-        self.data = json.load(fp)
-        logger.info("loading subfile %s with contents %s", fp.name, self.data)
-        for noise, signal in zip(self.data['noise'], self.data['signal']):
-            print(noise, signal)
-        return self
+        data = json.load(fp)
+        logger.info("loading subfile %s with contents %s", fp.name, data)
+        self = cls(parent, data)
+        self.exec_()
 
     def write(self):
         self.data.update({'description': self.desc.inputobj.text(),
@@ -168,7 +178,7 @@ class SubWindow(PySide.QtGui.QDialog):
             outfile.write(json.dumps(self.data, **pretty_print))
 
     class InteriorDatum(Py.QtGui.QWidget):
-        def __init__(self, parent=None, data={}):
+        def __init__(self, data, parent=None):
             super().__init__(parent)
             self.parent = parent
 
@@ -199,8 +209,8 @@ class SubWindow(PySide.QtGui.QDialog):
             flippy_buttons.addWidget(self.noiseButton)
             """
 
-            self.signal = self.SignalOrNoise('Signal', self)
-            self.noise = self.SignalOrNoise('Noise', self)
+            self.signal = self.SignalOrNoise('Signal', data[0], self)
+            self.noise = self.SignalOrNoise('Noise', data[1], self)
 
             # self.signalButton.clicked.connect(self.signal.show)
             # self.noiseButton.clicked.connect(self.noise.show)
@@ -253,7 +263,7 @@ class SubWindow(PySide.QtGui.QDialog):
                         pass
                         'make button not blue'
 
-            def __init__(self, sigornoise, parent=None):
+            def __init__(self, sigornoise, data, parent=None):
                 super().__init__(parent)
                 self.parent = parent
                 self.toggle = sigornoise
@@ -269,16 +279,20 @@ class SubWindow(PySide.QtGui.QDialog):
                 state: radio button true or false
                 """
 
-                self.state = Py.QtGui.QCheckBox()
-                self.state.setCheckState(Py.QtCore.Qt.Checked)
+                self.state = Py.QtGui.QCheckBox()  # state checkbox
+                if data['state']:
+                    self.state.setCheckState(Py.QtCore.Qt.CheckState.Checked)
+                else:
+                    self.state.setCheckState(Py.QtCore.Qt.CheckState.Unchecked)
                 statelayout = Py.QtGui.QHBoxLayout()
                 label = Py.QtGui.QLabel('State:')
                 statelayout.addWidget(label)
                 statelayout.addWidget(self.state)
                 self.layout.addLayout(statelayout)
 
-                self.sampleinput = Py.QtGui.QSpinBox()
+                self.sampleinput = Py.QtGui.QSpinBox()  # sample spinbox
                 self.sampleinput.setMinimum(1)
+                self.sampleinput.setValue(data['sample'])
                 samplelayout = Py.QtGui.QHBoxLayout()
                 label = Py.QtGui.QLabel('Sample:')
                 samplelayout.addWidget(label)
@@ -288,6 +302,7 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.levelinput = Py.QtGui.QSpinBox()
                 self.levelinput.setMinimum(-50)
                 self.levelinput.setMaximum(50)
+                self.levelinput.setValue(data['level'])
                 levellayout = Py.QtGui.QHBoxLayout()
                 label = Py.QtGui.QLabel('Level:')
                 levellayout.addWidget(label)
@@ -295,6 +310,7 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.layout.addLayout(levellayout)
 
                 self.offsetinput = Py.QtGui.QSpinBox()
+                self.offsetinput.setValue(data['offset'])
                 offsetlayout = Py.QtGui.QHBoxLayout()
                 label = Py.QtGui.QLabel('Offset(ms):')
                 offsetlayout.addWidget(label)

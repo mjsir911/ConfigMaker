@@ -215,7 +215,7 @@ class BaseWindow(PySide.QtGui.QMainWindow):
                                                 os.path.splitext(os.path.basename(jsonFile))[0],
                                                 thingname)) as fp:
                 self.subwind.load(self, fp)
-        raise NotImplementedError()
+        return
         self.reInitGui()
         if jsonFile[0]:  # If a valid filename has been selected...
             self.filename = jsonFile[0]
