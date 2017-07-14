@@ -257,11 +257,18 @@ class BaseWindow(PySide.QtGui.QMainWindow):
 
     def export_data(self):
         from PySide.QtGui import QFileDialog
+        print(defaultdir + self.name + 's/')
+        savedir = defaultdir + self.name + 's/'
+        try:
+            os.mkdir(savedir)
+        except OSError:
+            pass
+
         savefilepath = QFileDialog.getSaveFileName(parent=None,
                                                    caption='Export Config File',
-                                                   dir=defaultdir,
+                                                   dir=savedir,
                                                    filter='JSON files(*.json)'
-                                                  )[0]
+                                                   )[0]
         logger.info('path given to save is {}'.format(savefilepath))
         self.write(savefilepath)
 
