@@ -199,9 +199,12 @@ class BaseWindow(PySide.QtGui.QMainWindow):
 
     def import_data(self):
         from PySide.QtGui import QFileDialog
+        savedir = defaultdir + self.name + 's/'
+        if not os.path.exists(savedir):
+            print('should raise an error!')
         jsonFile = QFileDialog.getOpenFileName(parent=None,
                                                caption='Open Config File',
-                                               dir=defaultdir,
+                                               dir=savedir,
                                                filter='JSON files (*.json)')[0]
         logger.info('opening path %s', jsonFile)
         with open(jsonFile, 'r') as fp:
