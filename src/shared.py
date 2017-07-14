@@ -266,12 +266,20 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         except OSError:
             pass
 
+        savefilepath = QFileDialog.getExistingDirectory(
+                                                        self,
+                                                        caption="Export Config File",
+                                                        dir=savedir,
+                                                        )[0]
+        """
         savefilepath = QFileDialog.getSaveFileName(parent=None,
                                                    caption='Export Config File',
                                                    dir=savedir,
                                                    filter='JSON files(*.json)'
                                                    )[0]
-        logger.info('path given to save is {}'.format(savefilepath))
+                                                   """
+        logger.info('path given to save is "%s"', savefilepath)
+        raise notImplementedError()
         self.write(savefilepath)
 
     def write(self, path=None):
