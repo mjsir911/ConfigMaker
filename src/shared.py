@@ -27,43 +27,25 @@ class MainWindow(PySide.QtGui.QMainWindow):
         self.setWindowTitle("ScribblerSeq")
         self.showMaximized()
 
-        test = MainWidget(parent=self)
-        #self.setCentralWidget(MainWidget(parent=self))
-        self.setCentralWidget(test)
+        self.setCentralWidget(MainWidget(parent=self))
 
         font = PySide.QtGui.QFont()
         font.setFamily(font.defaultFamily())
         font.setPointSize(28)
         self.setFont(font)
 
-        #left_layout = PySide.QtGui.QVBoxLayout()
-        #self.centralWidget().layout().addLayout(left_layout, stretch=2)
-
-        #left_layout.addLayout(description_layout)
-
         self.show()
-        #description_layout.update()
-
-        description_widget = PySide.QtGui.QWidget(parent=test)
-        self.centralWidget().layout().addWidget(description_widget)
-        description_layout = PySide.QtGui.QFormLayout(parent=description_widget)
-        description_widget.setLayout(description_layout)
-
-        description_layout.addRow("Ratings &description: ",
-                                  PySide.QtGui.QLineEdit())
 
 
 class MainWidget(PySide.QtGui.QGroupBox):
+    """ Put main content here """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        self.l = PySide.QtGui.QHBoxLayout()
-        self.setLayout(self.l)
+        self.setLayout(PySide.QtGui.QHBoxLayout())
 
-        description_widget = PySide.QtGui.QWidget(parent=self)
-        self.l.addWidget(description_widget)
-        description_layout = PySide.QtGui.QFormLayout(parent=description_widget)
-        description_widget.setLayout(description_layout)
+        description_layout = PySide.QtGui.QFormLayout()
+        self.layout().addLayout(description_layout)
 
         description_layout.addRow("Ratings &description: ",
                                   PySide.QtGui.QLineEdit())
