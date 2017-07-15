@@ -266,38 +266,36 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         except OSError:
             pass
 
+        savefilepath = QFileDialog.getExistingDirectory(self,
+                                                        caption="Export Config File",
+                                                        dir=savedir,
+                                                        )
+        """
         savefilepath = QFileDialog.getSaveFileName(parent=None,
                                                    caption='Export Config File',
                                                    dir=savedir,
                                                    filter='JSON files(*.json)'
                                                    )[0]
-        logger.info('path given to save is {}'.format(savefilepath))
+                                                   """
+        logger.info('path given to save is "%s"', savefilepath)
         self.write(savefilepath)
 
     def write(self, path=None):
-        path = path.replace('.json', '')
         if not path:
             path = self.filename
         else:
             self.filename = path
 
-        dirpath = os.path.dirname(os.path.abspath(path))
-        for thing in self.things:
-            try:
-                os.mkdir('{}/{}'.format(dirpath, thing.data['type']))
-            except OSError:
-                pass
-            thing.write_file(os.path.basename(path), dirpath)
-
-        self.savedcontents.update(
-            {'{}s'.format(self.name): [thing.data[self.namevar]
-                                       for thing in self.things]
-             })
+        for i, thing in enumerate(self.things):
+            numprefix = (i + 1) * 10
+            with open("{}/{:02}-{}.json".format(path, numprefix, thing.data[self.namevar]), 'w') as fp:
+                print(fp.name)
+                thing.write_file(fp)
 
         self.setWindowTitle(self.windowtitle.format(os.path.basename(path)))
         self.save.setEnabled(True)
 
-        with open('{}.json'.format(path), 'w') as outfile:
+        with open('{}/00-index.json'.format(path), 'w') as outfile:
             pretty_print = {'sort_keys': True,
                             'indent': 4,
                             'separators': (',', ': ')
