@@ -89,7 +89,7 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         self.savedcontents = {}
         self.widget = wandl(PySide.QtGui.QWidget(), PySide.QtGui.QVBoxLayout())
         description = PySide.QtGui.QLineEdit()
-        self.widget.layout.addLayout(description_and_label('Scenario Description',
+        self.widget.layout.addLayout(description_and_label('{}s Description'.format(self.name.capitalize()),
                                                            description))
         description_ok = PySide.QtGui.QPushButton()
         description_ok.setText('OK')
