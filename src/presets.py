@@ -314,6 +314,7 @@ class SubWindow(PySide.QtGui.QDialog):
 class MyWindow(BaseWindow):
     name = 'preset'
     namevar = 'description'
+    subthing = 'trial'
     subwind = SubWindow
 
 
