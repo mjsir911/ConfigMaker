@@ -146,6 +146,11 @@ class SubWindow(PySide.QtGui.QDialog):
                         }
         fp.write(json.dumps(self.data, **pretty_print))
 
+    def close(self):
+        super().close()
+        self.hide()
+        self.parent.update_dropdown()
+
 
 class MyWindow(BaseWindow):
     name = 'rating'
