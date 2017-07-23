@@ -59,7 +59,7 @@ def wandl(widget, layout):
     return widget
 
 
-def okbutt(func, button=None, buttonText='OK'):
+def okbutt(func, button=None, buttonText='SAVE'):
     print(buttonText)
     if button is None:
         button = PySide.QtGui.QPushButton(buttonText)
@@ -92,7 +92,7 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         self.widget.layout.addLayout(description_and_label('{}s Description'.format(self.name.capitalize()),
                                                            description))
         description_ok = PySide.QtGui.QPushButton()
-        description_ok.setText('OK')
+        #description_ok.setText('SAVE')
 
         def lockDescription():
             """ Take a description and on ok hide """
