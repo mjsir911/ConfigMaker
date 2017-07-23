@@ -33,9 +33,9 @@ __email__       = "msirabel@gmail.com"
 __status__      = "Prototype"  # "Prototype", "Development" or "Production"
 __module__      = ""
 
-responses = {'Radio Buttons': 'radio',
-             'Check Boxes': 'check',
-             'Free Response': 'free'
+responses = {'Single choice': 'single',
+             'Multiple choice': 'multi',
+             'Fill in': 'fill'
              }
 
 
@@ -91,11 +91,11 @@ class SubWindow(PySide.QtGui.QDialog):
 
     def check(self):
         text = self.rType.currentText()
-        if text == "Radio Buttons":
+        if text == "Single choice":
             self.questionNum.setRange(2, self.maxoptions)
-        elif text == "Check Boxes":
+        elif text == "Multiple choice":
             self.questionNum.setRange(1, self.maxoptions)
-        elif text == "Free Response":
+        elif text == "Fill in":
             self.questionNum.setRange(0, 0)
         else:
             print('error: {}'.format(text))
@@ -128,9 +128,9 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.show()
 
     def write(self):
-        self.data['name'] = self.name.inputobj.text()
+        self.data['name'] = self.name.text()
         self.data['subtype'] = responses[self.rType.currentText()]
-        self.data['question'] = self.question.inputobj.text()
+        self.data['question'] = self.question.text()
         self.data['options'] = [(x.recode.value(), x.selection.text())
                                 for x in self.responses if not x.isHidden()]
         self.hide()
