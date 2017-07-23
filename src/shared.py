@@ -44,11 +44,23 @@ class MainWidget(PySide.QtGui.QGroupBox):
 
         self.setLayout(PySide.QtGui.QHBoxLayout())
 
+        leftlayout = PySide.QtGui.QVBoxLayout()
+        rightlayout = PySide.QtGui.QVBoxLayout()
+        self.layout().addLayout(leftlayout, 1)
+        self.layout().addLayout(rightlayout, 1)
+
         description_layout = PySide.QtGui.QFormLayout()
-        self.layout().addLayout(description_layout)
+        leftlayout.addLayout(description_layout)
+        leftlayout.addSpacing(20)
 
         description_layout.addRow("Ratings &description: ",
                                   PySide.QtGui.QLineEdit())
+
+        self.add_button = PySide.QtGui.QPushButton('Add Question')
+        self.add_button.setMinimumHeight(50)
+        leftlayout.addWidget(self.add_button)
+        self.things = PySide.QtGui.QListWidget()
+        leftlayout.addWidget(self.things)
 
 
 if __name__ == '__main__':
