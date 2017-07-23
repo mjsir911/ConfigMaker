@@ -117,7 +117,7 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         self.dropdown = PySide.QtGui.QComboBox()
         self.dropdown.currentIndexChanged.connect(self.selected_new)
         dropdownlayout.addWidget(self.dropdown)
-        addbutton = PySide.QtGui.QPushButton('+')
+        addbutton = PySide.QtGui.QPushButton('Add {}'.format(self.subthing))
         addbutton.clicked.connect(self.add_thing)
         dropdownlayout.addWidget(addbutton)
 

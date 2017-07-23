@@ -148,6 +148,7 @@ class SubWindow(PySide.QtGui.QDialog):
 class MyWindow(BaseWindow):
     name = 'rating'
     namevar = 'name'
+    subthing = 'question'
     subwind = SubWindow
 
 
