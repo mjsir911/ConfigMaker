@@ -45,28 +45,30 @@ class SubWindow(PySide.QtGui.QDialog):
         self.data = {'type': 'rating'}
         super().__init__(parent)
         self.layout = Py.QtGui.QVBoxLayout()
-        self.name = description_and_label('Column Heading', Py.QtGui.QLineEdit())
-        self.layout.addLayout(self.name)
-        self.question = description_and_label('Question', Py.QtGui.QLineEdit())
-        self.layout.addLayout(self.question)
+        sublayout = PySide.QtGui.QFormLayout()
+        self.layout.addLayout(sublayout)
+        self.name = PySide.QtGui.QLineEdit()
+        sublayout.addRow('Response id:', self.name)
+        self.question = PySide.QtGui.QLineEdit()
+        sublayout.addRow('Question:', self.question)
 
         #self.questionNum = Py.QtGui.QSpinBox()
         #self.questionNum.setRange(1, 5)
 
         self.rType = Py.QtGui.QComboBox()
+        sublayout.addRow('Response type:', self.rType)
 
         for button_type in responses.keys():
             self.rType.addItem(button_type)
 
         self.rType.currentIndexChanged.connect(self.check)
-        self.layout.addWidget(self.rType)
 
         self.responses = []
         self.parent = parent
         self.questionNum = Py.QtGui.QSpinBox()
         self.questionNum.setRange(2, self.maxoptions)
         self.questionNum.valueChanged.connect(self.responseCheck)
-        self.layout.addWidget(self.questionNum)
+        sublayout.addRow('Number of choices:', self.questionNum)
         for x in range(0, self.maxoptions):
             response = self.Response(x)
             self.responses.append(response)
