@@ -133,10 +133,9 @@ class SubWindow(PySide.QtGui.QDialog):
         self.data['question'] = self.question.text()
         self.data['options'] = [(x.recode.value(), x.selection.text())
                                 for x in self.responses if not x.isHidden()]
-        self.hide()
         if self not in self.parent.things:
             self.parent.things.append(self)
-        self.parent.update_dropdown()
+        self.close()
 
     def write_file(self, fp):
         logger.info('writing sub-file %s', fp.name)
@@ -148,7 +147,6 @@ class SubWindow(PySide.QtGui.QDialog):
 
     def close(self):
         super().close()
-        self.hide()
         self.parent.update_dropdown()
 
 
