@@ -29,10 +29,9 @@ class MainWindow(PySide.QtGui.QMainWindow):
 
         self.setCentralWidget(MainWidget(parent=self))
 
-        font = PySide.QtGui.QFont()
-        font.setFamily(font.defaultFamily())
-        font.setPointSize(28)
-        self.setFont(font)
+        with open('style.css', 'r') as fp:
+            self.setStyleSheet(fp.read())
+        #self.setStyleSheet('* { font-size: 32px; }')
 
         self.show()
 
