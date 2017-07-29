@@ -66,9 +66,23 @@ class MainWidget(shared.MainWidget):
         button_layout.accepted.connect(self.export_data)
         leftlayout.addWidget(button_layout)
 
+        self.rightlayout = rightlayout
+        self.update()
+
     def write(self, path=None):
         self.savedcontents['description'] = self.description.text()
         super().write(path)
+
+    def update(self):
+        for i in range(self.rightlayout.count()):
+            thing = self.rightlayout.itemAt(i)
+            w = thing.widget()
+            self.rightlayout.removeItem(thing)
+            w.deleteLater()
+
+        from kevin import RatingsPane
+        data = [thing.data for thing in self.things_actual]
+        self.rightlayout.addWidget(RatingsPane(data))
 
 
 
@@ -198,6 +212,7 @@ class SubWindow(PySide.QtGui.QDialog):
 
         else:
             self.listitem.setText(self.data['name'])
+        self.parent.update()
 
     def write_file(self, fp):
         shared.logger.info('writing sub-file %s', fp.name)
