@@ -62,7 +62,7 @@ class MainWidget(PySide.QtGui.QGroupBox):
                 range(self.things.count())]
 
     def add_subWindow(self):
-        self.sub_window(parent=self).exec_()
+        self.subwind(parent=self).exec_()
 
     def export_data(self):
         from PySide.QtGui import QFileDialog

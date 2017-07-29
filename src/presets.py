@@ -49,6 +49,9 @@ DEFAULT = {
     'targets': [3]
         }
 
+import shared
+
+
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
 
@@ -311,10 +314,18 @@ class SubWindow(PySide.QtGui.QDialog):
                 # self.hide()
 
 
-class MyWindow(BaseWindow):
-    name = 'preset'
-    namevar = 'description'
-    subwind = SubWindow
+class MainWidget(shared.MainWidget):
+    """ Put main content here """
+    name = 'presets'
+    namevar = 'name'
+    sub_window = SubWindow
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setLayout(PySide.QtGui.QHBoxLayout()
+
+
 
 
 app = PySide.QtGui.QApplication(sys.argv)

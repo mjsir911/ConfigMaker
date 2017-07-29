@@ -25,9 +25,10 @@ class MainWidget(shared.MainWidget):
     """ Put main content here """
     name = 'ratings'
     namevar = 'name'
+    subwind = SubWindow
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.sub_window = SubWindow
 
         self.setLayout(PySide.QtGui.QHBoxLayout())
 
