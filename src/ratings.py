@@ -6,6 +6,10 @@ import PySide.QtCore
 
 from builtins import super
 
+import json
+
+import shared
+
 __appname__     = ""
 __author__      = "Marco Sirabella"
 __copyright__   = ""
@@ -17,29 +21,13 @@ __email__       = "msirabel@gmail.com"
 __status__      = "Prototype"  # "Prototype", "Development" or "Production"
 __module__      = ""
 
-class MainWindow(PySide.QtGui.QMainWindow):
-    def __init__(self, parent=None):
-        super().__init__()
-
-        self.initGUI()
-
-    def initGUI(self):
-        self.setWindowTitle("ScribblerSeq")
-        self.showMaximized()
-
-        self.setCentralWidget(MainWidget(parent=self))
-
-        with open('style.css', 'r') as fp:
-            self.setStyleSheet(fp.read())
-        #self.setStyleSheet('* { font-size: 32px; }')
-
-        self.show()
-
-
-class MainWidget(PySide.QtGui.QGroupBox):
+class MainWidget(shared.MainWidget):
     """ Put main content here """
+    name = 'ratings'
+    namevar = 'name'
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.sub_window = SubWindow
 
         self.setLayout(PySide.QtGui.QHBoxLayout())
 
@@ -52,8 +40,9 @@ class MainWidget(PySide.QtGui.QGroupBox):
         leftlayout.addLayout(description_layout)
         leftlayout.addSpacing(20)
 
+        self.description = PySide.QtGui.QLineEdit()
         description_layout.addRow("Ratings &description: ",
-                                  PySide.QtGui.QLineEdit())
+                                  self.description)
 
         self.add_button = PySide.QtGui.QPushButton('Add Question', parent=self)
         leftlayout.addWidget(self.add_button)
@@ -74,44 +63,13 @@ class MainWidget(PySide.QtGui.QGroupBox):
         button_layout = PySide.QtGui.QDialogButtonBox(
                 PySide.QtGui.QDialogButtonBox.Save,
                 parent=self)
-        button_layout.accepted.connect(self.write)
+        button_layout.accepted.connect(self.export_data)
         leftlayout.addWidget(button_layout)
 
-    @property
-    def things_actual(self):
-        return [self.things.item(i).widget for i in
-                range(self.things.count())]
+    def write(self, path=None):
+        self.savedcontents['description'] = self.description.text()
+        super().write(path)
 
-    def add_subWindow(self):
-        SubWindow(parent=self).exec_()
-
-    def export_data(self):
-        from PySide.QtGui import QFileDialog
-        savedir = defaultdir + self.name + 's/'
-        try:
-            os.mkdir(savedir)
-        except OSError:
-            pass
-
-        savefilepath = QFileDialog.getExistingDirectory(self,
-                                                        caption="Export Config File",
-                                                        dir=savedir,
-                                                        )
-        """
-        savefilepath = QFileDialog.getSaveFileName(parent=None,
-                                                   caption='Export Config File',
-                                                   dir=savedir,
-                                                   filter='JSON files(*.json)'
-                                                   )[0]
-                                                   """
-        logger.info('path given to save is "%s"', savefilepath)
-        self.write(savefilepath)
-
-    def write(path, self):
-        for i, thing in enumerate(self.things_actual):
-            with open('{}/{:02}-{}.json'.format(path, i, thing.data['name']),
-                    'r') as fp:
-                thing.write_file(fp)
 
 
 import collections
@@ -242,7 +200,7 @@ class SubWindow(PySide.QtGui.QDialog):
             self.listitem.setText(self.data['name'])
 
     def write_file(self, fp):
-        logger.info('writing sub-file %s', fp.name)
+        shared.logger.info('writing sub-file %s', fp.name)
         pretty_print = {'sort_keys': True,
                         'indent': 4,
                         'separators': (',', ': ')
@@ -252,5 +210,5 @@ class SubWindow(PySide.QtGui.QDialog):
 if __name__ == '__main__':
     from sys import argv, exit
     app = PySide.QtGui.QApplication(argv)
-    dumbthing = MainWindow(parent=app)
+    dumbthing = shared.MainWindow(MainWidget, parent=app)
     exit(app.exec_())
