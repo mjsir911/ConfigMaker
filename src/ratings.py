@@ -187,7 +187,7 @@ class SubWindow(PySide.QtGui.QDialog):
         self.data['name'] = self.name.text()
         self.data['subtype'] = self.responses[self.rating_type.currentText()]
         self.data['question'] = self.question.text()
-        self.data['options'] = [(x.recode.text(), x.selection.text())
+        self.data['options'] = [(x.recode.value(), x.selection.text())
                                 for x in self.all_responses if not x.isHidden()]
         self.hide()
 
