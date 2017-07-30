@@ -17,7 +17,7 @@ import os
 import json
 import logging
 
-from shared import *
+from oldshared import *
 
 standard_library.install_aliases()
 
@@ -48,6 +48,8 @@ DEFAULT = {
     'type': 'preset',
     'targets': [3]
         }
+
+
 
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
@@ -311,15 +313,16 @@ class SubWindow(PySide.QtGui.QDialog):
                 # self.hide()
 
 
-class MyWindow(BaseWindow):
-    name = 'preset'
+class MainWidget(BaseWindow):
+    """ Put main content here """
+    name = 'presets'
     namevar = 'description'
     subthing = 'trial'
     subwind = SubWindow
 
 
 app = PySide.QtGui.QApplication(sys.argv)
-main_window = MyWindow()
+main_window = MainWidget()
 main_window.show()
 font = app.font()
 font.setPointSize(24)
