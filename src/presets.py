@@ -17,7 +17,7 @@ import os
 import json
 import logging
 
-from shared import *
+from oldshared import *
 
 standard_library.install_aliases()
 
@@ -49,7 +49,6 @@ DEFAULT = {
     'targets': [3]
         }
 
-import shared
 
 
 class SubWindow(PySide.QtGui.QDialog):
@@ -314,22 +313,15 @@ class SubWindow(PySide.QtGui.QDialog):
                 # self.hide()
 
 
-class MainWidget(shared.MainWidget):
+class MainWidget(BaseWindow):
     """ Put main content here """
     name = 'presets'
-    namevar = 'name'
-    sub_window = SubWindow
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.setLayout(PySide.QtGui.QHBoxLayout()
-
-
+    namevar = 'description'
+    subwind = SubWindow
 
 
 app = PySide.QtGui.QApplication(sys.argv)
-main_window = MyWindow()
+main_window = MainWidget()
 main_window.show()
 font = app.font()
 font.setPointSize(24)
