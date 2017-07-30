@@ -1,8 +1,8 @@
 PYTH = python2.7
-VENV = venv
-BUILD = build
-SRC = src
+VENV = venv/
+BUILD = build/
 TARGET = ratings.app presets.app
+SRC = src/
 
 
 
