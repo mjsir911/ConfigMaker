@@ -44,7 +44,7 @@ class MainWindow(PySide.QtGui.QMainWindow):
 
         self.setCentralWidget(self.widget(parent=self))
 
-        with open('style.css', 'r') as fp:
+        with open(os.path.dirname(os.path.abspath(__file__)) + '/style.css', 'r') as fp:
             self.setStyleSheet(fp.read())
         #self.setStyleSheet('* { font-size: 32px; }')
 
