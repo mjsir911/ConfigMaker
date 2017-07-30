@@ -1,8 +1,8 @@
 PYTH = python2.7
 VENV = venv
 BUILD = build
-APP = ratings.app presets.app
 SRC = src
+TARGET = ratings.app presets.app
 
 
 
@@ -13,9 +13,9 @@ SRC = src
 #"build/makeconf-$(shell date -u +"%Y-%m-%d").app"
 all: venv build
 
-build: $(APP)
+build: $(TARGET)
 
-$(APP): % : $(BUILD)/%
+$(TARGET): % : $(BUILD)/%
 
 $(BUILD)/%.app: $(VENV)/bin/py2applet setup.py $(SRC)/%.py
 	$(VENV)/bin/$(PYTH) setup.py py2app --app="['src/$*.py']"
