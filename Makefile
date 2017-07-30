@@ -21,7 +21,6 @@ $(BUILD)/%.app: $(VENV)/bin/py2applet setup.py $(SRC)/%.py
 	$(VENV)/bin/$(PYTH) setup.py py2app --app="['src/$*.py']"
 
 setup.py: $(VENV)/bin/py2applet
-	rm -f setup.py
 	$(VENV)/bin/py2applet --make-setup -a -s --site-packages --packages=PySide -d $(BUILD) -b $(BUILD)
 
 $(VENV)/bin/py2applet: requirements
