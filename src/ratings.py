@@ -91,9 +91,9 @@ import collections
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
     responses = collections.OrderedDict((
-                 ('Radio Buttons', 'radio'),
-                 ('Check Boxes', 'check'),
-                 ('Free Response', 'free'),
+                 ('Radio buttons', 'radio'),
+                 ('Multiple choice', 'check'),
+                 ('Fill in', 'free'),
                  ))
     def __init__(self, parent=None):
         super().__init__(parent=parent)
