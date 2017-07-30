@@ -1,8 +1,8 @@
 PYTH = python2.7
-VENV = venv
-BUILD = build
-APP = ratings.app presets.app
-SRC = src
+VENV = venv/
+BUILD = build/
+TARGET = ratings.app presets.app
+SRC = src/
 
 
 
@@ -13,16 +13,15 @@ SRC = src
 #"build/makeconf-$(shell date -u +"%Y-%m-%d").app"
 all: venv build
 
-build: $(APP)
+build: $(TARGET)
 
-$(APP): % : $(BUILD)/%
+$(TARGET): % : $(BUILD)/%
 
-$(BUILD)/%.app: $(VENV)/bin/py2applet setup.py $(SRC)/%.py
+$(BUILD)/%.app: setup.py $(SRC)/%.py | $(VENV)/bin/py2applet
 	$(VENV)/bin/$(PYTH) setup.py py2app --app="['src/$*.py']"
 
-setup.py: $(VENV)/bin/py2applet
-	rm -f setup.py
-	$(VENV)/bin/py2applet --make-setup -a -s --site-packages --packages=PySide -d $(BUILD) -b $(BUILD)
+setup.py: | $(VENV)/bin/py2applet
+	$(VENV)/bin/py2applet --make-setup -a -s --site-packages --resources='src/' --packages=PySide -d $(BUILD) -b $(BUILD) $(SRC)
 
 $(VENV)/bin/py2applet: requirements
 

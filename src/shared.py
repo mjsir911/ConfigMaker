@@ -1,26 +1,19 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import PySide
-import PySide.QtCore
 import PySide.QtGui
-
-import os
+import PySide.QtCore
 
 from builtins import super
 
+import os
 import json
-
 import logging
-
-import abc
-import six
 
 __appname__     = ""
 __author__      = "Marco Sirabella"
 __copyright__   = ""
-__credits__     = ["Marco Sirabella",
-                   "Kevin Cole"]  # Authors and bug reporters
+__credits__     = ["Marco Sirabella"]  # Authors and bug reporters
 __license__     = "GPL"
 __version__     = "1.0"
 __maintainers__ = "Marco Sirabella"
@@ -34,233 +27,46 @@ logger.setLevel(logging.DEBUG)
 
 defaultdir = os.path.expanduser('~/.config/sound-advice/')
 
+pretty_print = {'sort_keys': True, 'indent': 4, 'separators': (',', ': ')}
 
-def description_and_label(text, inputobj):
-    layout = PySide.QtGui.QHBoxLayout()
-    layout.setAlignment(PySide.QtCore.Qt.AlignCenter)
-    label  = PySide.QtGui.QLabel(text)
-    label.setText(label.text() + ': ')
-    #label.text += ': '
-    print(label.text())
-    layout.addWidget(label)
-    layout.name = label
-    layout.addWidget(inputobj)
-    layout.inputobj = inputobj
-    try:
-        inputobj.setPlaceholderText(text)
-    except:
-        pass
-    return layout
+class MainWindow(PySide.QtGui.QMainWindow):
+    windowtitle = 'Sound Advice Configuration Editor ({})'
+    def __init__(self, widget, parent=None):
+        super().__init__()
+        self.widget = widget
 
+        self.initGUI()
 
-def wandl(widget, layout):
-    widget.layout = layout
-    widget.setLayout(widget.layout)
-    return widget
-
-
-def okbutt(func, button=None, buttonText='OK'):
-    print(buttonText)
-    if button is None:
-        button = PySide.QtGui.QPushButton(buttonText)
-    else:
-        if button.text() is not '':
-            button.setText(buttonText)
-    button.clicked.connect(func)
-    return button
-
-#class MyWindow(PySide.QtGui.QMainWindow):
-#@six.add_metaclass(abc.ABCMeta)
-
-
-class BaseWindow(PySide.QtGui.QMainWindow):
-    namevar = ''
-    name = ''
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-
-        self.selfmenubar = self.menuBar()
-        self.reInitGui()
-
-        self.label = 'yo'
-
-    def reInitGui(self):
-        self.savedcontents = {}
-        self.widget = wandl(PySide.QtGui.QWidget(), PySide.QtGui.QVBoxLayout())
-        description = PySide.QtGui.QLineEdit()
-        self.widget.layout.addLayout(description_and_label('Scenario Description',
-                                                           description))
-        description_ok = PySide.QtGui.QPushButton()
-        description_ok.setText('OK')
-
-        def lockDescription():
-            """ Take a description and on ok hide """
-            text = description.text()
-            if text:
-                description.setEnabled(False)
-                self.savedcontents['description'] = description.text()
-                self.widget.layout.removeWidget(description_ok)
-                description_ok.hide()
-            else:
-                PySide.QtGui.QMessageBox.critical(self.widget,
-                                                  'Empty Description',
-                                                  'Description box cannot be empty')
-
-        description_ok = okbutt(lockDescription)
-        self.widget.layout.addWidget(description_ok)
-        self.setCentralWidget(self.widget)
-        self.selfmenubar.clear()
-        self.initUI()
-
-        dropdownlayout = PySide.QtGui.QHBoxLayout()
-        self.dropdown = PySide.QtGui.QComboBox()
-        self.dropdown.currentIndexChanged.connect(self.selected_new)
-        dropdownlayout.addWidget(self.dropdown)
-        addbutton = PySide.QtGui.QPushButton('+')
-        addbutton.clicked.connect(self.add_thing)
-        dropdownlayout.addWidget(addbutton)
-
-        self.widget.layout.addLayout(dropdownlayout)
-        self.things = []
-
-    def update_dropdown(self):
-        self.editing_dropdown = True  # Hacky
-        for _ in range(self.dropdown.count()):
-            self.dropdown.removeItem(0)
-        for thing in self.things:
-            self.dropdown.addItem(thing.data[self.namevar])
-        self.editing_dropdown = False
-        self.dropdown.setCurrentIndex(-1)
-
-    def selected_new(self):
-        ci = self.dropdown.currentIndex()
-        if ci >= 0 and not self.editing_dropdown:
-            self.things[ci].show()
-
-    def initUI(self):
-
-        # Initialize menu bar
-        menuBar = self.menuBar()
-        self.selfmenubar = menuBar
-        menuBar.setNativeMenuBar(True)
-        self.setMenuBar(menuBar)
-
-        # Initialize menu tabs
-        fileMenu = PySide.QtGui.QMenu(menuBar)
-        fileMenu.setTitle('File')
-
-        editMenu = PySide.QtGui.QMenu(menuBar)
-        editMenu.setTitle('Edit')
-
-        # Give menu tabs actions
-        action = fileMenu.addAction('New Exercise', self.reInitGui)
-        action.setShortcut(PySide.QtGui.QKeySequence('Ctrl+N'))
-
-        action = fileMenu.addAction('Open...', self.import_data)
-        action.setShortcut(PySide.QtGui.QKeySequence('Ctrl+O'))
-
-        fileMenu.addSeparator() # This is a horizontal bar
-
-        action = fileMenu.addAction('Close')
-        action.setShortcut(PySide.QtGui.QKeySequence('Ctrl+W'))
-
-        action = fileMenu.addAction('Save', self.write)
-        action.setShortcut(PySide.QtGui.QKeySequence('Ctrl+S'))
-        self.save = action
-        self.save.setEnabled(False)
-
-        action = fileMenu.addAction('Save As...', self.export_data)
-        action.setShortcut(PySide.QtGui.QKeySequence('Ctrl+Shift+S'))
-
-        action = editMenu.addAction('Add {}'.format(self.name.capitalize()),
-                                    self.add_thing)
-        #action.setShortcut(PySide.QtGui.QKeySequence(self.add_rating'Ctrl+Shift+S'))
-
-        # Give menu bar tabs
-        menuBar.addAction(fileMenu.menuAction())
-        menuBar.addAction(editMenu.menuAction())
-
-        self.setGeometry(300, 300, 250, 150)
-        self.windowtitle = 'Sound Advice Configuration Editor ({})'
+    def initGUI(self):
         self.setWindowTitle(self.windowtitle.format('New File'))
+        self.showMaximized()
+
+
+        self.setCentralWidget(self.widget(parent=self))
+
+        with open(os.path.dirname(os.path.abspath(__file__)) + '/style.css', 'r') as fp:
+            self.setStyleSheet(fp.read())
+        #self.setStyleSheet('* { font-size: 32px; }')
 
         self.show()
 
-    def add_thing(self):
+class MainWidget(PySide.QtGui.QGroupBox):
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.parent = parent
+        self.savedcontents = {}
+
+    @property
+    def things_actual(self):
+        return [self.things.item(i).widget for i in
+                range(self.things.count())]
+
+    def add_subWindow(self):
         self.subwind(parent=self).exec_()
-
-    def error(self, title, message, error_message=None):
-        if error_message:
-            PySide.QtGui.QMessageBox.critical(self, title,
-                                              message.format(error_message))
-        else:
-            PySide.QtGui.QMessageBox.critical(self, title, message)
-
-    def import_data(self):
-        from PySide.QtGui import QFileDialog
-        savedir = defaultdir + self.name + 's/'
-        if not os.path.exists(savedir):
-            print('should raise an error!')
-        jsonFile = QFileDialog.getOpenFileName(parent=None,
-                                               caption='Open Config File',
-                                               dir=savedir,
-                                               filter='JSON files (*.json)')[0]
-        logger.info('opening path %s', jsonFile)
-        with open(jsonFile, 'r') as fp:
-            data = json.load(fp)
-        wd = os.path.dirname(jsonFile)
-        if self.name + 's' not in data:  # ugh plural and singular
-            logging.error("ERROR!: %s not in %s", self.name + 's', data)
-        for thingname in data[self.name + 's']:
-            with open('{}/{}/{}-{}.json'.format(wd,
-                                                self.name,
-                                                os.path.splitext(os.path.basename(jsonFile))[0],
-                                                thingname)) as fp:
-                self.subwind.load(self, fp)
-        return
-        self.reInitGui()
-        if jsonFile[0]:  # If a valid filename has been selected...
-            self.filename = jsonFile[0]
-            self.setWindowTitle(self.windowtitle.format(os.path.basename(self.filename)))
-            self.save.setEnabled(True)
-            jsonFile = open(jsonFile[0], 'r')
-            try:
-                settings = json.load(jsonFile)
-                #self.data(settings)
-                self.widget.resultsInput.setText(settings['description'])
-                for y, x in enumerate(settings['ratings']):
-                    self.widget.ratingsWidget.add()
-                    print(type(y))
-                    print(type(x['name']))
-                    self.widget.ratingsWidget.rName.setItemText(y, x['name'])
-                    currentwidget = self.widget.ratingsWidget.alltheratings[y]
-                    currentwidget.question.setText(x['question'])
-                    currentwidget.rType.setCurrentIndex(
-                            responses[x['subtype']])
-                    if x['subtype'] != 'free':
-                        currentwidget.options.questionNum.setValue(
-                            len(x['options']))
-                    if x['options']:
-                        for c, d in enumerate(x['options']):
-                            cresponse = currentwidget.options.responses[c]
-                            cresponse.selection.setText(d[0])
-                            cresponse.recode.setValue(d[1])
-
-            except EOFError as err:
-                print(err)
-                self.error('import failed',
-                           '<p>import file failed to open with<br />{}</p>',
-                           err)
-                return 1
-            except KeyError as err:
-                self.error('Invalid file',
-                           '<b>Import file failed to open with<br />{}</b>',
-                           err)
 
     def export_data(self):
         from PySide.QtGui import QFileDialog
-        savedir = defaultdir + self.name + 's/'
+        savedir = defaultdir + self.name + '/'
         try:
             os.mkdir(savedir)
         except OSError:
@@ -286,18 +92,12 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         else:
             self.filename = path
 
-        for i, thing in enumerate(self.things):
-            numprefix = (i + 1) * 10
-            with open("{}/{:02}-{}.json".format(path, numprefix, thing.data[self.namevar]), 'w') as fp:
-                print(fp.name)
+        for i, thing in enumerate(self.things_actual):
+            with open('{}/{:02}-{}.json'.format(path, i + 1,
+                thing.data[self.namevar]), 'w') as fp:
                 thing.write_file(fp)
 
-        self.setWindowTitle(self.windowtitle.format(os.path.basename(path)))
-        self.save.setEnabled(True)
+        self.parent.setWindowTitle(self.parent.windowtitle.format(os.path.basename(path)))
 
         with open('{}/00-index.json'.format(path), 'w') as outfile:
-            pretty_print = {'sort_keys': True,
-                            'indent': 4,
-                            'separators': (',', ': ')
-                            }
             outfile.write(json.dumps(self.savedcontents, **pretty_print))

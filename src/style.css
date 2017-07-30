@@ -1,0 +1,13 @@
+QWidget {
+	font-size: 32px;
+}
+QLineEdit {
+	min-height: 32px;
+}
+QPushButton {
+	min-height: 64px;
+	/*SizePolicy: QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding);*/
+}
+QSpinBox {
+	min-height: 32px;
+}
