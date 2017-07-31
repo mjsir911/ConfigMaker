@@ -2,6 +2,7 @@ PYTH = python2.7
 VENV = venv/
 BUILD = build/
 TARGET = ratings.app presets.app
+TARGET := $(addprefix $(BUILD)/,$(TARGET))
 SRC = src/
 
 
@@ -15,7 +16,6 @@ all: $(VENV) $(BUILD)
 
 build: $(TARGET)
 
-$(TARGET): % : $(BUILD)/%
 
 $(BUILD)/%.app: setup.py $(SRC)/%.py | $(VENV)/bin/py2applet
 	$(VENV)/bin/$(PYTH) setup.py py2app --app="['src/$*.py']"
