@@ -17,8 +17,12 @@ all: $(VENV) $(BUILD)
 build: $(TARGET)
 
 
-$(BUILD)/%.app: setup.py $(SRC)/%.py | $(VENV)/bin/py2applet
+$(BUILD)/%.app: setup.py $(SRC)/%.py $(SRC)/kevin | $(VENV)/bin/py2applet
 	$(VENV)/bin/$(PYTH) setup.py py2app --app="['src/$*.py']"
+
+$(SRC)/kevin:
+	echo '$(SRC)/kevin needs to exist!'
+	exit 2
 
 setup.py: | $(VENV)/bin/py2applet
 	$(VENV)/bin/py2applet --make-setup -a -s --site-packages --resources='src/' --packages=PySide -d $(BUILD) -b $(BUILD) $(SRC)
