@@ -11,7 +11,7 @@ SRC = src/
 #$(VENV)/bin/py2applet -s -d build/ src/makeconf.py
 #rm -rf $(BUILD)/bdist*
 #"build/makeconf-$(shell date -u +"%Y-%m-%d").app"
-all: venv build
+all: $(VENV) $(BUILD)
 
 build: $(TARGET)
 
