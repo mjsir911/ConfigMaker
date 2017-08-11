@@ -85,8 +85,8 @@ class MainWindow(PySide.QtGui.QMainWindow):
                                                  triggered=self.saveAsFile,
         ))
 
-        self.editMenu = self.menuBar().addMenu("&Edit")
 
+        self.newFile()
 
         self.setCentralWidget(self.widget(parent=self))
 
@@ -97,7 +97,7 @@ class MainWindow(PySide.QtGui.QMainWindow):
         self.show()
 
     def newFile(self):
-        raise NotImplementedError()
+        self.editMenu = self.menuBar().addMenu("&Edit")
     def openFile(self):
         raise NotImplementedError()
     def saveFile(self):
