@@ -34,9 +34,9 @@ class MainWidget(shared.MainWidget):
         self.setLayout(PySide.QtGui.QHBoxLayout())
 
         leftlayout = PySide.QtGui.QVBoxLayout()
-        rightlayout = PySide.QtGui.QVBoxLayout()
+        self.rightlayout = PySide.QtGui.QVBoxLayout()
         self.layout().addLayout(leftlayout, 1)
-        self.layout().addLayout(rightlayout, 1)
+        self.layout().addLayout(self.rightlayout, 1)
 
         description_layout = PySide.QtGui.QFormLayout()
         leftlayout.addLayout(description_layout)
@@ -68,7 +68,6 @@ class MainWidget(shared.MainWidget):
         button_layout.accepted.connect(self.export_data)
         leftlayout.addWidget(button_layout)
 
-        self.rightlayout = rightlayout
         self.update()
 
     def write(self, path=None):
@@ -84,7 +83,12 @@ class MainWidget(shared.MainWidget):
 
         from kevin.RatingsPane import RatingsPane
         data = [thing.data for thing in self.things_actual]
-        self.rightlayout.addWidget(RatingsPane(data))
+        if data:
+            self.rightlayout.addWidget(RatingsPane(data))
+        else:
+            prev = PySide.QtGui.QLabel('Preview')
+            prev.setAlignment(PySide.QtCore.Qt.AlignCenter)
+            self.rightlayout.addWidget(prev)
 
 
 class SubWindow(PySide.QtGui.QDialog):
