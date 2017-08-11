@@ -5,6 +5,7 @@ import PySide.QtGui
 import PySide.QtCore
 
 from builtins import super
+import collections
 
 import json
 
@@ -86,15 +87,14 @@ class MainWidget(shared.MainWidget):
         self.rightlayout.addWidget(RatingsPane(data))
 
 
-
-import collections
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
     responses = collections.OrderedDict((
-                 ('Radio buttons', 'radio'),
-                 ('Multiple choice', 'check'),
-                 ('Fill in', 'free'),
-                 ))
+        ('Single choice', 'radio'),
+        ('Multiple choice', 'check'),
+        ('Fill in', 'free'),
+    ))
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.parent = parent
@@ -161,7 +161,7 @@ class SubWindow(PySide.QtGui.QDialog):
     def check(self):
         text = self.rating_type.currentText()
         print(self.rating_type.minimumHeight())
-        if text == "Radio Buttons":
+        if text == "Single choice":
             self.questionNum.setRange(2, self.maxoptions)
         elif text == "Multiple choice":
             self.questionNum.setRange(1, self.maxoptions)
