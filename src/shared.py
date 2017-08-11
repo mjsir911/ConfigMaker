@@ -69,14 +69,14 @@ class MainWindow(PySide.QtGui.QMainWindow):
                                                  triggered=self.closeWindow,
         ))
 
-        self.save = PySide.QtGui.QAction('Save',
-                                         self,
-                                         shortcut=PySide.QtGui.QKeySequence.Save,
-                                         statusTip="Save the file to the already saved file",
-                                         triggered=self.saveFile,
-                                         enabled=False,
+        self.saveButton = PySide.QtGui.QAction('Save',
+                                                self,
+                                                shortcut=PySide.QtGui.QKeySequence.Save,
+                                                statusTip="Save the file to the already saved file",
+                                                triggered=self.saveFile,
+                                                enabled=False,
         )
-        fileMenu.addAction(self.save)
+        fileMenu.addAction(self.saveButton)
 
         fileMenu.addAction(PySide.QtGui.QAction('Save As...',
                                                  self,
@@ -101,9 +101,9 @@ class MainWindow(PySide.QtGui.QMainWindow):
     def openFile(self):
         raise NotImplementedError()
     def saveFile(self):
-        raise NotImplementedError()
+        self.centralWidget().write()
     def saveAsFile(self):
-        raise NotImplementedError()
+        self.centralWidget().export_data()
     def closeWindow(self):
         raise NotImplementedError()
 
@@ -124,15 +124,14 @@ class MainWidget(PySide.QtGui.QGroupBox):
     def export_data(self):
         from PySide.QtGui import QFileDialog
         savedir = defaultdir + self.name + '/'
-        try:
+        if not os.path.exists(savedir):
             os.mkdir(savedir)
-        except OSError:
-            pass
 
-        savefilepath = QFileDialog.getExistingDirectory(self,
-                                                        caption="Export Config File",
-                                                        dir=savedir,
-                                                        )
+        self.filename = QFileDialog.getExistingDirectory(self,
+                                                         caption="Export Config File",
+                                                         dir=savedir,
+                                                         )
+        self.parent.saveButton.setEnabled(True)
         """
         savefilepath = QFileDialog.getSaveFileName(parent=None,
                                                    caption='Export Config File',
@@ -140,15 +139,25 @@ class MainWidget(PySide.QtGui.QGroupBox):
                                                    filter='JSON files(*.json)'
                                                    )[0]
                                                    """
-        logger.info('path given to save is "%s"', savefilepath)
-        self.write(savefilepath)
+        logger.info('path given to save is "%s"', self.filename)
+        self.write()
 
-    def write(self, path=None):
-        if not path:
-            path = self.filename
-        else:
-            self.filename = path
+    def write(self):
+        path = self.filename
+        import shutil
+        import tempfile
+        oldstuff = tempfile.mkdtemp(suffix="ConfigMaker", prefix='{}-'.format(os.path.basename(path)))
+        os.rmdir(oldstuff) # To be copied to later
+        shutil.move(path, oldstuff)
+        # Oh also dont mess up this section cuz right here all the user's
+        # contents are in ram in both places
+        logger.info('Moving old contents to %s', oldstuff)
+        os.mkdir(path)
 
+        # NOTE: if users start opening up multiple windows, implement a lock
+        # file
+
+        logger.info('saving to path "%s"', self.filename)
         for i, thing in enumerate(self.things_actual):
             with open('{}/{:02}-{}.json'.format(path, i + 1,
                 thing.data[self.namevar]), 'w') as fp:

@@ -81,9 +81,9 @@ class MainWidget(shared.MainWidget):
 
         self.update()
 
-    def write(self, path=None):
+    def write(self):
         self.savedcontents['description'] = self.description.text()
-        super().write(path)
+        super().write()
 
     def update(self):
         for i in range(self.rightlayout.count()):
