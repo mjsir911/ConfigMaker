@@ -84,7 +84,12 @@ class MainWidget(shared.MainWidget):
 
         from kevin.RatingsPane import RatingsPane
         data = [thing.data for thing in self.things_actual]
-        self.rightlayout.addWidget(RatingsPane(data))
+        if data:
+            self.rightlayout.addWidget(RatingsPane(data))
+        else:
+            prev = PySide.QtGui.QLabel('Preview')
+            prev.setAlignment(PySide.QtCore.Qt.AlignCenter)
+            self.rightlayout.addWidget(prev)
 
 
 class SubWindow(PySide.QtGui.QDialog):
