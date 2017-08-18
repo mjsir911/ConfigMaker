@@ -211,7 +211,7 @@ class BaseWindow(PySide.QtGui.QMainWindow):
         with open(jsonFile, 'r') as fp:
             data = json.load(fp)
         wd = os.path.dirname(jsonFile)
-        if self.name not in data:  # ugh plural and singular
+        if self.name not in data:
             logging.error("ERROR!: %s not in %s", self.name, data)
         for thingname in data[self.name]:
             with open('{}/{}/{}-{}.json'.format(wd,

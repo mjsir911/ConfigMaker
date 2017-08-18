@@ -25,7 +25,8 @@ $(SRC)/kevin:
 	exit 2
 
 setup.py: | $(VENV)/bin/py2applet
-	$(VENV)/bin/py2applet --make-setup -a -s --site-packages --resources='src/' --packages=PySide -d $(BUILD) -b $(BUILD) $(SRC)
+	#$(VENV)/bin/py2applet --make-setup -a -s --site-packages --resources='src/' --packages=PySide -d $(BUILD) -b $(BUILD) $(SRC)
+	$(VENV)/bin/py2applet --make-setup --resources='src/' -d $(BUILD) -b $(BUILD) $(SRC)
 
 $(VENV)/bin/py2applet: requirements
 

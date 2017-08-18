@@ -25,6 +25,7 @@ __module__      = ""
 class MainWidget(shared.MainWidget):
     """ Put main content here """
     name = 'ratings'
+    thing = 'question' # I really dont want to go down this path again
     namevar = 'name'
 
     def __init__(self, parent=None):
@@ -46,9 +47,20 @@ class MainWidget(shared.MainWidget):
         description_layout.addRow("Ratings &description: ",
                                   self.description)
 
-        self.add_button = PySide.QtGui.QPushButton('Add Question', parent=self)
+        self.add_button = PySide.QtGui.QPushButton('Add {}'.format(self.thing), parent=self)
         leftlayout.addWidget(self.add_button)
         self.add_button.clicked.connect(self.add_subWindow)
+
+        self.parent.editMenu.addAction(PySide.QtGui.QAction('Add {}'.format(self.thing),
+                                                 self,
+                                                 statusTip="Add a new {}".format(self.thing),
+                                                 triggered=self.add_subWindow,
+        ))
+
+        leftlayout.addWidget(PySide.QtGui.QLabel("Double click an entry below to edit:"))
+        # Thanks kevin for good wording on that
+
+
 
         self.things = PySide.QtGui.QListWidget()
         leftlayout.addWidget(self.things)
@@ -65,14 +77,16 @@ class MainWidget(shared.MainWidget):
         button_layout = PySide.QtGui.QDialogButtonBox(
                 PySide.QtGui.QDialogButtonBox.Save,
                 parent=self)
+        button_layout.buttons()[0].setText('Save as')
+        # Change first (and only) button from Save => Save as
         button_layout.accepted.connect(self.export_data)
         leftlayout.addWidget(button_layout)
 
         self.update()
 
-    def write(self, path=None):
+    def write(self):
         self.savedcontents['description'] = self.description.text()
-        super().write(path)
+        super().write()
 
     def update(self):
         for i in range(self.rightlayout.count()):

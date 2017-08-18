@@ -35,20 +35,77 @@ class MainWindow(PySide.QtGui.QMainWindow):
         super().__init__()
         self.widget = widget
 
-        self.initGUI()
+        self.initUI()
 
-    def initGUI(self):
+    def initUI(self):
         self.setWindowTitle(self.windowtitle.format('New File'))
         self.showMaximized()
 
+        #menubar stuff
+        fileMenu = self.menuBar().addMenu("&File")
+
+        fileMenu.addAction(PySide.QtGui.QAction('New Exercise',
+                                                 self,
+                                                 shortcut=PySide.QtGui.QKeySequence.New,
+                                                 statusTip="Create a new file",
+                                                 triggered=self.newFile,
+        ))
+
+        fileMenu.addAction(PySide.QtGui.QAction('Open...',
+                                                 self,
+                                                 shortcut=PySide.QtGui.QKeySequence.Open,
+                                                 statusTip="Open an existing file",
+                                                 triggered=self.openFile,
+        ))
+
+        #####self.setStyleSheet('* { font-size: 32px; }')
+
+        fileMenu.addSeparator() # This is a horizontal bar
+
+        fileMenu.addAction(PySide.QtGui.QAction('Close',
+                                                 self,
+                                                 shortcut=PySide.QtGui.QKeySequence.Close,
+                                                 statusTip="Close window",
+                                                 triggered=self.closeWindow,
+        ))
+
+        self.saveButton = PySide.QtGui.QAction('Save',
+                                                self,
+                                                shortcut=PySide.QtGui.QKeySequence.Save,
+                                                statusTip="Save the file to the already saved file",
+                                                triggered=self.saveFile,
+                                                enabled=False,
+        )
+        fileMenu.addAction(self.saveButton)
+
+        fileMenu.addAction(PySide.QtGui.QAction('Save As...',
+                                                 self,
+                                                 shortcut=PySide.QtGui.QKeySequence.SaveAs,
+                                                 statusTip="Save file as new document",
+                                                 triggered=self.saveAsFile,
+        ))
+
+
+        self.newFile()
 
         self.setCentralWidget(self.widget(parent=self))
 
         with open(os.path.dirname(os.path.abspath(__file__)) + '/style.css', 'r') as fp:
             self.setStyleSheet(fp.read())
-        #self.setStyleSheet('* { font-size: 32px; }')
+
 
         self.show()
+
+    def newFile(self):
+        self.editMenu = self.menuBar().addMenu("&Edit")
+    def openFile(self):
+        raise NotImplementedError()
+    def saveFile(self):
+        self.centralWidget().write()
+    def saveAsFile(self):
+        self.centralWidget().export_data()
+    def closeWindow(self):
+        raise NotImplementedError()
 
 class MainWidget(PySide.QtGui.QGroupBox):
     def __init__(self, parent=None):
@@ -67,15 +124,14 @@ class MainWidget(PySide.QtGui.QGroupBox):
     def export_data(self):
         from PySide.QtGui import QFileDialog
         savedir = defaultdir + self.name + '/'
-        try:
+        if not os.path.exists(savedir):
             os.mkdir(savedir)
-        except OSError:
-            pass
 
-        savefilepath = QFileDialog.getExistingDirectory(self,
-                                                        caption="Export Config File",
-                                                        dir=savedir,
-                                                        )
+        self.filename = QFileDialog.getExistingDirectory(self,
+                                                         caption="Export Config File",
+                                                         dir=savedir,
+                                                         )
+        self.parent.saveButton.setEnabled(True)
         """
         savefilepath = QFileDialog.getSaveFileName(parent=None,
                                                    caption='Export Config File',
@@ -83,15 +139,25 @@ class MainWidget(PySide.QtGui.QGroupBox):
                                                    filter='JSON files(*.json)'
                                                    )[0]
                                                    """
-        logger.info('path given to save is "%s"', savefilepath)
-        self.write(savefilepath)
+        logger.info('path given to save is "%s"', self.filename)
+        self.write()
 
-    def write(self, path=None):
-        if not path:
-            path = self.filename
-        else:
-            self.filename = path
+    def write(self):
+        path = self.filename
+        import shutil
+        import tempfile
+        oldstuff = tempfile.mkdtemp(suffix="ConfigMaker", prefix='{}-'.format(os.path.basename(path)))
+        os.rmdir(oldstuff) # To be copied to later
+        shutil.move(path, oldstuff)
+        # Oh also dont mess up this section cuz right here all the user's
+        # contents are in ram in both places
+        logger.info('Moving old contents to %s', oldstuff)
+        os.mkdir(path)
 
+        # NOTE: if users start opening up multiple windows, implement a lock
+        # file
+
+        logger.info('saving to path "%s"', self.filename)
         for i, thing in enumerate(self.things_actual):
             with open('{}/{:02}-{}.json'.format(path, i + 1,
                 thing.data[self.namevar]), 'w') as fp:
