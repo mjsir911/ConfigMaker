@@ -57,6 +57,9 @@ class MainWidget(shared.MainWidget):
                                                  triggered=self.add_subWindow,
         ))
 
+        leftlayout.addWidget(PySide.QtGui.QLabel("Double click an entry below to edit:"))
+        # Thanks kevin for good wording on that
+
 
 
         self.things = PySide.QtGui.QListWidget()
