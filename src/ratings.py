@@ -47,11 +47,14 @@ class MainWidget(shared.MainWidget):
         description_layout.addRow("Ratings &description: ",
                                   self.description)
 
-        self.add_button = PySide.QtGui.QPushButton('Add {}'.format(self.thing), parent=self)
         self.instruction = PySide.QtGui.QLineEdit()
         description_layout.addRow("&Instructions: ",
                                   self.instruction)
 
+        self.add_button = PySide.QtGui.QPushButton(
+            'Add {}'.format(self.thing),
+            parent=self
+        )
         leftlayout.addWidget(self.add_button)
         self.add_button.clicked.connect(self.add_subWindow)
 
