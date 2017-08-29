@@ -48,6 +48,10 @@ class MainWidget(shared.MainWidget):
                                   self.description)
 
         self.add_button = PySide.QtGui.QPushButton('Add {}'.format(self.thing), parent=self)
+        self.instruction = PySide.QtGui.QLineEdit()
+        description_layout.addRow("&Instructions: ",
+                                  self.instruction)
+
         leftlayout.addWidget(self.add_button)
         self.add_button.clicked.connect(self.add_subWindow)
 
@@ -86,6 +90,7 @@ class MainWidget(shared.MainWidget):
 
     def write(self):
         self.savedcontents['description'] = self.description.text()
+        self.savedcontents['instructions'] = self.instruction.text()
         super().write()
 
     def update(self):
