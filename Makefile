@@ -45,4 +45,4 @@ $(VENV):
 	rm -f $(VENV)/pip-selfcheck.json
 
 clean: 
-	rm -rf $(BUILD)
+	rm -rf $(BUILD) setup.py
