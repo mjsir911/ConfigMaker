@@ -103,7 +103,7 @@ class MainWidget(shared.MainWidget):
             self.rightlayout.removeItem(thing)
             w.deleteLater()
 
-        from kevin.RatingsPane import RatingsPane
+        from UI.RatingsPane import RatingsPane
         data = [thing.data for thing in self.things_actual]
         if data:
             self.rightlayout.addWidget(RatingsPane(data))
