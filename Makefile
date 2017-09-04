@@ -18,7 +18,7 @@ build: $(TARGET)
 
 
 $(BUILD)/%.app: setup.py $(SRC)/%.py $(SRC)/UI | $(VENV)/bin/py2applet
-	$(VENV)/bin/$(PYTH) setup.py py2app --app="['$(SRC)/$*.py']"
+	$(VENV)/bin/$(PYTH) setup.py py2app -A --app="['$(SRC)/$*.py']"
 
 $(SRC)/UI:
 	echo '$(SRC)/UI needs to exist!'
