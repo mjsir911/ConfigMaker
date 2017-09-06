@@ -35,7 +35,9 @@ class MainWidget(shared.MainWidget):
         #self.layout().addSpacing(20)
 
         self.description = PySide.QtGui.QLineEdit()
-        self.description.setMaximumWidth(10000)
+        self.description.setSizePolicy(PySide.QtGui.QSizePolicy.MinimumExpanding,
+                PySide.QtGui.QSizePolicy.Fixed)
+        self.description.setMinimumWidth(10 * self.size().width()) # TODO: make better
         description_layout.addRow("Ratings &description: ",
                                   self.description)
 
