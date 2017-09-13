@@ -100,6 +100,57 @@ DEFAULT = {
     'targets': [3]
         }
 
+from UI import LocalizationPane
+import math
+class FancyCircle(LocalizationPane.ControlPane):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.signal.hide()
+        self.noise.hide()
+
+        for i in range(8):
+            for button in ('louder', 'softer'):
+                self.speakers[i][button].hide()
+
+    def paintEvent(self, event):
+        """
+        Draw / position the audio source buttons
+        MONKEYPATCHING
+        """
+
+        #super(PySide.QtCore.ControlPane, self).paintEvent(event)  # Draw the normal grey box
+        super().paintEvent(event)
+############################################################################
+
+        sizeX, sizeY = [55] * 2
+        self.speaker1.setGeometry(self.compass[0][0] - (sizeX // 2),
+                                  self.compass[0][1] - (sizeY // 2),
+                                  sizeX, sizeY)
+        self.speaker2.setGeometry(self.compass[1][0] - (sizeX // 2),
+                                  self.compass[1][1] - (sizeY // 2),
+                                  sizeX, sizeY)
+        self.speaker3.setGeometry(self.compass[2][0] - (sizeX // 2),
+                                  self.compass[2][1] - (sizeY // 2),
+                                  sizeX, sizeY)
+        self.speaker4.setGeometry(self.compass[3][0] - (sizeX // 2),
+                                  self.compass[3][1] - (sizeY // 2),
+                                  sizeX, sizeY)
+        self.speaker5.setGeometry(self.compass[4][0] - (sizeX // 2),
+                                  self.compass[4][1] - (sizeY // 2),
+                                  sizeX, sizeY)
+        self.speaker6.setGeometry(self.compass[5][0] - (sizeX // 2),
+                                  self.compass[5][1] - (sizeY // 2),
+                                  sizeX, sizeY)
+        self.speaker7.setGeometry(self.compass[6][0] - (sizeX // 2),
+                                  self.compass[6][1] - (sizeY // 2),
+                                  sizeX, sizeY)
+        self.speaker8.setGeometry(self.compass[7][0] - (sizeX // 2),
+                                  self.compass[7][1] - (sizeY // 2),
+                                  sizeX, sizeY)
+
+        signalX, signalY = 10,              self.height - 90
+        noiseX,  noiseY  = self.width - 95, self.height - 90
+
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
 
@@ -124,47 +175,19 @@ class SubWindow(PySide.QtGui.QDialog):
         # self.layout.addLayout(self.programlayout, 0, 1,
         #                      PySide.QtCore.Qt.AlignCenter)
 
-        self.glayout = PySide.QtGui.QGridLayout()
+        self.fancy_circle = FancyCircle()
+        self.layout().addWidget(self.fancy_circle)
 
         self.datums = []
-        # http://mathworld.wolfram.com/TriangleWave.html
-        x_equation = lambda t: 8 * abs(round((1 / 8) * (t - 1)) - (1 / 8) * (t - 1))  # noqa
-        y_equation = lambda t: 8 * abs(round((1 / 8) * (t - 3)) - (1 / 8) * (t - 3))  # noqa
-        # THESE ARE FOR THE EQUATIONS BELOOWWWW
-        for i, datum in zip(range(1, 9), zip(data['signal'], data['noise'])):
-            """
-            Courtesy of the internet, i refined the quartic equation
-            Now its a triangle graph, mapping x and y coordinates
-            creates a diamond shaped object, which is exactly where we want
-            the buttons
-              /\    /
-             /  \  /   ooh fancy triangle graph
-            /    \/
-            """
+        for button, datum in zip(self.fancy_circle.speakers, zip(data['signal'], data['noise'])):
             interior = self.InteriorDatum(datum, parent=self)
             self.datums.append(interior)
             interior.show()
             interior.hide()
-            button = PySide.QtGui.QPushButton()
-            button.setFixedWidth(200)
-            button.clicked.connect(interior.show)
-            button.setText(str(i))
-            xc = x_equation(i)
-            yc = y_equation(i)
-            # print(xc, yc)
-            self.glayout.addWidget(button, xc, yc)
 
-        """ In case of emergency, break quotes
-        self.layout.addWidget(button, 0, 2)
-        self.layout.addWidget(button, 1, 1)
-        self.layout.addWidget(button, 2, 0)
-        self.layout.addWidget(button, 3, 1)
-        self.layout.addWidget(button, 4, 2)
-        self.layout.addWidget(button, 3, 3)
-        self.layout.addWidget(button, 2, 4)
-        self.layout.addWidget(button, 1, 3)
-        """
-        self.layout().addLayout(self.glayout)
+            button['select'].clicked.connect(interior.show)
+
+        self.showMaximized()
 
         button_layout = PySide.QtGui.QDialogButtonBox(
                 PySide.QtGui.QDialogButtonBox.Save |\
@@ -219,12 +242,13 @@ class SubWindow(PySide.QtGui.QDialog):
                         }
         fp.write(json.dumps(self.data, **pretty_print))
 
-    class InteriorDatum(PySide.QtGui.QWidget):
+    class InteriorDatum(PySide.QtGui.QDialog):
         def __init__(self, data, parent=None):
             super().__init__(parent)
             self.parent = parent
 
-            layout = PySide.QtGui.QVBoxLayout()
+            self.setLayout(PySide.QtGui.QVBoxLayout())
+
             switchlayout = PySide.QtGui.QHBoxLayout()
             speakernum = PySide.QtGui.QLabel('Speaker Number {0}'
                                          .format(len(self.parent.datums) + 1))
@@ -235,7 +259,7 @@ class SubWindow(PySide.QtGui.QDialog):
             speakerhead.addStretch(0.5)
             speakerhead.addWidget(speakernum)
             speakerhead.addStretch(0.5)
-            layout.addLayout(speakerhead)
+            #layout.addLayout(speakerhead)
 
             """
             flippy_buttons = PySide.QtGui.QHBoxLayout()
@@ -262,7 +286,7 @@ class SubWindow(PySide.QtGui.QDialog):
             signal_noise_layout.addWidget(self.signal)
             signal_noise_layout.addWidget(self.noise)
 
-            layout.addLayout(signal_noise_layout)
+            self.layout().addLayout(signal_noise_layout)
 
             self.target = PySide.QtGui.QCheckBox()
             targetlayout = PySide.QtGui.QHBoxLayout()
@@ -271,15 +295,13 @@ class SubWindow(PySide.QtGui.QDialog):
             targetlayout.addWidget(label)
             targetlayout.addWidget(self.target)
             targetlayout.addStretch(0.5)
-            layout.addLayout(targetlayout)
+            self.layout().addLayout(targetlayout)
 
-            self.layout = layout
 
             # layout.addLayout(switchlayout)
             # layout.addLayout(flippy_buttons)
             # self.layout.add
-            layout.addLayout(switchlayout)
-            self.setLayout(layout)
+            self.layout().addLayout(switchlayout)
 
         def show(self):
             super().show()
@@ -289,12 +311,12 @@ class SubWindow(PySide.QtGui.QDialog):
                 # pass
                 # self.parent.layout.removeWidget(self)
 
-            self.parent.glayout.addWidget(self, 2, 2)
-            self.parent.glayout.indexOf(self)
+            #self.parent.glayout.addWidget(self, 2, 2) # XXX
+            #self.parent.glayout.indexOf(self) # XXX
 
         def hide(self):
             super().hide()
-            self.parent.glayout.removeWidget(self)
+            #self.parent.glayout.removeWidget(self) # XXX
 
         class SignalOrNoise(PySide.QtGui.QWidget):
 
