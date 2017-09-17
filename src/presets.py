@@ -4,6 +4,8 @@
 import PySide.QtGui
 import PySide.QtCore
 
+import json
+
 from builtins import super
 
 import shared
@@ -23,7 +25,7 @@ class MainWidget(shared.MainWidget):
     """ Put main content here """
     name = 'ratings'
     thing = 'question' # I really dont want to go down this path again
-    namevar = 'name'
+    namevar = 'description'
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.subwind = SubWindow
@@ -83,7 +85,6 @@ class MainWidget(shared.MainWidget):
 
     def write(self):
         self.savedcontents['description'] = self.description.text()
-        self.savedcontents['instructions'] = self.instruction.text()
         super().write()
 
     def update(self):
@@ -230,9 +231,16 @@ class SubWindow(PySide.QtGui.QDialog):
                           })
 
         self.hide()
-        if self not in self.parent.things:
-            self.parent.things.append(self)
-        self.parent.update_dropdown()
+
+        if self not in self.parent.things_actual:
+            self.listitem = PySide.QtGui.QListWidgetItem(self.data['description'])
+            self.listitem.widget = self
+            self.parent.things.addItem(self.listitem)
+
+        else:
+            self.listitem.setText(self.data['description'])
+
+        self.parent.update()
 
     def write_file(self, fp):
         shared.logger.info('writing sub-file %s', fp.name)
@@ -250,8 +258,8 @@ class SubWindow(PySide.QtGui.QDialog):
             self.setLayout(PySide.QtGui.QVBoxLayout())
 
             switchlayout = PySide.QtGui.QHBoxLayout()
-            speakernum = PySide.QtGui.QLabel('Speaker Number {0}'
-                                         .format(len(self.parent.datums) + 1))
+            self.num = len(self.parent.datums) + 1
+            speakernum = PySide.QtGui.QLabel('Loudspeaker {0}'.format(self.num))
             f = PySide.QtGui.QFont()
             f.setWeight(PySide.QtGui.QFont.Black)
             speakernum.setFont(f)
@@ -259,7 +267,7 @@ class SubWindow(PySide.QtGui.QDialog):
             speakerhead.addStretch(0.5)
             speakerhead.addWidget(speakernum)
             speakerhead.addStretch(0.5)
-            #layout.addLayout(speakerhead)
+            self.layout().addLayout(speakerhead)
 
             """
             flippy_buttons = PySide.QtGui.QHBoxLayout()
@@ -302,6 +310,20 @@ class SubWindow(PySide.QtGui.QDialog):
             # layout.addLayout(flippy_buttons)
             # self.layout.add
             self.layout().addLayout(switchlayout)
+
+            button_layout = PySide.QtGui.QDialogButtonBox(
+                    PySide.QtGui.QDialogButtonBox.Save |\
+                    PySide.QtGui.QDialogButtonBox.Cancel,
+                    parent=self)
+
+            button_layout.accepted.connect(self.write)
+            button_layout.rejected.connect(self.close)
+            self.layout().addWidget(button_layout)
+
+        def write(self):
+            button = self.parent.fancy_circle.speakers[self.num - 1]['select']
+            button.setStyleSheet(self.parent.fancy_circle.style.format('green'))
+            self.hide()
 
         def show(self):
             super().show()
