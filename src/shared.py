@@ -140,19 +140,26 @@ class MainWidget(PySide.QtGui.QGroupBox):
                                                    )[0]
                                                    """
         logger.info('path given to save is "%s"', self.filename)
-        self.write()
+        self.write(save_as=True)
 
-    def write(self):
+    def write(self, save_as=False):
         path = self.filename
         import shutil
         import tempfile
-        oldstuff = tempfile.mkdtemp(suffix="ConfigMaker", prefix='{}-'.format(os.path.basename(path)))
-        os.rmdir(oldstuff) # To be copied to later
-        shutil.move(path, oldstuff)
-        # Oh also dont mess up this section cuz right here all the user's
-        # contents are in ram in both places
-        logger.info('Moving old contents to %s', oldstuff)
-        os.mkdir(path)
+
+        logger.info("Hello i am write")
+        warn = lambda: logger.info('warn')
+        files_exist_in_directory = True # Spoof for now
+        if files_exist_in_directory:
+            if save_as:
+                warn()
+            oldstuff = tempfile.mkdtemp(suffix="ConfigMaker", prefix='{}-'.format(os.path.basename(path)))
+            os.rmdir(oldstuff) # To be copied to later
+            shutil.move(path, oldstuff)
+            # Oh also dont mess up this section cuz right here all the user's
+            # contents are in ram in both places
+            logger.info('Moving old contents to %s', oldstuff)
+            os.mkdir(path)
 
         # NOTE: if users start opening up multiple windows, implement a lock
         # file
