@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# vim: set fileencoding=utf-8:
+# vim: set expandtab:
 
 import PySide.QtGui
 import PySide.QtCore
@@ -9,6 +10,8 @@ from builtins import super
 import os
 import json
 import logging
+
+import pathlib2
 
 __appname__     = ""
 __author__      = "Marco Sirabella"
@@ -131,6 +134,9 @@ class MainWidget(PySide.QtGui.QGroupBox):
                                                          caption="Export Config File",
                                                          dir=savedir,
                                                          )
+        print self.filename
+        if not self.filename:
+            return
         self.parent.saveButton.setEnabled(True)
         """
         savefilepath = QFileDialog.getSaveFileName(parent=None,
@@ -143,17 +149,29 @@ class MainWidget(PySide.QtGui.QGroupBox):
         self.write(save_as=True)
 
     def write(self, save_as=False):
-        path = self.filename
+        path = pathlib2.Path(self.filename)
         import shutil
         import tempfile
 
         logger.info("Hello i am write")
-        warn = lambda: logger.info('warn')
-        files_exist_in_directory = True # Spoof for now
+        def warn():
+            box = PySide.QtGui.QMessageBox()
+            box.setIcon(PySide.QtGui.QMessageBox.Warning)
+            box.setWindowTitle("Directory not empty")
+            box.setText("<strong>Directory not empty</strong>")
+            box.setInformativeText("""The directory {} is not empty. continue?
+                    This will wipe out everything""".format(path))
+            box.setStandardButtons(PySide.QtGui.QMessageBox.Save |
+                    PySide.QtGui.QMessageBox.Cancel)
+            box.setDefaultButton(PySide.QtGui.QMessageBox.Cancel)
+            return box.exec_()
+
+        files_exist_in_directory = bool(tuple(path.iterdir()))
         if files_exist_in_directory:
             if save_as:
-                warn()
-            oldstuff = tempfile.mkdtemp(suffix="ConfigMaker", prefix='{}-'.format(os.path.basename(path)))
+                if warn() == PySide.QtGui.QMessageBox.Cancel:
+                    return self.export_data()
+            oldstuff = tempfile.mkdtemp(suffix="ConfigMaker", prefix='{}-'.format(path.name))
             os.rmdir(oldstuff) # To be copied to later
             shutil.move(path, oldstuff)
             # Oh also dont mess up this section cuz right here all the user's
@@ -170,7 +188,7 @@ class MainWidget(PySide.QtGui.QGroupBox):
                 thing.data[self.namevar]), 'w') as fp:
                 thing.write_file(fp)
 
-        self.parent.setWindowTitle(self.parent.windowtitle.format(os.path.basename(path)))
+        self.parent.setWindowTitle(self.parent.windowtitle.format(path.name))
 
         with open('{}/00-index.json'.format(path), 'w') as outfile:
             outfile.write(json.dumps(self.savedcontents, **pretty_print))
