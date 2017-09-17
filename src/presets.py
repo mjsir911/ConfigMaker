@@ -105,6 +105,7 @@ from UI import LocalizationPane
 import math
 class FancyCircle(LocalizationPane.ControlPane):
     def __init__(self, *args):
+        shared.logger.debug("Creating circle")
         super().__init__(*args)
         self.signal.hide()
         self.noise.hide()
@@ -113,8 +114,10 @@ class FancyCircle(LocalizationPane.ControlPane):
             for button in ('louder', 'softer'):
                 self.speakers[i][button].hide()
             self.speakers[i]['select'].setStyleSheet(self.style.format('black'))
+        shared.logger.debug("finishing fancy circle")
 
     def paintEvent(self, event):
+        shared.logger.debug("fancy circle paint event")
         """
         Draw / position the audio source buttons
         MONKEYPATCHING
@@ -182,6 +185,7 @@ class SubWindow(PySide.QtGui.QDialog):
 
         self.datums = []
         for button, datum in zip(self.fancy_circle.speakers, zip(data['signal'], data['noise'])):
+            shared.logger.debug("Adding widget x")
             interior = self.InteriorDatum(datum, parent=self)
             self.datums.append(interior)
             interior.show()
@@ -206,6 +210,7 @@ class SubWindow(PySide.QtGui.QDialog):
         self.layout().addWidget(button_layout)
 
         self.showMaximized()
+        logging.info("Finishing subwindow init")
 
     @classmethod
     def load(cls, parent, fp):
