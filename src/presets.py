@@ -93,10 +93,10 @@ class MainWidget(shared.MainWidget):
 DEFAULT = {
     'noise':  [{'sample': 1, 'state': True, 'offset': 0, 'level': 0}] * 8,
     'signal': [{'sample': 1, 'state': True, 'offset': 0, 'level': 0}] * 8,
-    'step': 2,
-    'range': [-5, 5],
+    'step': 3,
+    'range': [-12, 12],
     'program': 1,
-    'rsize': [200, 250],
+    'rsize': [104, 104],
     'type': 'preset',
     'targets': [3]
         }
