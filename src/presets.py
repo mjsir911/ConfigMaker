@@ -367,10 +367,13 @@ class SubWindow(PySide.QtGui.QDialog):
                 super().__init__(parent)
                 self.parent = parent
                 self.toggle = sigornoise
-                self.setLayout(PySide.QtGui.QVBoxLayout())
+                self.setLayout(PySide.QtGui.QFormLayout())
 
                 label = PySide.QtGui.QLabel(sigornoise)
-                self.layout().addWidget(label)
+                label.setAlignment(PySide.QtCore.Qt.AlignHCenter)
+                label.setProperty('class', 'list_header') # This is pretty cool
+
+                self.layout().addRow(label)
 
                 """
                 sample: number
@@ -379,8 +382,6 @@ class SubWindow(PySide.QtGui.QDialog):
                 state: radio button true or false
                 """
 
-                input_layout = PySide.QtGui.QFormLayout()
-                self.layout().addLayout(input_layout)
 
                 self.state = PySide.QtGui.QCheckBox()  # state checkbox
 
@@ -390,24 +391,24 @@ class SubWindow(PySide.QtGui.QDialog):
                                          PySide.QtCore.Qt.CheckState.Unchecked
                                          )
 
-                input_layout.addRow("Active:", self.state)
+                self.layout().addRow("Active:", self.state)
 
                 self.sampleinput = PySide.QtGui.QSpinBox()  # sample spinbox
                 self.sampleinput.setMinimum(1)
                 self.sampleinput.setValue(data['sample'])
-                input_layout.addRow("Sample:", self.sampleinput)
+                self.layout().addRow("Sample:", self.sampleinput)
 
 
                 self.levelinput = PySide.QtGui.QSpinBox()
                 self.levelinput.setMinimum(-50)
                 self.levelinput.setMaximum(50)
                 self.levelinput.setValue(data['level'])
-                input_layout.addRow("Gain (dB):", self.levelinput)
+                self.layout().addRow("Gain (dB):", self.levelinput)
 
                 self.offsetinput = PySide.QtGui.QSpinBox()
                 self.offsetinput.setValue(data['offset'])
                 self.offsetinput.setEnabled(False)
-                input_layout.addRow("Offset (sec):", self.offsetinput)
+                self.layout().addRow("Offset (sec):", self.offsetinput)
 
                 # self.hide()
 
