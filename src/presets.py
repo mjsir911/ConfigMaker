@@ -370,10 +370,10 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.setLayout(PySide.QtGui.QFormLayout())
 
                 label = PySide.QtGui.QLabel(sigornoise)
+                self.layout().addRow(label)
                 label.setAlignment(PySide.QtCore.Qt.AlignHCenter)
                 label.setProperty('class', 'list_header') # This is pretty cool
 
-                self.layout().addRow(label)
 
                 """
                 sample: number
