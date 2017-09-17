@@ -367,10 +367,10 @@ class SubWindow(PySide.QtGui.QDialog):
                 super().__init__(parent)
                 self.parent = parent
                 self.toggle = sigornoise
-                self.layout = PySide.QtGui.QVBoxLayout()
+                self.setLayout(PySide.QtGui.QVBoxLayout())
 
                 label = PySide.QtGui.QLabel(sigornoise)
-                self.layout.addWidget(label)
+                self.layout().addWidget(label)
 
                 """
                 sample: number
@@ -378,6 +378,9 @@ class SubWindow(PySide.QtGui.QDialog):
                 offset: in milliseconds
                 state: radio button true or false
                 """
+
+                input_layout = PySide.QtGui.QFormLayout()
+                self.layout().addLayout(input_layout)
 
                 self.state = PySide.QtGui.QCheckBox()  # state checkbox
 
@@ -387,41 +390,25 @@ class SubWindow(PySide.QtGui.QDialog):
                                          PySide.QtCore.Qt.CheckState.Unchecked
                                          )
 
-                statelayout = PySide.QtGui.QHBoxLayout()
-                label = PySide.QtGui.QLabel('Active:')
-                statelayout.addWidget(label)
-                statelayout.addWidget(self.state)
-                self.layout.addLayout(statelayout)
+                input_layout.addRow("Active:", self.state)
 
                 self.sampleinput = PySide.QtGui.QSpinBox()  # sample spinbox
                 self.sampleinput.setMinimum(1)
                 self.sampleinput.setValue(data['sample'])
-                samplelayout = PySide.QtGui.QHBoxLayout()
-                label = PySide.QtGui.QLabel('Sample:')
-                samplelayout.addWidget(label)
-                samplelayout.addWidget(self.sampleinput)
-                self.layout.addLayout(samplelayout)
+                input_layout.addRow("Sample:", self.sampleinput)
+
 
                 self.levelinput = PySide.QtGui.QSpinBox()
                 self.levelinput.setMinimum(-50)
                 self.levelinput.setMaximum(50)
                 self.levelinput.setValue(data['level'])
-                levellayout = PySide.QtGui.QHBoxLayout()
-                label = PySide.QtGui.QLabel('Gain (dB):')
-                levellayout.addWidget(label)
-                levellayout.addWidget(self.levelinput)
-                self.layout.addLayout(levellayout)
+                input_layout.addRow("Gain (dB):", self.levelinput)
 
                 self.offsetinput = PySide.QtGui.QSpinBox()
                 self.offsetinput.setValue(data['offset'])
                 self.offsetinput.setEnabled(False)
-                offsetlayout = PySide.QtGui.QHBoxLayout()
-                label = PySide.QtGui.QLabel('Offset (sec):')
-                offsetlayout.addWidget(label)
-                offsetlayout.addWidget(self.offsetinput)
-                self.layout.addLayout(offsetlayout)
+                input_layout.addRow("Offset (sec):", self.offsetinput)
 
-                self.setLayout(self.layout)
                 # self.hide()
 
 if __name__ == '__main__':
