@@ -21,6 +21,12 @@ __email__       = "msirabel@gmail.com"
 __status__      = "Prototype"  # "Prototype", "Development" or "Production"
 __module__      = ""
 
+from inspect import currentframe
+def debug(frame):
+    import inspect
+    frameinfo = inspect.getframeinfo(frame)
+    shared.logger.debug("%s:%s", frameinfo.filename, frameinfo.lineno)
+
 class MainWidget(shared.MainWidget):
     """ Put main content here """
     name = 'ratings'
@@ -193,24 +199,28 @@ class SubWindow(PySide.QtGui.QDialog):
 
             button['select'].clicked.connect(interior.show)
 
+        debug(currentframe())
+
 
         button_layout = PySide.QtGui.QDialogButtonBox(
                 PySide.QtGui.QDialogButtonBox.Save |\
                 PySide.QtGui.QDialogButtonBox.Cancel,
                 parent=self)
 
+        debug(currentframe())
         for button in button_layout.buttons():
             button.setSizePolicy(PySide.QtGui.QSizePolicy(
                 PySide.QtGui.QSizePolicy.MinimumExpanding,
                 PySide.QtGui.QSizePolicy.MinimumExpanding)
             )
 
+        debug(currentframe())
         button_layout.accepted.connect(self.write)
         button_layout.rejected.connect(self.close)
         self.layout().addWidget(button_layout)
 
         self.showMaximized()
-        logging.info("Finishing subwindow init")
+        debug(currentframe())
 
     @classmethod
     def load(cls, parent, fp):
