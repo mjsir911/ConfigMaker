@@ -24,7 +24,7 @@ __module__      = ""
 class MainWidget(shared.MainWidget):
     """ Put main content here """
     name = 'ratings'
-    thing = 'question' # I really dont want to go down this path again
+    thing = 'trial' # I really dont want to go down this path again
     namevar = 'description'
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -40,7 +40,7 @@ class MainWidget(shared.MainWidget):
         self.description.setSizePolicy(PySide.QtGui.QSizePolicy.MinimumExpanding,
                 PySide.QtGui.QSizePolicy.Fixed)
         self.description.setMinimumWidth(10 * self.size().width()) # TODO: make better
-        description_layout.addRow("Ratings &description: ",
+        description_layout.addRow("Scenario &description: ",
                                   self.description)
 
         self.add_button = PySide.QtGui.QPushButton(
@@ -91,8 +91,8 @@ class MainWidget(shared.MainWidget):
         pass
 
 DEFAULT = {
-    'noise':  [{'sample': 1, 'state': True, 'offset': 0, 'level': 0}] * 8,
-    'signal': [{'sample': 1, 'state': True, 'offset': 0, 'level': 0}] * 8,
+    'noise':  [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
+    'signal': [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
     'step': 3,
     'range': [-12, 12],
     'program': 1,
@@ -166,13 +166,13 @@ class SubWindow(PySide.QtGui.QDialog):
         description_layout = PySide.QtGui.QFormLayout()
         self.layout().addLayout(description_layout)
         self.description = PySide.QtGui.QLineEdit()
-        description_layout.addRow("Scenario &Description",
+        description_layout.addRow("Trial &Description:",
                                   self.description)
 
         self.program = PySide.QtGui.QSpinBox()
         self.program.setMinimum(0)
         self.program.setMaximum(6)
-        description_layout.addRow("Program", self.program)
+        description_layout.addRow("Program:", self.program)
 
         # self.layout.addLayout(self.programlayout, 0, 1,
         #                      PySide.QtCore.Qt.AlignCenter)
@@ -189,16 +189,23 @@ class SubWindow(PySide.QtGui.QDialog):
 
             button['select'].clicked.connect(interior.show)
 
-        self.showMaximized()
 
         button_layout = PySide.QtGui.QDialogButtonBox(
                 PySide.QtGui.QDialogButtonBox.Save |\
                 PySide.QtGui.QDialogButtonBox.Cancel,
                 parent=self)
 
+        for button in button_layout.buttons():
+            button.setSizePolicy(PySide.QtGui.QSizePolicy(
+                PySide.QtGui.QSizePolicy.MinimumExpanding,
+                PySide.QtGui.QSizePolicy.MinimumExpanding)
+            )
+
         button_layout.accepted.connect(self.write)
         button_layout.rejected.connect(self.close)
         self.layout().addWidget(button_layout)
+
+        self.showMaximized()
 
     @classmethod
     def load(cls, parent, fp):
@@ -317,6 +324,12 @@ class SubWindow(PySide.QtGui.QDialog):
                     PySide.QtGui.QDialogButtonBox.Cancel,
                     parent=self)
 
+            for button in button_layout.buttons():
+                button.setSizePolicy(PySide.QtGui.QSizePolicy(
+                    PySide.QtGui.QSizePolicy.MinimumExpanding,
+                    PySide.QtGui.QSizePolicy.MinimumExpanding)
+                    )
+
             button_layout.accepted.connect(self.write)
             button_layout.rejected.connect(self.close)
             self.layout().addWidget(button_layout)
@@ -367,12 +380,15 @@ class SubWindow(PySide.QtGui.QDialog):
                 """
 
                 self.state = PySide.QtGui.QCheckBox()  # state checkbox
-                if data['state']:
-                    self.state.setCheckState(PySide.QtCore.Qt.CheckState.Checked)
-                else:
-                    self.state.setCheckState(PySide.QtCore.Qt.CheckState.Unchecked)
+
+                self.state.setCheckState(
+                                         PySide.QtCore.Qt.CheckState.Checked
+                                         if data['state'] else
+                                         PySide.QtCore.Qt.CheckState.Unchecked
+                                         )
+
                 statelayout = PySide.QtGui.QHBoxLayout()
-                label = PySide.QtGui.QLabel('State:')
+                label = PySide.QtGui.QLabel('Active:')
                 statelayout.addWidget(label)
                 statelayout.addWidget(self.state)
                 self.layout.addLayout(statelayout)
@@ -391,15 +407,16 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.levelinput.setMaximum(50)
                 self.levelinput.setValue(data['level'])
                 levellayout = PySide.QtGui.QHBoxLayout()
-                label = PySide.QtGui.QLabel('Level:')
+                label = PySide.QtGui.QLabel('Gain (dB):')
                 levellayout.addWidget(label)
                 levellayout.addWidget(self.levelinput)
                 self.layout.addLayout(levellayout)
 
                 self.offsetinput = PySide.QtGui.QSpinBox()
                 self.offsetinput.setValue(data['offset'])
+                self.offsetinput.setEnabled(False)
                 offsetlayout = PySide.QtGui.QHBoxLayout()
-                label = PySide.QtGui.QLabel('Offset:')
+                label = PySide.QtGui.QLabel('Offset (sec):')
                 offsetlayout.addWidget(label)
                 offsetlayout.addWidget(self.offsetinput)
                 self.layout.addLayout(offsetlayout)
