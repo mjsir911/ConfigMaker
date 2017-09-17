@@ -175,13 +175,28 @@ class SubWindow(PySide.QtGui.QDialog):
         description_layout = PySide.QtGui.QFormLayout()
         self.layout().addLayout(description_layout)
         self.description = PySide.QtGui.QLineEdit()
+        self.description.setMinimumWidth(10 * self.size().width()) # TODO: make better
         description_layout.addRow("Trial &Description:",
                                   self.description)
 
         self.program = PySide.QtGui.QSpinBox()
         self.program.setMinimum(0)
         self.program.setMaximum(6)
-        description_layout.addRow("Program:", self.program)
+        self.program.setSizePolicy(PySide.QtGui.QSizePolicy(
+                PySide.QtGui.QSizePolicy.Maximum,
+                PySide.QtGui.QSizePolicy.Maximum)
+            )
+        label1 = PySide.QtGui.QLabel("Program:")
+        label1.setSizePolicy(PySide.QtGui.QSizePolicy(
+                PySide.QtGui.QSizePolicy.Maximum,
+                PySide.QtGui.QSizePolicy.Maximum)
+            )
+        program_layout = PySide.QtGui.QHBoxLayout()
+        program_layout.addWidget(label1)
+        program_layout.addWidget(self.program)
+        program_layout.addWidget(PySide.QtGui.QLabel(
+        "0 = client's choice of program. 1 to 6 = assigned [requested] program"))
+        description_layout.addRow(program_layout)
 
         # self.layout.addLayout(self.programlayout, 0, 1,
         #                      PySide.QtCore.Qt.AlignCenter)
