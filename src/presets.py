@@ -170,7 +170,7 @@ class SubWindow(PySide.QtGui.QDialog):
                                   self.description)
 
         self.program = PySide.QtGui.QSpinBox()
-        self.program.setMinimum(1)
+        self.program.setMinimum(0)
         self.program.setMaximum(6)
         description_layout.addRow("Program", self.program)
 
