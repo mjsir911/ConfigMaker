@@ -29,7 +29,7 @@ def debug(frame):
 
 class MainWidget(shared.MainWidget):
     """ Put main content here """
-    name = 'ratings'
+    name = 'presets'
     thing = 'trial' # I really dont want to go down this path again
     namevar = 'description'
     def __init__(self, parent=None):
