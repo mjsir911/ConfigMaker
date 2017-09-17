@@ -232,11 +232,10 @@ class SubWindow(PySide.QtGui.QDialog):
     def write(self):
         self.data.update({'description': self.description.text(),
                           'program': self.program.value(),
-                          'targets': [3],
-                          'step': 2,
-                          'range': [-5, 5],
-                          'rsize': [200, 250],
                           })
+
+        self.data['target'] = [sub.num for sub in self.datums if
+            sub.target.isChecked()]
 
         self.data['noise'] = noise = []
         self.data['signal'] = signal = []
