@@ -119,7 +119,7 @@ class FancyCircle(LocalizationPane.ControlPane):
         for i in range(8):
             for button in ('louder', 'softer'):
                 self.speakers[i][button].hide()
-            self.speakers[i]['select'].setStyleSheet(self.style.format('black'))
+            self.speakers[i]['select'].setStyleSheet(self.style.format('red'))
         shared.logger.debug("finishing fancy circle")
 
     def paintEvent(self, event):
