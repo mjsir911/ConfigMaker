@@ -178,7 +178,7 @@ class MainWidget(PySide.QtGui.QGroupBox):
             box.setWindowTitle("Directory not empty")
             box.setText("<strong>Directory not empty</strong>")
             box.setInformativeText("""The directory {} is not empty. continue?
-                    This will wipe out everything""".format(path))
+                    This will wipe out everything""".format(str(path)))
             box.setStandardButtons(PySide.QtGui.QMessageBox.Save |
                     PySide.QtGui.QMessageBox.Cancel)
             box.setDefaultButton(PySide.QtGui.QMessageBox.Cancel)
@@ -191,11 +191,11 @@ class MainWidget(PySide.QtGui.QGroupBox):
                     return self.export_data()
             oldstuff = tempfile.mkdtemp(suffix="ConfigMaker", prefix='{}-'.format(path.name))
             os.rmdir(oldstuff) # To be copied to later
-            shutil.move(path, oldstuff)
+            shutil.move(str(path), oldstuff)
             # Oh also dont mess up this section cuz right here all the user's
             # contents are in ram in both places
             logger.info('Moving old contents to %s', oldstuff)
-            os.mkdir(path)
+            os.mkdir(str(path))
 
         # NOTE: if users start opening up multiple windows, implement a lock
         # file
@@ -208,5 +208,5 @@ class MainWidget(PySide.QtGui.QGroupBox):
 
         self.parent.setWindowTitle(self.parent.windowtitle.format(path.name))
 
-        with open('{}/00-index.json'.format(path), 'w') as outfile:
+        with open('{}/00-index.json'.format(str(path)), 'w') as outfile:
             outfile.write(json.dumps(self.savedcontents, **pretty_print))
