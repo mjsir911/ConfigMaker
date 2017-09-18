@@ -8,6 +8,7 @@ import PySide.QtCore
 from builtins import super
 
 import os
+import re
 import json
 import logging
 
@@ -130,10 +131,27 @@ class MainWidget(PySide.QtGui.QGroupBox):
         if not os.path.exists(savedir):
             os.mkdir(savedir)
 
-        self.filename = QFileDialog.getExistingDirectory(self,
-                                                         caption="Export Config File",
-                                                         dir=savedir,
-                                                         )
+        pattern = re.compile(savedir + ".+")  # At least one character beyond
+        attempted = False
+        self.filename = ""
+
+        while not pattern.match(self.filename):
+            self.filename = QFileDialog.getExistingDirectory(self,
+                                                             caption="Export Config File",
+                                                             dir=savedir,
+                                                             )
+            attempted = True
+            if attempted and not pattern.match(self.filename):
+                message  = """<p>Directory choice not allowed.</p>"""
+                message += """<p>Try again.</p>"""
+                box = PySide.QtGui.QMessageBox()
+                box.setIcon(PySide.QtGui.QMessageBox.Warning)
+                box.setWindowTitle("Invalid directory")
+                box.setText("<strong>Invalid directory</strong>")
+                box.setInformativeText(message.replace(" ", "&nbsp;"))
+                box.setStandardButtons(PySide.QtGui.QMessageBox.Ok)
+                box.exec_()
+
         print self.filename
         if not self.filename:
             return
