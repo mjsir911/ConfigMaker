@@ -4,6 +4,8 @@
 import PySide.QtGui
 import PySide.QtCore
 
+import json
+
 from builtins import super
 
 import shared
@@ -19,9 +21,15 @@ __email__       = "msirabel@gmail.com"
 __status__      = "Prototype"  # "Prototype", "Development" or "Production"
 __module__      = ""
 
+from inspect import currentframe
+def debug(frame):
+    import inspect
+    frameinfo = inspect.getframeinfo(frame)
+    shared.logger.debug("%s:%s", frameinfo.filename, frameinfo.lineno)
+
 class MainWidget(shared.MainWidget):
     """ Put main content here """
-    name = 'ratings'
+    name = 'presets'
     thing = 'trial' # I really dont want to go down this path again
     namevar = 'description'
     def __init__(self, parent=None):
@@ -32,12 +40,16 @@ class MainWidget(shared.MainWidget):
 
         description_layout = PySide.QtGui.QFormLayout()
         self.layout().addLayout(description_layout)
-        #self.layout().addSpacing(20)
+        # self.layout().addSpacing(20)
 
         self.description = PySide.QtGui.QLineEdit()
-        self.description.setSizePolicy(PySide.QtGui.QSizePolicy.MinimumExpanding,
-                PySide.QtGui.QSizePolicy.Fixed)
-        self.description.setMinimumWidth(10 * self.size().width()) # TODO: make better
+        self.description.setPlaceholderText("Scenario")
+        self.description.setSizePolicy(
+            PySide.QtGui.QSizePolicy.MinimumExpanding,
+            PySide.QtGui.QSizePolicy.Fixed
+        )
+        self.description.setMinimumWidth(10 * self.size().width())
+        # TODO: make better
         description_layout.addRow("Scenario &description: ",
                                   self.description)
 
@@ -81,10 +93,11 @@ class MainWidget(shared.MainWidget):
 
         self.update()
 
-    def write(self):
+    def write(self, save_as=False):
+        if self.description.text() == "":
+            self.description.setText(self.description.placeholderText())
         self.savedcontents['description'] = self.description.text()
-        self.savedcontents['instructions'] = self.instruction.text()
-        super().write()
+        super().write(save_as)
 
     def update(self):
         pass
@@ -95,7 +108,7 @@ DEFAULT = {
     'step': 3,
     'range': [-12, 12],
     'program': 1,
-    'rsize': [200, 250],
+    'rsize': [104, 104],
     'type': 'preset',
     'targets': [3]
         }
@@ -104,6 +117,7 @@ from UI import LocalizationPane
 import math
 class FancyCircle(LocalizationPane.ControlPane):
     def __init__(self, *args):
+        shared.logger.debug("Creating circle")
         super().__init__(*args)
         self.signal.hide()
         self.noise.hide()
@@ -111,9 +125,11 @@ class FancyCircle(LocalizationPane.ControlPane):
         for i in range(8):
             for button in ('louder', 'softer'):
                 self.speakers[i][button].hide()
-            self.speakers[i]['select'].setStyleSheet(self.style.format('black'))
+            self.speakers[i]['select'].setStyleSheet(self.style.format('red'))
+        shared.logger.debug("finishing fancy circle")
 
     def paintEvent(self, event):
+        shared.logger.debug("fancy circle paint event")
         """
         Draw / position the audio source buttons
         MONKEYPATCHING
@@ -157,21 +173,39 @@ class SubWindow(PySide.QtGui.QDialog):
 
     def __init__(self, parent=None, data=DEFAULT):
         shared.logger.debug("data is %s", data)
+        self.parent = parent
+        self.num = self.parent.things.count() + 1
         self.data = {'type': 'preset'}
         super().__init__(parent)
-        self.parent = parent
         self.setLayout(PySide.QtGui.QVBoxLayout())
 
         description_layout = PySide.QtGui.QFormLayout()
         self.layout().addLayout(description_layout)
         self.description = PySide.QtGui.QLineEdit()
+        self.description.setPlaceholderText("Trial {}".format(self.num))
+        self.description.setMinimumWidth(10 * self.size().width())
+        # TODO: make better
         description_layout.addRow("Trial &Description:",
                                   self.description)
 
         self.program = PySide.QtGui.QSpinBox()
-        self.program.setMinimum(1)
+        self.program.setMinimum(0)
         self.program.setMaximum(6)
-        description_layout.addRow("Program:", self.program)
+        self.program.setSizePolicy(PySide.QtGui.QSizePolicy(
+                PySide.QtGui.QSizePolicy.Maximum,
+                PySide.QtGui.QSizePolicy.Maximum)
+            )
+        label1 = PySide.QtGui.QLabel("Program:")
+        label1.setSizePolicy(PySide.QtGui.QSizePolicy(
+                PySide.QtGui.QSizePolicy.Maximum,
+                PySide.QtGui.QSizePolicy.Maximum)
+            )
+        program_layout = PySide.QtGui.QHBoxLayout()
+        program_layout.addWidget(label1)
+        program_layout.addWidget(self.program)
+        program_layout.addWidget(PySide.QtGui.QLabel(
+        "0 = client's choice of program. 1 to 6 = assigned [requested] program"))
+        description_layout.addRow(program_layout)
 
         # self.layout.addLayout(self.programlayout, 0, 1,
         #                      PySide.QtCore.Qt.AlignCenter)
@@ -181,6 +215,7 @@ class SubWindow(PySide.QtGui.QDialog):
 
         self.datums = []
         for button, datum in zip(self.fancy_circle.speakers, zip(data['signal'], data['noise'])):
+            shared.logger.debug("Adding widget x")
             interior = self.InteriorDatum(datum, parent=self)
             self.datums.append(interior)
             interior.show()
@@ -188,23 +223,28 @@ class SubWindow(PySide.QtGui.QDialog):
 
             button['select'].clicked.connect(interior.show)
 
+        debug(currentframe())
+
 
         button_layout = PySide.QtGui.QDialogButtonBox(
                 PySide.QtGui.QDialogButtonBox.Save |\
                 PySide.QtGui.QDialogButtonBox.Cancel,
                 parent=self)
 
+        debug(currentframe())
         for button in button_layout.buttons():
             button.setSizePolicy(PySide.QtGui.QSizePolicy(
                 PySide.QtGui.QSizePolicy.MinimumExpanding,
                 PySide.QtGui.QSizePolicy.MinimumExpanding)
             )
 
+        debug(currentframe())
         button_layout.accepted.connect(self.write)
         button_layout.rejected.connect(self.close)
         self.layout().addWidget(button_layout)
 
         self.showMaximized()
+        debug(currentframe())
 
     @classmethod
     def load(cls, parent, fp):
@@ -214,13 +254,15 @@ class SubWindow(PySide.QtGui.QDialog):
         self.exec_()
 
     def write(self):
+        if self.description.text() == "":
+            self.description.setText(self.description.placeholderText())
+
         self.data.update({'description': self.description.text(),
                           'program': self.program.value(),
-                          'targets': [3],
-                          'step': 2,
-                          'range': [-5, 5],
-                          'rsize': [200, 250],
                           })
+
+        self.data['target'] = [sub.num for sub in self.datums if
+            sub.target.isChecked()]
 
         self.data['noise'] = noise = []
         self.data['signal'] = signal = []
@@ -238,9 +280,16 @@ class SubWindow(PySide.QtGui.QDialog):
                           })
 
         self.hide()
-        if self not in self.parent.things:
-            self.parent.things.append(self)
-        self.parent.update_dropdown()
+
+        if self not in self.parent.things_actual:
+            self.listitem = PySide.QtGui.QListWidgetItem(self.data['description'])
+            self.listitem.widget = self
+            self.parent.things.addItem(self.listitem)
+
+        else:
+            self.listitem.setText(self.data['description'])
+
+        self.parent.update()
 
     def write_file(self, fp):
         shared.logger.info('writing sub-file %s', fp.name)
@@ -258,8 +307,8 @@ class SubWindow(PySide.QtGui.QDialog):
             self.setLayout(PySide.QtGui.QVBoxLayout())
 
             switchlayout = PySide.QtGui.QHBoxLayout()
-            speakernum = PySide.QtGui.QLabel('Speaker Number {0}'
-                                         .format(len(self.parent.datums) + 1))
+            self.num = len(self.parent.datums) + 1
+            speakernum = PySide.QtGui.QLabel('Loudspeaker {0}'.format(self.num))
             f = PySide.QtGui.QFont()
             f.setWeight(PySide.QtGui.QFont.Black)
             speakernum.setFont(f)
@@ -267,7 +316,7 @@ class SubWindow(PySide.QtGui.QDialog):
             speakerhead.addStretch(0.5)
             speakerhead.addWidget(speakernum)
             speakerhead.addStretch(0.5)
-            #layout.addLayout(speakerhead)
+            self.layout().addLayout(speakerhead)
 
             """
             flippy_buttons = PySide.QtGui.QHBoxLayout()
@@ -359,10 +408,13 @@ class SubWindow(PySide.QtGui.QDialog):
                 super().__init__(parent)
                 self.parent = parent
                 self.toggle = sigornoise
-                self.setLayout(PySide.QtGui.QVBoxLayout())
+                self.setLayout(PySide.QtGui.QFormLayout())
 
                 label = PySide.QtGui.QLabel(sigornoise)
-                self.layout().addWidget(label)
+                self.layout().addRow(label)
+                label.setAlignment(PySide.QtCore.Qt.AlignHCenter)
+                label.setProperty('class', 'list_header') # This is pretty cool
+
 
                 """
                 sample: number
@@ -371,8 +423,6 @@ class SubWindow(PySide.QtGui.QDialog):
                 state: radio button true or false
                 """
 
-                input_layout = PySide.QtGui.QFormLayout()
-                self.layout().addLayout(input_layout)
 
                 self.state = PySide.QtGui.QCheckBox()  # state checkbox
 
@@ -382,24 +432,24 @@ class SubWindow(PySide.QtGui.QDialog):
                                          PySide.QtCore.Qt.CheckState.Unchecked
                                          )
 
-                input_layout.addRow("Active:", self.state)
+                self.layout().addRow("Active:", self.state)
 
                 self.sampleinput = PySide.QtGui.QSpinBox()  # sample spinbox
                 self.sampleinput.setMinimum(1)
                 self.sampleinput.setValue(data['sample'])
-                input_layout.addRow("Sample:", self.sampleinput)
+                self.layout().addRow("Sample:", self.sampleinput)
 
 
                 self.levelinput = PySide.QtGui.QSpinBox()
                 self.levelinput.setMinimum(-50)
                 self.levelinput.setMaximum(50)
                 self.levelinput.setValue(data['level'])
-                input_layout.addRow("Gain (dB):", self.levelinput)
+                self.layout().addRow("Gain (dB):", self.levelinput)
 
                 self.offsetinput = PySide.QtGui.QSpinBox()
                 self.offsetinput.setValue(data['offset'])
                 self.offsetinput.setEnabled(False)
-                input_layout.addRow("Offset (sec):", self.offsetinput)
+                self.layout().addRow("Offset (sec):", self.offsetinput)
 
                 # self.hide()
 

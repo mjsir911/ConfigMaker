@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# vim: set fileencoding=utf-8:
+# vim: set expandtab:
 
 import PySide.QtGui
 import PySide.QtCore
@@ -7,8 +8,11 @@ import PySide.QtCore
 from builtins import super
 
 import os
+import re
 import json
 import logging
+
+import pathlib2
 
 __appname__     = ""
 __author__      = "Marco Sirabella"
@@ -127,10 +131,30 @@ class MainWidget(PySide.QtGui.QGroupBox):
         if not os.path.exists(savedir):
             os.mkdir(savedir)
 
-        self.filename = QFileDialog.getExistingDirectory(self,
-                                                         caption="Export Config File",
-                                                         dir=savedir,
-                                                         )
+        pattern = re.compile(savedir + ".+")  # At least one character beyond
+        attempted = False
+        self.filename = ""
+
+        self.filename = QFileDialog.getExistingDirectory(
+            self,
+            caption="Export Config File",
+            dir=savedir,
+        )
+
+        if not self.filename:
+            return
+        print(self.filename)
+        if not pattern.match(self.filename):
+            message  = """<p>Directory choice not allowed.</p>"""
+            message += """<p>Try again.</p>"""
+            box = PySide.QtGui.QMessageBox()
+            box.setIcon(PySide.QtGui.QMessageBox.Warning)
+            box.setWindowTitle("Invalid directory")
+            box.setText("<strong>Invalid directory</strong>")
+            box.setInformativeText(message.replace(" ", "&nbsp;"))
+            box.setStandardButtons(PySide.QtGui.QMessageBox.Ok)
+            box.exec_()
+            return self.export_data()
         self.parent.saveButton.setEnabled(True)
         """
         savefilepath = QFileDialog.getSaveFileName(parent=None,
@@ -140,19 +164,38 @@ class MainWidget(PySide.QtGui.QGroupBox):
                                                    )[0]
                                                    """
         logger.info('path given to save is "%s"', self.filename)
-        self.write()
+        self.write(save_as=True)
 
-    def write(self):
-        path = self.filename
+    def write(self, save_as=False):
+        path = pathlib2.Path(self.filename)
         import shutil
         import tempfile
-        oldstuff = tempfile.mkdtemp(suffix="ConfigMaker", prefix='{}-'.format(os.path.basename(path)))
-        os.rmdir(oldstuff) # To be copied to later
-        shutil.move(path, oldstuff)
-        # Oh also dont mess up this section cuz right here all the user's
-        # contents are in ram in both places
-        logger.info('Moving old contents to %s', oldstuff)
-        os.mkdir(path)
+
+        logger.info("Hello i am write")
+        def warn():
+            box = PySide.QtGui.QMessageBox()
+            box.setIcon(PySide.QtGui.QMessageBox.Warning)
+            box.setWindowTitle("Directory not empty")
+            box.setText("<strong>Directory not empty</strong>")
+            box.setInformativeText("""The directory {} is not empty. continue?
+                    This will wipe out everything""".format(str(path)))
+            box.setStandardButtons(PySide.QtGui.QMessageBox.Save |
+                    PySide.QtGui.QMessageBox.Cancel)
+            box.setDefaultButton(PySide.QtGui.QMessageBox.Cancel)
+            return box.exec_()
+
+        files_exist_in_directory = bool(tuple(path.iterdir()))
+        if files_exist_in_directory:
+            if save_as:
+                if warn() == PySide.QtGui.QMessageBox.Cancel:
+                    return self.export_data()
+            oldstuff = tempfile.mkdtemp(suffix="ConfigMaker", prefix='{}-'.format(path.name))
+            os.rmdir(oldstuff) # To be copied to later
+            shutil.move(str(path), oldstuff)
+            # Oh also dont mess up this section cuz right here all the user's
+            # contents are in ram in both places
+            logger.info('Moving old contents to %s', oldstuff)
+            os.mkdir(str(path))
 
         # NOTE: if users start opening up multiple windows, implement a lock
         # file
@@ -163,7 +206,7 @@ class MainWidget(PySide.QtGui.QGroupBox):
                 thing.data[self.namevar]), 'w') as fp:
                 thing.write_file(fp)
 
-        self.parent.setWindowTitle(self.parent.windowtitle.format(os.path.basename(path)))
+        self.parent.setWindowTitle(self.parent.windowtitle.format(path.name))
 
-        with open('{}/00-index.json'.format(path), 'w') as outfile:
+        with open('{}/00-index.json'.format(str(path)), 'w') as outfile:
             outfile.write(json.dumps(self.savedcontents, **pretty_print))

@@ -11,3 +11,7 @@ QPushButton {
 QSpinBox {
 	min-height: 26px;
 }
+QLabel.list_header {
+  font-weight: bold;
+  text-decoration: underline;
+}

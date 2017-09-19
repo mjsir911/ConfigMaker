@@ -91,10 +91,10 @@ class MainWidget(shared.MainWidget):
 
         self.update()
 
-    def write(self):
+    def write(self, **kwargs):
         self.savedcontents['description'] = self.description.text()
         self.savedcontents['instructions'] = self.instruction.text()
-        super().write()
+        super().write(**kwargs)
 
     def update(self):
         for i in range(self.rightlayout.count()):
