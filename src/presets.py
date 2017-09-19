@@ -40,12 +40,16 @@ class MainWidget(shared.MainWidget):
 
         description_layout = PySide.QtGui.QFormLayout()
         self.layout().addLayout(description_layout)
-        #self.layout().addSpacing(20)
+        # self.layout().addSpacing(20)
 
         self.description = PySide.QtGui.QLineEdit()
-        self.description.setSizePolicy(PySide.QtGui.QSizePolicy.MinimumExpanding,
-                PySide.QtGui.QSizePolicy.Fixed)
-        self.description.setMinimumWidth(10 * self.size().width()) # TODO: make better
+        self.description.setPlaceholderText("Scenario")
+        self.description.setSizePolicy(
+            PySide.QtGui.QSizePolicy.MinimumExpanding,
+            PySide.QtGui.QSizePolicy.Fixed
+        )
+        self.description.setMinimumWidth(10 * self.size().width())
+        # TODO: make better
         description_layout.addRow("Scenario &description: ",
                                   self.description)
 
@@ -90,6 +94,8 @@ class MainWidget(shared.MainWidget):
         self.update()
 
     def write(self, save_as=False):
+        if self.description.text() == "":
+            self.description.setText(self.description.placeholderText())
         self.savedcontents['description'] = self.description.text()
         super().write(save_as)
 
@@ -167,15 +173,18 @@ class SubWindow(PySide.QtGui.QDialog):
 
     def __init__(self, parent=None, data=DEFAULT):
         shared.logger.debug("data is %s", data)
+        self.parent = parent
+        self.num = self.parent.things.count() + 1
         self.data = {'type': 'preset'}
         super().__init__(parent)
-        self.parent = parent
         self.setLayout(PySide.QtGui.QVBoxLayout())
 
         description_layout = PySide.QtGui.QFormLayout()
         self.layout().addLayout(description_layout)
         self.description = PySide.QtGui.QLineEdit()
-        self.description.setMinimumWidth(10 * self.size().width()) # TODO: make better
+        self.description.setPlaceholderText("Trial {}".format(self.num))
+        self.description.setMinimumWidth(10 * self.size().width())
+        # TODO: make better
         description_layout.addRow("Trial &Description:",
                                   self.description)
 
@@ -245,6 +254,9 @@ class SubWindow(PySide.QtGui.QDialog):
         self.exec_()
 
     def write(self):
+        if self.description.text() == "":
+            self.description.setText(self.description.placeholderText())
+
         self.data.update({'description': self.description.text(),
                           'program': self.program.value(),
                           })
