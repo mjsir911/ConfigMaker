@@ -135,26 +135,26 @@ class MainWidget(PySide.QtGui.QGroupBox):
         attempted = False
         self.filename = ""
 
-        while not pattern.match(self.filename):
-            self.filename = QFileDialog.getExistingDirectory(self,
-                                                             caption="Export Config File",
-                                                             dir=savedir,
-                                                             )
-            attempted = True
-            if attempted and not pattern.match(self.filename):
-                message  = """<p>Directory choice not allowed.</p>"""
-                message += """<p>Try again.</p>"""
-                box = PySide.QtGui.QMessageBox()
-                box.setIcon(PySide.QtGui.QMessageBox.Warning)
-                box.setWindowTitle("Invalid directory")
-                box.setText("<strong>Invalid directory</strong>")
-                box.setInformativeText(message.replace(" ", "&nbsp;"))
-                box.setStandardButtons(PySide.QtGui.QMessageBox.Ok)
-                box.exec_()
+        self.filename = QFileDialog.getExistingDirectory(
+            self,
+            caption="Export Config File",
+            dir=savedir,
+        )
 
-        print self.filename
         if not self.filename:
             return
+        print(self.filename)
+        if not pattern.match(self.filename):
+            message  = """<p>Directory choice not allowed.</p>"""
+            message += """<p>Try again.</p>"""
+            box = PySide.QtGui.QMessageBox()
+            box.setIcon(PySide.QtGui.QMessageBox.Warning)
+            box.setWindowTitle("Invalid directory")
+            box.setText("<strong>Invalid directory</strong>")
+            box.setInformativeText(message.replace(" ", "&nbsp;"))
+            box.setStandardButtons(PySide.QtGui.QMessageBox.Ok)
+            box.exec_()
+            return self.export_data()
         self.parent.saveButton.setEnabled(True)
         """
         savefilepath = QFileDialog.getSaveFileName(parent=None,
