@@ -15,15 +15,15 @@ build: $(addprefix $(DIST_DIR)/,$(TARGETS))
 $(DIST_DIR)/%.app: $(SRC)/%.py %.spec | $(VENV)/bin/pyinstaller
 	$| --noconfirm $*.spec
 
-$(SRC)/UI:
-	echo '$@ needs to exist!'
-	exit 2
+%.spec: $(SRC)/%.py $(SRC)/style.css | $(VENV)/bin/pyi-makespec
+	$| -w --add-data "$(word 2,$^):." $<
 
 $(addprefix $(SRC)/,$(TARGETS:.app=.py)): $(SRC)/shared.py | $(SRC)/UI
 	touch $@
 
-%.spec: $(SRC)/%.py $(SRC)/style.css | $(VENV)/bin/pyi-makespec
-	$| -w --add-data "$(word 2,$^):." $<
+$(SRC)/UI:
+	echo '$@ needs to exist!'
+	exit 2
 
 $(VENV)/bin/pyi-makespec: $(VENV)/bin/pyinstaller
 $(VENV)/bin/pyinstaller: requirements
