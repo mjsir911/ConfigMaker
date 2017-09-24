@@ -93,11 +93,11 @@ class MainWidget(shared.MainWidget):
 
         self.update()
 
-    def write(self, save_as=False):
+    def write(self):
         if self.description.text() == "":
             self.description.setText(self.description.placeholderText())
         self.savedcontents['description'] = self.description.text()
-        super().write(save_as)
+        super().write()
 
     def update(self):
         pass

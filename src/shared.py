@@ -128,6 +128,7 @@ class MainWidget(PySide.QtGui.QGroupBox):
     def export_data(self):
         from PySide.QtGui import QFileDialog
         savedir = defaultdir + self.name + '/'
+        savedir = os.path.realpath(savedir)
         if not os.path.exists(savedir):
             os.mkdir(savedir)
 
@@ -135,15 +136,19 @@ class MainWidget(PySide.QtGui.QGroupBox):
         attempted = False
         self.filename = ""
 
-        self.filename = QFileDialog.getExistingDirectory(
+        # self.filename = QFileDialog.getExistingDirectory(
+        self.filename, _ = QFileDialog.getSaveFileName(
             self,
             caption="Export Config File",
             dir=savedir,
         )
-
+        self.filename = os.path.realpath(self.filename)
         if not self.filename:
             return
-        print(self.filename)
+        if not os.path.exists(self.filename):
+            os.mkdir(self.filename)
+
+        print(self.filename, pattern.match(self.filename))
         if not pattern.match(self.filename):
             message  = """<p>Directory choice not allowed.</p>"""
             message += """<p>Try again.</p>"""
@@ -156,39 +161,16 @@ class MainWidget(PySide.QtGui.QGroupBox):
             box.exec_()
             return self.export_data()
         self.parent.saveButton.setEnabled(True)
-        """
-        savefilepath = QFileDialog.getSaveFileName(parent=None,
-                                                   caption='Export Config File',
-                                                   dir=savedir,
-                                                   filter='JSON files(*.json)'
-                                                   )[0]
-                                                   """
         logger.info('path given to save is "%s"', self.filename)
-        self.write(save_as=True)
+        self.write()
 
-    def write(self, save_as=False):
+    def write(self):
         path = pathlib2.Path(self.filename)
         import shutil
         import tempfile
 
-        logger.info("Hello i am write")
-        def warn():
-            box = PySide.QtGui.QMessageBox()
-            box.setIcon(PySide.QtGui.QMessageBox.Warning)
-            box.setWindowTitle("Directory not empty")
-            box.setText("<strong>Directory not empty</strong>")
-            box.setInformativeText("""The directory {} is not empty. continue?
-                    This will wipe out everything""".format(str(path)))
-            box.setStandardButtons(PySide.QtGui.QMessageBox.Save |
-                    PySide.QtGui.QMessageBox.Cancel)
-            box.setDefaultButton(PySide.QtGui.QMessageBox.Cancel)
-            return box.exec_()
-
         files_exist_in_directory = bool(tuple(path.iterdir()))
         if files_exist_in_directory:
-            if save_as:
-                if warn() == PySide.QtGui.QMessageBox.Cancel:
-                    return self.export_data()
             oldstuff = tempfile.mkdtemp(suffix="ConfigMaker", prefix='{}-'.format(path.name))
             os.rmdir(oldstuff) # To be copied to later
             shutil.move(str(path), oldstuff)
