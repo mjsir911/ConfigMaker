@@ -14,7 +14,7 @@ SRC = src/
 build: $(TARGET)
 
 $(DIST_DIR)/%.app: %.spec $(SRC)/%.py $(SRC)/UI | $(VENV)/bin/pyinstaller
-	$| $*.spec
+	$| --noconfirm $*.spec
 
 $(SRC)/UI:
 	echo '$@ needs to exist!'
@@ -22,8 +22,8 @@ $(SRC)/UI:
 
 $(SRC)/%.py: $(SRC)/shared.py
 
-%.spec: $(SRC)/style.css | $(VENV)/bin/pyi-makespec
-	$| -w --add-data "$<:." src/$*.py
+%.spec: $(SRC)/%.py $(SRC)/style.css | $(VENV)/bin/pyi-makespec
+	$| -w --add-data "$(word 2,$^):." $<
 
 $(VENV)/bin/pyi-makespec: $(VENV)/bin/pyinstaller
 $(VENV)/bin/pyinstaller: requirements
