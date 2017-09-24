@@ -1,5 +1,5 @@
 future >= 0.16.0
 PySide == 1.2.2
-py2app >= 0.10
+pyinstaller
 six == 1.10.0
 pathlib2

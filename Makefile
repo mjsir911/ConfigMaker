@@ -1,33 +1,30 @@
 PYTH = python2.7
 VENV = venv/
 BUILD = build/
+DIST_DIR=dist/
 TARGET = ratings.app presets.app
-TARGET := $(addprefix $(BUILD)/,$(TARGET))
+TARGET := $(addprefix $(DIST_DIR)/,$(TARGET))
 SRC = src/
 
-
-
-.PHONY: all build clean $(APP)
-
-#$(VENV)/bin/py2applet -s -d build/ src/makeconf.py
-#rm -rf $(BUILD)/bdist*
-#"build/makeconf-$(shell date -u +"%Y-%m-%d").app"
-all: $(VENV) $(BUILD)
-
+.DEFAULT_GOAL := build
+.PHONY: build
 build: $(TARGET)
 
-
-$(BUILD)/%.app: setup.py $(SRC)/%.py $(SRC)/UI | $(VENV)/bin/py2applet
-	$(VENV)/bin/$(PYTH) setup.py py2app -A --app="['$(SRC)/$*.py']"
+$(DIST_DIR)/%.app: %.spec $(SRC)/%.py $(SRC)/UI | $(VENV)/bin/pyinstaller
+	#$(VENV)/bin/$(PYTH) setup.py py2app -A --app="['$(SRC)/$*.py']"
+	$| $*.spec
 
 $(SRC)/UI:
 	echo '$(SRC)/UI needs to exist!'
 	exit 2
 
-setup.py: | $(VENV)/bin/py2applet
-	$(VENV)/bin/py2applet --make-setup -a -s --site-packages --resources='src/' --packages=PySide -d $(BUILD) -b $(BUILD) $(SRC)
+$(SRC)/%.py: $(SRC)/shared.py
 
-$(VENV)/bin/py2applet: requirements
+%.spec: $(SRC)/style.css | $(VENV)/bin/pyi-makespec
+	$| -w --add-data "$<:." src/$*.py
+
+$(VENV)/bin/pyi-makespec: $(VENV)/bin/pyinstaller
+$(VENV)/bin/pyinstaller: requirements
 
 requirements: pip
 
