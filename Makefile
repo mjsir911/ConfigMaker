@@ -12,7 +12,7 @@ SRC = src/
 .PHONY: build
 build: $(addprefix $(DIST_DIR)/,$(TARGETS))
 
-$(DIST_DIR)/%.app: $(SRC)/%.py %.spec | $(VENV)/bin/pyinstaller
+$(DIST_DIR)/%.app: $(SRC)/%.py %.spec $(SRC)/style.css | $(VENV)/bin/pyinstaller
 	$| --noconfirm $*.spec
 
 %.spec: $(SRC)/%.py $(SRC)/style.css | $(VENV)/bin/pyi-makespec
