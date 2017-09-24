@@ -1,3 +1,6 @@
+MAKEFLAGS += --warn-undefined-variables
+RM += -r
+
 PYTH = python2.7
 VENV = venv/
 BUILD = build/
@@ -11,11 +14,10 @@ SRC = src/
 build: $(TARGET)
 
 $(DIST_DIR)/%.app: %.spec $(SRC)/%.py $(SRC)/UI | $(VENV)/bin/pyinstaller
-	#$(VENV)/bin/$(PYTH) setup.py py2app -A --app="['$(SRC)/$*.py']"
 	$| $*.spec
 
 $(SRC)/UI:
-	echo '$(SRC)/UI needs to exist!'
+	echo '$@ needs to exist!'
 	exit 2
 
 $(SRC)/%.py: $(SRC)/shared.py
@@ -37,8 +39,9 @@ $(VENV)/pip-selfcheck.json: $(VENV) requirements.txt
 	touch $(VENV)/pip-selfcheck.json
 
 $(VENV):
-	virtualenv $(VENV) --python=$(PYTH)
-	rm -f $(VENV)/pip-selfcheck.json
+	virtualenv --python=$(PYTH) $@
+	$(RM) $(VENV)/pip-selfcheck.json
 
+.PHONY: clean
 clean: 
-	rm -rf $(BUILD) setup.py
+	$(RM) $(BUILD) $(DIST_DIR) *.spec
