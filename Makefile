@@ -5,22 +5,22 @@ PYTH = python2.7
 VENV = venv/
 BUILD = build/
 DIST_DIR=dist/
-TARGET = ratings.app presets.app
-TARGET := $(addprefix $(DIST_DIR)/,$(TARGET))
+TARGETS = ratings.app presets.app
 SRC = src/
 
 .DEFAULT_GOAL := build
 .PHONY: build
-build: $(TARGET)
+build: $(addprefix $(DIST_DIR)/,$(TARGETS))
 
-$(DIST_DIR)/%.app: %.spec $(SRC)/%.py $(SRC)/UI | $(VENV)/bin/pyinstaller
+$(DIST_DIR)/%.app: $(SRC)/%.py %.spec | $(VENV)/bin/pyinstaller
 	$| --noconfirm $*.spec
 
 $(SRC)/UI:
 	echo '$@ needs to exist!'
 	exit 2
 
-$(SRC)/%.py: $(SRC)/shared.py
+$(addprefix $(SRC)/,$(TARGETS:.app=.py)): $(SRC)/shared.py | $(SRC)/UI
+	touch $@
 
 %.spec: $(SRC)/%.py $(SRC)/style.css | $(VENV)/bin/pyi-makespec
 	$| -w --add-data "$(word 2,$^):." $<
