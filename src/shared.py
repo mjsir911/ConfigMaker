@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8:
+# vim: set tabstop=8 expandtab shiftwidth=4 softtabstop=4
 # vim: set expandtab:
 
 import PySide.QtGui
@@ -103,7 +104,19 @@ class MainWindow(PySide.QtGui.QMainWindow):
     def newFile(self):
         self.editMenu = self.menuBar().addMenu("&Edit")
     def openFile(self):
-        raise NotImplementedError()
+        #self.centralWidget.
+        savedir = defaultdir + self.widget.name + '/'
+        from PySide.QtGui import QFileDialog
+        config_dir = QFileDialog.getExistingDirectory(parent=None,
+                                                    caption='Open Configuration File',
+                                                    dir=defaultdir
+        )
+        config_dir = pathlib2.Path(config_dir)
+        self.setCentralWidget(self.widget.load_from_name(
+                                                         config_dir,
+                                                         parent=self
+                             )
+        )
     def saveFile(self):
         self.centralWidget().write()
     def saveAsFile(self):
@@ -192,3 +205,25 @@ class MainWidget(PySide.QtGui.QGroupBox):
 
         with open('{}/00-index.json'.format(str(path)), 'w') as outfile:
             outfile.write(json.dumps(self.savedcontents, **pretty_print))
+
+    @classmethod
+    def load_from_name(cls, config, parent=None):
+        index = '00-index.json'
+        self = None
+        for file_name in config.iterdir(): # TODO: maybe replace with os.walk
+            # as thats what kevin is using
+            # TODO: file validation, make sure doesnt start with . and ends
+            # with .json
+            # NOTE: use common or shared directory with integration to kymapy
+            with open(str(file_name), 'r') as file:
+                data = json.loads(file.read())
+                if file_name.name == index:
+                    self = cls(parent=parent, data=data)
+                else:
+                    subwindow = self.subwind(parent=self, data=data)
+                    subwindow.write()
+                    subwindow.close()
+
+        if self is None:
+            raise
+        return self

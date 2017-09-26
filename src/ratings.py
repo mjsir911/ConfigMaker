@@ -7,6 +7,7 @@ import PySide.QtCore
 from builtins import super
 import collections
 
+
 import json
 
 import shared
@@ -28,8 +29,10 @@ class MainWidget(shared.MainWidget):
     thing = 'question' # I really dont want to go down this path again
     namevar = 'name'
 
-    def __init__(self, parent=None):
+    DEFAULT={'description': '', 'instructions': ''}
+    def __init__(self, parent=None, data=DEFAULT):
         super().__init__(parent=parent)
+        self.savedcontent = data
         self.subwind = SubWindow
 
         self.setLayout(PySide.QtGui.QHBoxLayout())
@@ -44,10 +47,12 @@ class MainWidget(shared.MainWidget):
         leftlayout.addSpacing(20)
 
         self.description = PySide.QtGui.QLineEdit()
+        self.description.setText(self.savedcontent['description'])
         description_layout.addRow("Ratings &description: ",
                                   self.description)
 
         self.instruction = PySide.QtGui.QLineEdit()
+        self.instruction.setText(self.savedcontent['instructions'])
         description_layout.addRow("&Instructions: ",
                                   self.instruction)
 
@@ -112,7 +117,6 @@ class MainWidget(shared.MainWidget):
             prev.setAlignment(PySide.QtCore.Qt.AlignCenter)
             self.rightlayout.addWidget(prev)
 
-
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
     responses = collections.OrderedDict((
@@ -121,32 +125,53 @@ class SubWindow(PySide.QtGui.QDialog):
         ('Fill in', 'free'),
     ))
 
-    def __init__(self, parent=None):
+    DEFAULT = {
+            "type": "rating",
+            "name": "",
+            "question": "",
+            "subtype": "radio",
+            "options": [
+                [1, ''],
+                [2, ''],
+                [3, ''],
+                [4, ''],
+                [5, ''],
+                ],
+            }
+
+    def __init__(self, parent=None, data=DEFAULT):
         super().__init__(parent=parent)
         self.parent = parent
+        self.data = data
         self.index = -1
 
-        self.data = {'type': 'rating'}
 
         self.setLayout(PySide.QtGui.QVBoxLayout())
         input_layout = PySide.QtGui.QFormLayout()
         self.layout().addLayout(input_layout)
         self.name = PySide.QtGui.QLineEdit(parent=self)
+        self.name.setText(self.data['name'])
         input_layout.addRow('Response id:', self.name)
         self.question = PySide.QtGui.QLineEdit(parent=self)
+        self.question.setText(self.data['question'])
         input_layout.addRow('Question:', self.question)
         self.rating_type = PySide.QtGui.QComboBox(parent=self)
-        input_layout.addRow('Response type:', self.rating_type)
         # Change to radio buttons if dragano dont like the ugliness of this
         self.rating_type.setSizePolicy(PySide.QtGui.QSizePolicy.Expanding,
                                 PySide.QtGui.QSizePolicy.Preferred)
 
         for response_type in self.responses.keys():
             self.rating_type.addItem(response_type)
-        self.rating_type.update()
+        print(tuple(self.responses.keys()), self.data['subtype'])
+        self.rating_type.setCurrentIndex(tuple(self.responses.values()).index(self.data['subtype']))
+        input_layout.addRow('Response type:', self.rating_type)
 
+        self.rating_type.update()
         self.rating_type.currentIndexChanged.connect(self.check)
         self.rating_type.update()
+
+        for option in data['options']:
+            pass
 
         self.all_responses = []
         self.questionNum = PySide.QtGui.QSpinBox()
@@ -156,8 +181,8 @@ class SubWindow(PySide.QtGui.QDialog):
 
         response_layout = PySide.QtGui.QVBoxLayout()
         self.layout().addLayout(response_layout)
-        for x in range(0, self.maxoptions):
-            response = self.Response(x)
+        for x, data in zip(range(0, self.maxoptions), self.data['options']):
+            response = self.Response(x, data=data)
             self.all_responses.append(response)
             response_layout.addWidget(response)
         response_layout.addStretch(1)
@@ -176,7 +201,7 @@ class SubWindow(PySide.QtGui.QDialog):
                 PySide.QtGui.QSizePolicy.Expanding)
             )
 
-        self.questionNum.setValue(5)
+        self.questionNum.setValue(len(self.data['options']))
         self.responseCheck()
         self.check()
 
@@ -198,7 +223,7 @@ class SubWindow(PySide.QtGui.QDialog):
         self.rating_type.update()
 
     class Response(PySide.QtGui.QWidget):
-        def __init__(self, num, parent=None):
+        def __init__(self, num, parent=None, data=None):
             super().__init__(parent)
             self.parent = parent
             self.layout = PySide.QtGui.QVBoxLayout()
@@ -206,9 +231,10 @@ class SubWindow(PySide.QtGui.QDialog):
             #self.hr = PySide.QtGui.QSpacerItem(20, 40, PySide.QtGui.QSizePolicy.Minimum, PySide.QtGui.QSizePolicy.Expanding)
             self.selection = PySide.QtGui.QLineEdit()
             self.selection.setPlaceholderText("Text")
+            self.selection.setText(data[1])
             self.questionNum = PySide.QtGui.QSpinBox()
             self.recode = PySide.QtGui.QSpinBox()
-            self.recode.setValue(num + 1)
+            self.recode.setValue(data[0])
             self.questionNum.setRange(0, -1)
 
             self.hbox = PySide.QtGui.QHBoxLayout()
@@ -223,6 +249,7 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.hide()
             else:
                 self.show()
+
 
     def write(self):
         self.data['name'] = self.name.text()
@@ -249,8 +276,9 @@ class SubWindow(PySide.QtGui.QDialog):
                         }
         fp.write(json.dumps(self.data, **pretty_print))
 
+
 if __name__ == '__main__':
     from sys import argv, exit
     app = PySide.QtGui.QApplication(argv)
-    dumbthing = shared.MainWindow(MainWidget, parent=app)
+    shared.MainWindow(MainWidget, parent=app)
     exit(app.exec_())
