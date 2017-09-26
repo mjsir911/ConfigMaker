@@ -32,8 +32,10 @@ class MainWidget(shared.MainWidget):
     name = 'presets'
     thing = 'trial' # I really dont want to go down this path again
     namevar = 'description'
-    def __init__(self, parent=None):
+    DEFAULT = {namevar: ''}
+    def __init__(self, parent=None, data=DEFAULT):
         super().__init__(parent=parent)
+        self.savedcontent = data
         self.subwind = SubWindow
 
         self.setLayout(PySide.QtGui.QVBoxLayout())
@@ -43,6 +45,7 @@ class MainWidget(shared.MainWidget):
         # self.layout().addSpacing(20)
 
         self.description = PySide.QtGui.QLineEdit()
+        self.description.setText(self.savedcontent['description'])
         self.description.setPlaceholderText("Scenario")
         self.description.setSizePolicy(
             PySide.QtGui.QSizePolicy.MinimumExpanding,
@@ -102,17 +105,6 @@ class MainWidget(shared.MainWidget):
     def update(self):
         pass
 
-DEFAULT = {
-    'noise':  [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
-    'signal': [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
-    'step': 3,
-    'range': [-12, 12],
-    'program': 1,
-    'rsize': [104, 104],
-    'type': 'preset',
-    'targets': [3]
-        }
-
 from UI import LocalizationPane
 import math
 class FancyCircle(LocalizationPane.ControlPane):
@@ -171,11 +163,22 @@ class FancyCircle(LocalizationPane.ControlPane):
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
 
+    DEFAULT = {
+        'noise':  [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
+        'signal': [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
+        'step': 3,
+        'range': [-12, 12],
+        'program': 1,
+        'rsize': [104, 104],
+        'type': 'preset',
+        'targets': [3]
+            }
+
     def __init__(self, parent=None, data=DEFAULT):
         shared.logger.debug("data is %s", data)
         self.parent = parent
         self.num = self.parent.things.count() + 1
-        self.data = {'type': 'preset'}
+        self.data = data
         super().__init__(parent)
         self.setLayout(PySide.QtGui.QVBoxLayout())
 
@@ -184,6 +187,7 @@ class SubWindow(PySide.QtGui.QDialog):
         self.description = PySide.QtGui.QLineEdit()
         self.description.setPlaceholderText("Trial {}".format(self.num))
         self.description.setMinimumWidth(10 * self.size().width())
+        self.description.setText(self.data['description'])
         # TODO: make better
         description_layout.addRow("Trial &Description:",
                                   self.description)
@@ -191,6 +195,7 @@ class SubWindow(PySide.QtGui.QDialog):
         self.program = PySide.QtGui.QSpinBox()
         self.program.setMinimum(0)
         self.program.setMaximum(6)
+        self.program.setValue(self.data['program'])
         self.program.setSizePolicy(PySide.QtGui.QSizePolicy(
                 PySide.QtGui.QSizePolicy.Maximum,
                 PySide.QtGui.QSizePolicy.Maximum)
