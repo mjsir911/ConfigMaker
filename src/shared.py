@@ -109,7 +109,7 @@ class MainWindow(PySide.QtGui.QMainWindow):
         from PySide.QtGui import QFileDialog
         config_dir = QFileDialog.getExistingDirectory(parent=None,
                                                     caption='Open Configuration File',
-                                                    dir=defaultdir
+                                                    dir=savedir
         )
         config_dir = pathlib2.Path(config_dir)
         self.setCentralWidget(self.widget.load_from_name(
