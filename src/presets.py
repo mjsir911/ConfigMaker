@@ -164,6 +164,7 @@ class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
 
     DEFAULT = {
+        'description': '',
         'noise':  [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
         'signal': [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
         'step': 3,
