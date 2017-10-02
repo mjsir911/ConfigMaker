@@ -35,7 +35,7 @@ class MainWidget(shared.MainWidget):
     DEFAULT = {namevar: ''}
     def __init__(self, parent=None, data=DEFAULT):
         super().__init__(parent=parent)
-        self.savedcontent = data
+        self.savedcontent = data.copy()
         self.subwind = SubWindow
 
         self.setLayout(PySide.QtGui.QVBoxLayout())
@@ -179,7 +179,7 @@ class SubWindow(PySide.QtGui.QDialog):
         shared.logger.debug("data is %s", data)
         self.parent = parent
         self.num = self.parent.things.count() + 1
-        self.data = data
+        self.data = data.copy()
         super().__init__(parent)
         self.setLayout(PySide.QtGui.QVBoxLayout())
 

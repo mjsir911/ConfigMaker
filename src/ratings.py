@@ -32,7 +32,7 @@ class MainWidget(shared.MainWidget):
     DEFAULT={'description': '', 'instructions': ''}
     def __init__(self, parent=None, data=DEFAULT):
         super().__init__(parent=parent)
-        self.savedcontent = data
+        self.savedcontent = data.copy()
         self.subwind = SubWindow
 
         self.setLayout(PySide.QtGui.QHBoxLayout())
@@ -142,7 +142,7 @@ class SubWindow(PySide.QtGui.QDialog):
     def __init__(self, parent=None, data=DEFAULT):
         super().__init__(parent=parent)
         self.parent = parent
-        self.data = data
+        self.data = data.copy()
         self.index = -1
 
 
