@@ -267,8 +267,8 @@ class SubWindow(PySide.QtGui.QDialog):
                           'program': self.program.value(),
                           })
 
-        self.data['target'] = [sub.num for sub in self.datums if
             sub.target.isChecked()]
+        self.data['targets'] = [sub.num for sub in self.datums if
 
         self.data['noise'] = noise = []
         self.data['signal'] = signal = []
