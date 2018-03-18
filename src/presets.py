@@ -31,7 +31,7 @@ def debug(frame):
 class MainWidget(shared.MainWidget):
     """ Put main content here """
     name = 'presets'
-    thing = 'trial'  # I really dont want to go down this path again
+    thing = 'scenario'  # I really dont want to go down this path again
     namevar = 'description'
     DEFAULT = {namevar: ''}
 
@@ -48,14 +48,14 @@ class MainWidget(shared.MainWidget):
 
         self.description = PySide.QtGui.QLineEdit()
         self.description.setText(self.savedcontent['description'])
-        self.description.setPlaceholderText("Scenario")
+        self.description.setPlaceholderText("Presets")
         self.description.setSizePolicy(
             PySide.QtGui.QSizePolicy.MinimumExpanding,
             PySide.QtGui.QSizePolicy.Fixed
         )
         self.description.setMinimumWidth(10 * self.size().width())
         # TODO: make better
-        description_layout.addRow("Scenario &description: ",
+        description_layout.addRow("Presets &description: ",
                                   self.description)
 
         self.add_button = PySide.QtGui.QPushButton(
@@ -192,7 +192,7 @@ class SubWindow(PySide.QtGui.QDialog):
         self.description.setMinimumWidth(10 * self.size().width())
         self.description.setText(self.data['description'])
         # TODO: make better
-        description_layout.addRow("Trial &Description:",
+        description_layout.addRow("Scenario &Description:",
                                   self.description)
 
         self.program = PySide.QtGui.QSpinBox()
