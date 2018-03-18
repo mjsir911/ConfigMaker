@@ -111,6 +111,8 @@ class MainWindow(PySide.QtGui.QMainWindow):
                                                     caption='Open Configuration File',
                                                     dir=savedir
         )
+        if not config_dir:
+            return  # User pressed `Cancel`
         config_dir = pathlib2.Path(config_dir)
         self.setCentralWidget(self.widget.load_from_name(
                                                          config_dir,
