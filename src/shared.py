@@ -208,22 +208,26 @@ class MainWidget(PySide.QtGui.QGroupBox):
 
     @classmethod
     def load_from_name(cls, config, parent=None):
-        index = '00-index.json'
-        self = None
-        for file_name in config.iterdir(): # TODO: maybe replace with os.walk
+        """
+        Instantiates new window with data already filled in
+        """
+        INDEX = config.joinpath('00-index.json')
+        with INDEX.open('r') as file:
+            # Load index file first
+            data = json.load(file)
+            self = cls(parent=parent, data=data)
+        for file_name in config.iterdir():  # TODO: maybe replace with os.walk
             # as thats what kevin is using
             # TODO: file validation, make sure doesnt start with . and ends
             # with .json
             # NOTE: use common or shared directory with integration to kymapy
-            with open(str(file_name), 'r') as file:
-                data = json.loads(file.read())
-                if file_name.name == index:
-                    self = cls(parent=parent, data=data)
-                else:
-                    subwindow = self.subwind(parent=self, data=data)
-                    subwindow.write()
-                    subwindow.close()
+            if file_name == INDEX:  # if is index file has a different format
+                continue
+            with file_name.open('r') as file:
+                # Load each individual configuration
+                data = json.load(file)
+                subwindow = self.subwind(parent=self, data=data)
+                subwindow.write()
+                subwindow.close()
 
-        if self is None:
-            raise
         return self
