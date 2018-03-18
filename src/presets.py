@@ -27,12 +27,14 @@ def debug(frame):
     frameinfo = inspect.getframeinfo(frame)
     shared.logger.debug("%s:%s", frameinfo.filename, frameinfo.lineno)
 
+
 class MainWidget(shared.MainWidget):
     """ Put main content here """
     name = 'presets'
-    thing = 'trial' # I really dont want to go down this path again
+    thing = 'trial'  # I really dont want to go down this path again
     namevar = 'description'
     DEFAULT = {namevar: ''}
+
     def __init__(self, parent=None, data=DEFAULT):
         super().__init__(parent=parent)
         self.savedcontent = data.copy()
@@ -267,8 +269,8 @@ class SubWindow(PySide.QtGui.QDialog):
                           'program': self.program.value(),
                           })
 
-            sub.target.isChecked()]
         self.data['targets'] = [sub.num for sub in self.datums if
+                                sub.target.isChecked()]
 
         self.data['noise'] = noise = []
         self.data['signal'] = signal = []
@@ -394,12 +396,12 @@ class SubWindow(PySide.QtGui.QDialog):
                 # pass
                 # self.parent.layout.removeWidget(self)
 
-            #self.parent.glayout.addWidget(self, 2, 2) # XXX
-            #self.parent.glayout.indexOf(self) # XXX
+            # self.parent.glayout.addWidget(self, 2, 2) # XXX
+            # self.parent.glayout.indexOf(self) # XXX
 
         def hide(self):
             super().hide()
-            #self.parent.glayout.removeWidget(self) # XXX
+            # self.parent.glayout.removeWidget(self) # XXX
 
         class SignalOrNoise(PySide.QtGui.QWidget):
 
@@ -419,8 +421,7 @@ class SubWindow(PySide.QtGui.QDialog):
                 label = PySide.QtGui.QLabel(sigornoise)
                 self.layout().addRow(label)
                 label.setAlignment(PySide.QtCore.Qt.AlignHCenter)
-                label.setProperty('class', 'list_header') # This is pretty cool
-
+                label.setProperty('class', 'list_header')  # This is prety cool
 
                 """
                 sample: number
@@ -428,7 +429,6 @@ class SubWindow(PySide.QtGui.QDialog):
                 offset: in milliseconds
                 state: radio button true or false
                 """
-
 
                 self.state = PySide.QtGui.QCheckBox()  # state checkbox
 
@@ -445,7 +445,6 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.sampleinput.setValue(data['sample'])
                 self.layout().addRow("Sample:", self.sampleinput)
 
-
                 self.levelinput = PySide.QtGui.QSpinBox()
                 self.levelinput.setMinimum(-50)
                 self.levelinput.setMaximum(50)
@@ -458,6 +457,7 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.layout().addRow("Offset (sec):", self.offsetinput)
 
                 # self.hide()
+
 
 if __name__ == '__main__':
     from sys import argv, exit

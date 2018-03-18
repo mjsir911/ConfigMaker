@@ -26,10 +26,11 @@ __module__      = ""
 class MainWidget(shared.MainWidget):
     """ Put main content here """
     name = 'ratings'
-    thing = 'question' # I really dont want to go down this path again
+    thing = 'question'  # I really dont want to go down this path again
     namevar = 'name'
 
-    DEFAULT={'description': '', 'instructions': ''}
+    DEFAULT = {'description': '', 'instructions': ''}
+
     def __init__(self, parent=None, data=DEFAULT):
         super().__init__(parent=parent)
         self.savedcontent = data.copy()
@@ -249,7 +250,6 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.hide()
             else:
                 self.show()
-
 
     def write(self):
         self.data['name'] = self.name.text()
