@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8:
+# vim: set tabstop=8 expandtab shiftwidth=4 softtabstop=4
 # vim: set expandtab:
 
 import PySide.QtGui
@@ -103,7 +104,21 @@ class MainWindow(PySide.QtGui.QMainWindow):
     def newFile(self):
         self.editMenu = self.menuBar().addMenu("&Edit")
     def openFile(self):
-        raise NotImplementedError()
+        #self.centralWidget.
+        savedir = defaultdir + self.widget.name + '/'
+        from PySide.QtGui import QFileDialog
+        config_dir = QFileDialog.getExistingDirectory(parent=None,
+                                                    caption='Open Configuration File',
+                                                    dir=savedir
+        )
+        if not config_dir:
+            return  # User pressed `Cancel`
+        config_dir = pathlib2.Path(config_dir)
+        self.setCentralWidget(self.widget.load_from_name(
+                                                         config_dir,
+                                                         parent=self
+                             )
+        )
     def saveFile(self):
         self.centralWidget().write()
     def saveAsFile(self):
@@ -128,6 +143,7 @@ class MainWidget(PySide.QtGui.QGroupBox):
     def export_data(self):
         from PySide.QtGui import QFileDialog
         savedir = defaultdir + self.name + '/'
+        savedir = os.path.realpath(savedir)
         if not os.path.exists(savedir):
             os.mkdir(savedir)
 
@@ -135,15 +151,19 @@ class MainWidget(PySide.QtGui.QGroupBox):
         attempted = False
         self.filename = ""
 
-        self.filename = QFileDialog.getExistingDirectory(
+        # self.filename = QFileDialog.getExistingDirectory(
+        self.filename, _ = QFileDialog.getSaveFileName(
             self,
             caption="Export Config File",
             dir=savedir,
         )
-
+        self.filename = os.path.realpath(self.filename)
         if not self.filename:
             return
-        print(self.filename)
+        if not os.path.exists(self.filename):
+            os.mkdir(self.filename)
+
+        print(self.filename, pattern.match(self.filename))
         if not pattern.match(self.filename):
             message  = """<p>Directory choice not allowed.</p>"""
             message += """<p>Try again.</p>"""
@@ -156,39 +176,16 @@ class MainWidget(PySide.QtGui.QGroupBox):
             box.exec_()
             return self.export_data()
         self.parent.saveButton.setEnabled(True)
-        """
-        savefilepath = QFileDialog.getSaveFileName(parent=None,
-                                                   caption='Export Config File',
-                                                   dir=savedir,
-                                                   filter='JSON files(*.json)'
-                                                   )[0]
-                                                   """
         logger.info('path given to save is "%s"', self.filename)
         self.write(save_as=True)
 
-    def write(self, save_as=False):
+    def write(self):
         path = pathlib2.Path(self.filename)
         import shutil
         import tempfile
 
-        logger.info("Hello i am write")
-        def warn():
-            box = PySide.QtGui.QMessageBox()
-            box.setIcon(PySide.QtGui.QMessageBox.Warning)
-            box.setWindowTitle("Directory not empty")
-            box.setText("<strong>Directory not empty</strong>")
-            box.setInformativeText("""The directory {} is not empty. continue?
-                    This will wipe out everything""".format(str(path)))
-            box.setStandardButtons(PySide.QtGui.QMessageBox.Save |
-                    PySide.QtGui.QMessageBox.Cancel)
-            box.setDefaultButton(PySide.QtGui.QMessageBox.Cancel)
-            return box.exec_()
-
         files_exist_in_directory = bool(tuple(path.iterdir()))
         if files_exist_in_directory:
-            if save_as:
-                if warn() == PySide.QtGui.QMessageBox.Cancel:
-                    return self.export_data()
             oldstuff = tempfile.mkdtemp(suffix="ConfigMaker", prefix='{}-'.format(path.name))
             os.rmdir(oldstuff) # To be copied to later
             shutil.move(str(path), oldstuff)
@@ -210,3 +207,32 @@ class MainWidget(PySide.QtGui.QGroupBox):
 
         with open('{}/00-index.json'.format(str(path)), 'w') as outfile:
             outfile.write(json.dumps(self.savedcontents, **pretty_print))
+
+    @classmethod
+    def load_from_name(cls, config, parent=None):
+        """
+        Instantiates new window with data already filled in
+        """
+        INDEX = config.joinpath('00-index.json')
+        with INDEX.open('r') as file:
+            # Load index file first
+            data = json.load(file)
+            self = cls(parent=parent, data=data)
+        # Just sort the order
+        for file_name in sorted(config.iterdir()):  # TODO: maybe replace with os.walk
+            print('%%%%' * 10)
+            print(file_name)
+            # as thats what kevin is using
+            # TODO: file validation, make sure doesnt start with . and ends
+            # with .json
+            # NOTE: use common or shared directory with integration to kymapy
+            if file_name == INDEX:  # if is index file has a different format
+                continue
+            with file_name.open('r') as file:
+                # Load each individual configuration
+                data = json.load(file)
+                subwindow = self.subwind(parent=self, data=data)
+                subwindow.write()
+                subwindow.close()
+
+        return self

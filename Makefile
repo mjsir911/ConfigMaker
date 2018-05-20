@@ -1,33 +1,32 @@
+MAKEFLAGS += --warn-undefined-variables
+RM += -r
+
 PYTH = python2.7
 VENV = venv/
 BUILD = build/
-TARGET = ratings.app presets.app
-TARGET := $(addprefix $(BUILD)/,$(TARGET))
+DIST_DIR=dist/
+TARGETS = ratings.app presets.app
 SRC = src/
 
+.DEFAULT_GOAL := build
+.PHONY: build
+build: $(addprefix $(DIST_DIR)/,$(TARGETS))
 
+$(DIST_DIR)/%.app: $(SRC)/%.py %.spec $(SRC)/style.css | $(VENV)/bin/pyinstaller
+	$| --noconfirm $*.spec
 
-.PHONY: all build clean $(APP)
+%.spec: $(SRC)/%.py $(SRC)/style.css | $(VENV)/bin/pyi-makespec
+	$| -w --add-data "$(word 2,$^):." $<
 
-#$(VENV)/bin/py2applet -s -d build/ src/makeconf.py
-#rm -rf $(BUILD)/bdist*
-#"build/makeconf-$(shell date -u +"%Y-%m-%d").app"
-all: $(VENV) $(BUILD)
-
-build: $(TARGET)
-
-
-$(BUILD)/%.app: setup.py $(SRC)/%.py $(SRC)/UI | $(VENV)/bin/py2applet
-	$(VENV)/bin/$(PYTH) setup.py py2app -A --app="['$(SRC)/$*.py']"
+$(addprefix $(SRC)/,$(TARGETS:.app=.py)): $(SRC)/shared.py | $(SRC)/UI
+	touch $@
 
 $(SRC)/UI:
-	echo '$(SRC)/UI needs to exist!'
+	echo '$@ needs to exist!'
 	exit 2
 
-setup.py: | $(VENV)/bin/py2applet
-	$(VENV)/bin/py2applet --make-setup -a -s --site-packages --resources='src/' --packages=PySide -d $(BUILD) -b $(BUILD) $(SRC)
-
-$(VENV)/bin/py2applet: requirements
+$(VENV)/bin/pyi-makespec: $(VENV)/bin/pyinstaller
+$(VENV)/bin/pyinstaller: requirements
 
 requirements: pip
 
@@ -40,8 +39,9 @@ $(VENV)/pip-selfcheck.json: $(VENV) requirements.txt
 	touch $(VENV)/pip-selfcheck.json
 
 $(VENV):
-	virtualenv $(VENV) --python=$(PYTH)
-	rm -f $(VENV)/pip-selfcheck.json
+	virtualenv --python=$(PYTH) $@
+	$(RM) $(VENV)/pip-selfcheck.json
 
+.PHONY: clean
 clean: 
-	rm -rf $(BUILD) setup.py
+	$(RM) $(BUILD) $(DIST_DIR) *.spec

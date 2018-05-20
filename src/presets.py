@@ -27,13 +27,17 @@ def debug(frame):
     frameinfo = inspect.getframeinfo(frame)
     shared.logger.debug("%s:%s", frameinfo.filename, frameinfo.lineno)
 
+
 class MainWidget(shared.MainWidget):
     """ Put main content here """
     name = 'presets'
-    thing = 'trial' # I really dont want to go down this path again
+    thing = 'scenario'  # I really dont want to go down this path again
     namevar = 'description'
-    def __init__(self, parent=None):
+    DEFAULT = {namevar: ''}
+
+    def __init__(self, parent=None, data=DEFAULT):
         super().__init__(parent=parent)
+        self.savedcontent = data.copy()
         self.subwind = SubWindow
 
         self.setLayout(PySide.QtGui.QVBoxLayout())
@@ -43,14 +47,15 @@ class MainWidget(shared.MainWidget):
         # self.layout().addSpacing(20)
 
         self.description = PySide.QtGui.QLineEdit()
-        self.description.setPlaceholderText("Scenario")
+        self.description.setText(self.savedcontent['description'])
+        self.description.setPlaceholderText("Presets")
         self.description.setSizePolicy(
             PySide.QtGui.QSizePolicy.MinimumExpanding,
             PySide.QtGui.QSizePolicy.Fixed
         )
         self.description.setMinimumWidth(10 * self.size().width())
         # TODO: make better
-        description_layout.addRow("Scenario &description: ",
+        description_layout.addRow("Presets &description: ",
                                   self.description)
 
         self.add_button = PySide.QtGui.QPushButton(
@@ -93,25 +98,14 @@ class MainWidget(shared.MainWidget):
 
         self.update()
 
-    def write(self, save_as=False):
+    def write(self):
         if self.description.text() == "":
             self.description.setText(self.description.placeholderText())
         self.savedcontents['description'] = self.description.text()
-        super().write(save_as)
+        super().write()
 
     def update(self):
         pass
-
-DEFAULT = {
-    'noise':  [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
-    'signal': [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
-    'step': 3,
-    'range': [-12, 12],
-    'program': 1,
-    'rsize': [104, 104],
-    'type': 'preset',
-    'targets': [3]
-        }
 
 from UI import LocalizationPane
 import math
@@ -171,11 +165,23 @@ class FancyCircle(LocalizationPane.ControlPane):
 class SubWindow(PySide.QtGui.QDialog):
     maxoptions = 5
 
+    DEFAULT = {
+        'description': '',
+        'noise':  [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
+        'signal': [{'sample': 1, 'state': False, 'offset': 0, 'level': 0}] * 8,
+        'step': 3,
+        'range': [-12, 12],
+        'program': 1,
+        'rsize': [104, 104],
+        'type': 'preset',
+        'targets': [3]
+            }
+
     def __init__(self, parent=None, data=DEFAULT):
         shared.logger.debug("data is %s", data)
         self.parent = parent
         self.num = self.parent.things.count() + 1
-        self.data = {'type': 'preset'}
+        self.data = data.copy()
         super().__init__(parent)
         self.setLayout(PySide.QtGui.QVBoxLayout())
 
@@ -184,13 +190,15 @@ class SubWindow(PySide.QtGui.QDialog):
         self.description = PySide.QtGui.QLineEdit()
         self.description.setPlaceholderText("Trial {}".format(self.num))
         self.description.setMinimumWidth(10 * self.size().width())
+        self.description.setText(self.data['description'])
         # TODO: make better
-        description_layout.addRow("Trial &Description:",
+        description_layout.addRow("Scenario &Description:",
                                   self.description)
 
         self.program = PySide.QtGui.QSpinBox()
         self.program.setMinimum(0)
         self.program.setMaximum(6)
+        self.program.setValue(self.data['program'])
         self.program.setSizePolicy(PySide.QtGui.QSizePolicy(
                 PySide.QtGui.QSizePolicy.Maximum,
                 PySide.QtGui.QSizePolicy.Maximum)
@@ -261,8 +269,8 @@ class SubWindow(PySide.QtGui.QDialog):
                           'program': self.program.value(),
                           })
 
-        self.data['target'] = [sub.num for sub in self.datums if
-            sub.target.isChecked()]
+        self.data['targets'] = [sub.num for sub in self.datums if
+                                sub.target.isChecked()]
 
         self.data['noise'] = noise = []
         self.data['signal'] = signal = []
@@ -388,12 +396,12 @@ class SubWindow(PySide.QtGui.QDialog):
                 # pass
                 # self.parent.layout.removeWidget(self)
 
-            #self.parent.glayout.addWidget(self, 2, 2) # XXX
-            #self.parent.glayout.indexOf(self) # XXX
+            # self.parent.glayout.addWidget(self, 2, 2) # XXX
+            # self.parent.glayout.indexOf(self) # XXX
 
         def hide(self):
             super().hide()
-            #self.parent.glayout.removeWidget(self) # XXX
+            # self.parent.glayout.removeWidget(self) # XXX
 
         class SignalOrNoise(PySide.QtGui.QWidget):
 
@@ -413,8 +421,7 @@ class SubWindow(PySide.QtGui.QDialog):
                 label = PySide.QtGui.QLabel(sigornoise)
                 self.layout().addRow(label)
                 label.setAlignment(PySide.QtCore.Qt.AlignHCenter)
-                label.setProperty('class', 'list_header') # This is pretty cool
-
+                label.setProperty('class', 'list_header')  # This is prety cool
 
                 """
                 sample: number
@@ -422,7 +429,6 @@ class SubWindow(PySide.QtGui.QDialog):
                 offset: in milliseconds
                 state: radio button true or false
                 """
-
 
                 self.state = PySide.QtGui.QCheckBox()  # state checkbox
 
@@ -439,7 +445,6 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.sampleinput.setValue(data['sample'])
                 self.layout().addRow("Sample:", self.sampleinput)
 
-
                 self.levelinput = PySide.QtGui.QSpinBox()
                 self.levelinput.setMinimum(-50)
                 self.levelinput.setMaximum(50)
@@ -452,6 +457,7 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.layout().addRow("Offset (sec):", self.offsetinput)
 
                 # self.hide()
+
 
 if __name__ == '__main__':
     from sys import argv, exit
