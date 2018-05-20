@@ -177,7 +177,7 @@ class MainWidget(PySide.QtGui.QGroupBox):
             return self.export_data()
         self.parent.saveButton.setEnabled(True)
         logger.info('path given to save is "%s"', self.filename)
-        self.write(save_as=True)
+        self.write()
 
     def write(self):
         path = pathlib2.Path(self.filename)
