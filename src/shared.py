@@ -218,7 +218,8 @@ class MainWidget(PySide.QtGui.QGroupBox):
             # Load index file first
             data = json.load(file)
             self = cls(parent=parent, data=data)
-        for file_name in config.iterdir():  # TODO: maybe replace with os.walk
+        # Reversed because for some reason files show up in reverse order
+        for file_name in reversed(list(config.iterdir())):  # TODO: maybe replace with os.walk
             # as thats what kevin is using
             # TODO: file validation, make sure doesnt start with . and ends
             # with .json
