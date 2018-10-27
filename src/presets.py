@@ -452,9 +452,10 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.layout().addRow("Gain (dB):", self.levelinput)
 
                 self.offsetinput = PySide.QtGui.QSpinBox()
+                self.offsetinput.setMinimum(0)
+                self.offsetinput.setMaximum(600000)  # 10 minutes in ms
                 self.offsetinput.setValue(data['offset'])
-                self.offsetinput.setEnabled(False)
-                self.layout().addRow("Offset (sec):", self.offsetinput)
+                self.layout().addRow("Offset (ms):", self.offsetinput)
 
                 # self.hide()
 
