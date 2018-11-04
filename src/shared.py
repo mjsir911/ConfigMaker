@@ -219,7 +219,6 @@ class MainWidget(PySide.QtGui.QGroupBox):
             data = json.load(file)
             self = cls(parent=parent, data=data)
         # Just sort the order
-        import re.compile
         file_filter = re.compile('[0-9]+-.*\.json')
         for file_name in sorted(filter(file_filter.search, config.iterdir())):
             print('%%%%' * 10)
