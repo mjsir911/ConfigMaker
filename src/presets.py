@@ -174,7 +174,7 @@ class SubWindow(PySide.QtGui.QDialog):
         'program': 1,
         'rsize': [104, 104],
         'type': 'preset',
-        'targets': [3]
+        'targets': []
             }
 
     def __init__(self, parent=None, data=DEFAULT):
@@ -230,6 +230,9 @@ class SubWindow(PySide.QtGui.QDialog):
             interior.hide()
 
             button['select'].clicked.connect(interior.show)
+
+        for savedstate in data["targets"]:
+            self.datums[savedstate - 1].target.setCheckState(PySide.QtCore.Qt.CheckState.Checked)
 
         debug(currentframe())
 
@@ -452,9 +455,10 @@ class SubWindow(PySide.QtGui.QDialog):
                 self.layout().addRow("Gain (dB):", self.levelinput)
 
                 self.offsetinput = PySide.QtGui.QSpinBox()
+                self.offsetinput.setMinimum(0)
+                self.offsetinput.setMaximum(600000)  # 10 minutes in ms
                 self.offsetinput.setValue(data['offset'])
-                self.offsetinput.setEnabled(False)
-                self.layout().addRow("Offset (sec):", self.offsetinput)
+                self.layout().addRow("Offset (ms):", self.offsetinput)
 
                 # self.hide()
 
