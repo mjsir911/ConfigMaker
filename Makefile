@@ -45,3 +45,6 @@ $(VENV):
 .PHONY: clean
 clean: 
 	$(RM) $(BUILD) $(DIST_DIR) *.spec
+
+clean-dist: clean
+	$(RM) $(VENV)

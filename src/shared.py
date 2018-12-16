@@ -157,6 +157,11 @@ class MainWidget(PySide.QtGui.QGroupBox):
             caption="Export Config File",
             dir=savedir,
         )
+        cancelled = not bool(self.filename)
+
+        if cancelled:
+            return
+
         self.filename = os.path.realpath(self.filename)
         if not self.filename:
             return
